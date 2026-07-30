@@ -1,9 +1,11 @@
 package executor
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os/exec"
+	"time"
 )
 
 type ImageMagickExecutor struct{}
@@ -22,7 +24,10 @@ func (e *ImageMagickExecutor) ConvertImage(inputPath, outputPath string) error {
 		return fmt.Errorf("ImageMagick binary not found")
 	}
 
-	cmd := exec.Command(binPath, inputPath, outputPath)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, binPath, inputPath, outputPath)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("ImageMagick Error: %v\nOutput: %s", err, string(output))

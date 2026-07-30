@@ -25,6 +25,12 @@ func (h *ConversionHandler) HandleConvert(c *gin.Context) {
 		return
 	}
 
+	// Security: Batasi ukuran file hingga 50MB
+	if file.Size > 50*1024*1024 {
+		c.JSON(http.StatusRequestEntityTooLarge, gin.H{"error": "Ukuran file maksimal 50MB"})
+		return
+	}
+
 	targetFormat := c.PostForm("targetFormat")
 	if targetFormat == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Format target tidak valid"})

@@ -58,13 +58,14 @@ func (uc *ConverterUsecase) ConvertGeneral(file *multipart.FileHeader, targetFor
 		return "", cleanup, fmt.Errorf("failed to create temp dir")
 	}
 
-	inputPath := filepath.Join(tmpDir, file.Filename)
+	safeFilename := filepath.Base(file.Filename)
+	inputPath := filepath.Join(tmpDir, safeFilename)
 	if err := saveUploadedFile(file, inputPath); err != nil {
 		return "", cleanup, err
 	}
 
-	ext := filepath.Ext(file.Filename)
-	baseName := file.Filename[0 : len(file.Filename)-len(ext)]
+	ext := filepath.Ext(safeFilename)
+	baseName := safeFilename[0 : len(safeFilename)-len(ext)]
 	outputPath := filepath.Join(tmpDir, baseName+"."+targetFormat)
 	
 	sourceExt := ext

@@ -1,10 +1,12 @@
 package executor
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"time"
 )
 
 type LibreOfficeExecutor struct{}
@@ -25,7 +27,10 @@ func (l *LibreOfficeExecutor) ConvertDocument(inputPath, outDir, targetFormat st
 		return fmt.Errorf("LibreOffice binary not found")
 	}
 
-	cmd := exec.Command(binPath, "--headless", "--convert-to", targetFormat, "--outdir", outDir, inputPath)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, binPath, "--headless", "--convert-to", targetFormat, "--outdir", outDir, inputPath)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("LibreOffice Error: %v\nOutput: %s", err, string(output))
