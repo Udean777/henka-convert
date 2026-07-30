@@ -4,6 +4,7 @@ import { FormatRouter } from '../router'
 import { ServerConverterAdapter } from '../../infrastructure/adapters/ServerConverterAdapter'
 import { LocalWorkerAdapter } from '../../infrastructure/adapters/LocalWorkerAdapter'
 import { YouTubeAdapter } from '../../infrastructure/adapters/YouTubeAdapter'
+import { ProcessingTier } from '../types'
 
 export class JobExecutionService {
   // Chain of Responsibility pattern: Cek dari yang paling spesifik (YouTube & Server) ke paling umum (Local Worker)
@@ -22,16 +23,16 @@ export class JobExecutionService {
     updateJob({ status: 'PROCESSING', progress: 10, error: null })
 
     const tier = FormatRouter.getProcessingTier(sourceExt as any, targetExt as any)
-    
+
     let adapter = this.adapters[0] // YouTubeAdapter is checked first if applicable
     if (job.file.name.endsWith('.youtube')) {
-       adapter = this.adapters[0]
-    } else if (tier === 'A') {
-       adapter = this.adapters[2] // LocalWorker
-    } else if (tier === 'B') {
-       adapter = this.adapters[1] // Server
+      adapter = this.adapters[0]
+    } else if (tier === ProcessingTier.TierA) {
+      adapter = this.adapters[2] // LocalWorker
+    } else if (tier === ProcessingTier.TierB) {
+      adapter = this.adapters[1] // Server
     } else {
-       adapter = this.adapters.find((a) => a.canHandle(sourceExt, targetExt))
+      adapter = this.adapters.find((a) => a.canHandle(sourceExt, targetExt))
     }
 
     if (!adapter) {
