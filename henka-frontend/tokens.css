@@ -1,6 +1,6 @@
-/* Hallmark · macrostructure: Bento Grid · genre: playful · theme: Hum
- * enrichment: none · nav: N1b · footer: Ft8
- * paper: oklch(97% 0.012 95) light · display: Plus Jakarta Sans 600 rounded-sans · accent: multi (pear-yellow H95, sky-cyan H235, coral-red H18)
+/* Hallmark · app: Henka Convert · genre: playful · theme: Hum
+ * enrichment: none · nav: minimal-topbar · footer: Ft8
+ * paper: oklch(97% 0.012 95) light · display: Instrument Serif 400 · body: Plus Jakarta Sans · accent: multi
  */
 
 :root {
@@ -24,10 +24,11 @@
   --color-success: oklch(72% 0.18 150);
   --color-error: var(--color-accent-3);
   --color-error-bg: oklch(80% 0.12 18 / 0.15);
+  --color-white: oklch(100% 0 0);
   --color-focus: oklch(66% 0.18 235);
 
   /* Fonts */
-  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
@@ -81,6 +82,15 @@
   --z-modal: 400;
   --z-toast: 500;
   --z-tooltip: 600;
+
+  /* Shadows */
+  --shadow-sm: 0 12px 32px -16px oklch(20% 0.012 250 / 0.12);
+  --shadow-md: 0 24px 48px -24px oklch(20% 0.012 250 / 0.18);
+  --shadow-card: 0 12px 32px -16px oklch(20% 0.012 250 / 0.12);
+  --shadow-card-hover: 0 24px 48px -24px oklch(20% 0.012 250 / 0.18);
+  --shadow-btn: 0 4px 0 0 var(--btn-edge, var(--color-accent-deep)), 0 6px 12px -3px var(--btn-cast, oklch(76% 0.2 95 / 0.45));
+  --shadow-btn-hover: 0 6px 0 0 var(--btn-edge, var(--color-accent-deep)), 0 12px 22px -4px var(--btn-cast, oklch(76% 0.2 95 / 0.45));
+  --shadow-btn-active: 0 1px 0 0 var(--btn-edge, var(--color-accent-deep));
 
   /* Layout */
   --page-max: 48rem;

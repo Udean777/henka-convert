@@ -11,5 +11,7 @@ export interface ConversionJob {
   progress: number
   resultUrl: string | null
   resultName?: string
+  resultSize?: number
   error: string | null
+  options?: Record<string, any>
 }

@@ -39,32 +39,38 @@ export const useConversionStore = defineStore('conversion', () => {
       jobs.value.push({
         id: crypto.randomUUID(),
         file: file as any,
-        status: 'IDLE',
+        status: availableTargets.length === 0 ? 'ERROR' : 'IDLE',
         targetFormat,
         availableTargets,
         progress: 0,
         resultUrl: null,
-        error: null,
+        error: availableTargets.length === 0 ? (ext === 'pdf' ? 'Use PDF Tools tab for PDFs' : 'Format not supported') : null,
       })
     }
   }
 
-  function addYouTubeJob(url: string) {
+  function addYouTubeJob(url: string, mediaType: 'audio' | 'video' = 'audio', quality?: string) {
     const dummyFile = new File([url], 'video.youtube', { type: 'text/plain' })
-    const audioTargets: Format[] = ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].map(
-      (ext) => SUPPORTED_FORMATS[ext]!,
-    )
-    const defaultTarget: Format = SUPPORTED_FORMATS['mp3']!
+
+    let targets: Format[] = []
+    if (mediaType === 'audio') {
+      targets = ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].map((ext) => SUPPORTED_FORMATS[ext]!)
+    } else {
+      targets = ['mp4', 'webm'].map((ext) => SUPPORTED_FORMATS[ext]!)
+    }
+
+    const defaultTarget = targets[0]!
 
     jobs.value.push({
       id: crypto.randomUUID(),
       file: dummyFile,
       status: 'IDLE',
       targetFormat: defaultTarget,
-      availableTargets: audioTargets,
+      availableTargets: targets,
       progress: 0,
       resultUrl: null,
       error: null,
+      options: quality ? { quality } : undefined,
     })
   }
 

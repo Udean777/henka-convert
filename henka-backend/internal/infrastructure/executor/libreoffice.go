@@ -13,7 +13,7 @@ func NewLibreOfficeExecutor() *LibreOfficeExecutor {
 	return &LibreOfficeExecutor{}
 }
 
-func (l *LibreOfficeExecutor) ConvertToPDF(inputPath, outDir string) error {
+func (l *LibreOfficeExecutor) ConvertDocument(inputPath, outDir, targetFormat string) error {
 	var binPath string
 	if _, err := exec.LookPath("soffice"); err == nil {
 		binPath = "soffice"
@@ -25,7 +25,7 @@ func (l *LibreOfficeExecutor) ConvertToPDF(inputPath, outDir string) error {
 		return fmt.Errorf("LibreOffice binary not found")
 	}
 
-	cmd := exec.Command(binPath, "--headless", "--convert-to", "pdf", "--outdir", outDir, inputPath)
+	cmd := exec.Command(binPath, "--headless", "--convert-to", targetFormat, "--outdir", outDir, inputPath)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("LibreOffice Error: %v\nOutput: %s", err, string(output))

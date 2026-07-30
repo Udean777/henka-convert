@@ -8,12 +8,14 @@ It is built from the ground up with a strong emphasis on Clean Architecture, SOL
 
 ## Features
 - **Hybrid Processing Architecture**: Intelligently routes tasks to run locally (Browser) or on the server.
-- **YouTube to Audio**: Download and extract high-quality Audio (MP3, WAV, FLAC, AAC, M4A, OGG) from YouTube using `yt-dlp` (bypassing EJS anti-bot measures via embedded Node.js runtime).
+- **YouTube to Media**: Download and extract high-quality Audio (MP3, WAV, etc.) and Video (MP4, WebM) from YouTube using `yt-dlp` with dynamic quality selection.
 - **Format Conversions**:
-  - Image: `JPG`, `PNG`, `WEBP`, `GIF` (WASM/Local)
-  - Data: `CSV`, `JSON`, `XLSX` (JS/Local)
-  - Document: `DOCX`, `XLSX` -> `PDF` (LibreOffice/Server)
-  - Video & Audio: `MP4`, `WEBM`, `MP3`, `WAV`, `FLAC`, `AAC`, `OGG` (FFmpeg/Server)
+  - **Image:** `JPG`, `PNG`, `WEBP`, `GIF`, `BMP`, `TIFF`, `ICO`, `SVG`, `HEIC`, `EPS` (WASM & ImageMagick)
+  - **Data:** `CSV`, `JSON`, `XLSX` (JS/Local)
+  - **Document:** `DOCX`, `DOC`, `RTF`, `TXT`, `ODT`, `HTML`, `XLSX`, `XLS`, `PPTX`, `PPT` -> `PDF` (LibreOffice/Server)
+  - **Video:** `MP4`, `WEBM`, `GIF`, `AVI`, `MOV`, `MKV`, `WMV`, `FLV`, `M4V`, `3GP`, `TS`, `VOB` (FFmpeg/Server)
+  - **Audio:** `MP3`, `WAV`, `FLAC`, `AAC`, `M4A`, `OGG`, `WMA`, `OPUS`, `AIFF` (FFmpeg/Server)
+- **PDF Toolkit**: Client-side PDF manipulation powered by `pdf-lib` (Merge, Rotate, etc.).
 - **Asymptotic Progress UI**: Beautiful, smooth, and realistic progress bars inspired by Zeno's paradox, completely eliminating awkward progress jumps and UI stutters.
 - **Batch Processing**: Convert multiple files at once and download them seamlessly as a compiled `.zip` file.
 - **Strict Format Routing**: Target formats are strictly filtered dynamically. The UI refuses to make false promises; if a conversion engine doesn't exist, the option won't exist.
@@ -21,7 +23,7 @@ It is built from the ground up with a strong emphasis on Clean Architecture, SOL
 ## Tech Stack
 - **Frontend**: Vue 3 (Composition API), Vite, Tailwind CSS, TypeScript, Web Workers, Pinia.
 - **Backend**: Go (Golang), Gin Framework, Clean Architecture.
-- **Tools/Engines**: FFmpeg, LibreOffice, yt-dlp, Node.js, JSZip.
+- **Tools/Engines**: FFmpeg, LibreOffice, ImageMagick, yt-dlp, Node.js, JSZip.
 
 ## Getting Started
 

@@ -21,7 +21,19 @@ export class JobExecutionService {
 
     updateJob({ status: 'PROCESSING', progress: 10, error: null })
 
-    const adapter = this.adapters.find((a) => a.canHandle(sourceExt, targetExt))
+    const tier = FormatRouter.getProcessingTier(sourceExt as any, targetExt as any)
+    
+    let adapter = this.adapters[0] // YouTubeAdapter is checked first if applicable
+    if (job.file.name.endsWith('.youtube')) {
+       adapter = this.adapters[0]
+    } else if (tier === 'A') {
+       adapter = this.adapters[2] // LocalWorker
+    } else if (tier === 'B') {
+       adapter = this.adapters[1] // Server
+    } else {
+       adapter = this.adapters.find((a) => a.canHandle(sourceExt, targetExt))
+    }
+
     if (!adapter) {
       updateJob({ status: 'ERROR', progress: 0, error: 'No converter available for this format' })
       return
@@ -31,9 +43,16 @@ export class JobExecutionService {
       file: job.file,
       sourceExt,
       targetExt,
+      options: job.options,
       onProgress: (p) => updateJob({ progress: p }),
-      onSuccess: (url, name) =>
-        updateJob({ status: 'COMPLETED', progress: 100, resultUrl: url, resultName: name }),
+      onSuccess: (url, name, size) =>
+        updateJob({
+          status: 'COMPLETED',
+          progress: 100,
+          resultUrl: url,
+          resultName: name,
+          resultSize: size,
+        }),
       onError: (err) => updateJob({ status: 'ERROR', progress: 0, error: err }),
     })
   }

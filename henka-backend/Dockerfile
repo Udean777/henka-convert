@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-mutagen \
     curl \
     nodejs \
+    imagemagick \
     && rm -rf /var/lib/apt/lists/*
 
 # Install versi terbaru yt-dlp langsung dari GitHub (apt package biasanya kadaluarsa)

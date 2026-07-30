@@ -18,30 +18,7 @@ func NewConversionHandler(uc *usecase.ConverterUsecase) *ConversionHandler {
 	return &ConversionHandler{uc: uc}
 }
 
-func (h *ConversionHandler) HandleDocument(c *gin.Context) {
-	file, err := c.FormFile("file")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Tidak ada file yang diunggah"})
-		return
-	}
-
-	outputPath, cleanup, err := h.uc.ConvertDocument(file)
-	defer cleanup() // Always clean up temporary directories!
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal melakukan konversi dokumen"})
-		return
-	}
-
-	ext := filepath.Ext(file.Filename)
-	baseName := file.Filename[0 : len(file.Filename)-len(ext)]
-	
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.pdf\"", baseName))
-	c.Header("Content-Type", "application/pdf")
-	c.File(outputPath)
-}
-
-func (h *ConversionHandler) HandleVideo(c *gin.Context) {
+func (h *ConversionHandler) HandleConvert(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Tidak ada file yang diunggah"})
@@ -54,11 +31,11 @@ func (h *ConversionHandler) HandleVideo(c *gin.Context) {
 		return
 	}
 
-	outputPath, cleanup, err := h.uc.ConvertVideo(file, targetFormat)
+	outputPath, cleanup, err := h.uc.ConvertGeneral(file, targetFormat)
 	defer cleanup() // Always clean up temporary directories!
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal melakukan konversi video"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -66,13 +43,13 @@ func (h *ConversionHandler) HandleVideo(c *gin.Context) {
 	baseName := file.Filename[0 : len(file.Filename)-len(ext)]
 	
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.%s\"", baseName, targetFormat))
-	// Content-Type bisa di-sniff atau dibiarkan agar Gin menentukan dari ektensi file
 	c.File(outputPath)
 }
 
 type YouTubeRequest struct {
-	URL    string `json:"url"`
-	Format string `json:"format"`
+	URL     string `json:"url"`
+	Format  string `json:"format"`
+	Quality string `json:"quality"`
 }
 
 func (h *ConversionHandler) HandleYouTubeConvert(c *gin.Context) {
@@ -86,7 +63,7 @@ func (h *ConversionHandler) HandleYouTubeConvert(c *gin.Context) {
 		req.Format = "mp3"
 	}
 
-	outputPath, cleanup, err := h.uc.ConvertYouTubeURL(req.URL, req.Format)
+	outputPath, cleanup, err := h.uc.ConvertYouTubeURL(req.URL, req.Format, req.Quality)
 	defer cleanup()
 
 	if err != nil {

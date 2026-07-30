@@ -12,7 +12,12 @@ import (
 
 // DocumentExecutor is the interface for LibreOffice operations
 type DocumentExecutor interface {
-	ConvertToPDF(inputPath, outDir string) error
+	ConvertDocument(inputPath, outDir, targetFormat string) error
+}
+
+// ImageExecutor is the interface for ImageMagick operations
+type ImageExecutor interface {
+	ConvertImage(inputPath, outputPath string) error
 }
 
 // VideoExecutor is the interface for FFmpeg operations
@@ -21,61 +26,29 @@ type VideoExecutor interface {
 }
 
 type YouTubeExecutor interface {
-	DownloadAudio(url, outputTemplate string, format string) error
+	DownloadMedia(url, outputTemplate string, format string, quality string) error
 }
 
 type ConverterUsecase struct {
 	docExec DocumentExecutor
 	vidExec VideoExecutor
 	ytExec  YouTubeExecutor
+	imgExec ImageExecutor
 }
 
-func NewConverterUsecase(docExec DocumentExecutor, vidExec VideoExecutor, ytExec YouTubeExecutor) *ConverterUsecase {
+func NewConverterUsecase(docExec DocumentExecutor, vidExec VideoExecutor, ytExec YouTubeExecutor, imgExec ImageExecutor) *ConverterUsecase {
 	return &ConverterUsecase{
 		docExec: docExec,
 		vidExec: vidExec,
 		ytExec:  ytExec,
+		imgExec: imgExec,
 	}
 }
 
-// ConvertDocument mengorkestrasi alur konversi dokumen:
-// Membuat folder UUID -> Simpan file -> Panggil LibreOffice -> Kembalikan path output & fungsi cleanup
-func (uc *ConverterUsecase) ConvertDocument(file *multipart.FileHeader) (string, func(), error) {
+// ConvertGeneral mengorkestrasi alur konversi secara generik
+func (uc *ConverterUsecase) ConvertGeneral(file *multipart.FileHeader, targetFormat string) (string, func(), error) {
 	jobID := uuid.New().String()
-	tmpDir := filepath.Join(os.TempDir(), "henka_doc", jobID)
-	
-	cleanup := func() {
-		os.RemoveAll(tmpDir)
-	}
-
-	if err := os.MkdirAll(tmpDir, 0755); err != nil {
-		return "", cleanup, fmt.Errorf("failed to create temp dir")
-	}
-
-	inputPath := filepath.Join(tmpDir, file.Filename)
-	if err := saveUploadedFile(file, inputPath); err != nil {
-		return "", cleanup, err
-	}
-
-	if err := uc.docExec.ConvertToPDF(inputPath, tmpDir); err != nil {
-		return "", cleanup, err
-	}
-
-	ext := filepath.Ext(file.Filename)
-	baseName := file.Filename[0 : len(file.Filename)-len(ext)]
-	outputPath := filepath.Join(tmpDir, baseName+".pdf")
-
-	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
-		return "", cleanup, fmt.Errorf("output file not found")
-	}
-
-	return outputPath, cleanup, nil
-}
-
-// ConvertVideo mengorkestrasi alur konversi video menggunakan FFmpeg
-func (uc *ConverterUsecase) ConvertVideo(file *multipart.FileHeader, targetFormat string) (string, func(), error) {
-	jobID := uuid.New().String()
-	tmpDir := filepath.Join(os.TempDir(), "henka_video", jobID)
+	tmpDir := filepath.Join(os.TempDir(), "henka_convert", jobID)
 	
 	cleanup := func() {
 		os.RemoveAll(tmpDir)
@@ -93,8 +66,42 @@ func (uc *ConverterUsecase) ConvertVideo(file *multipart.FileHeader, targetForma
 	ext := filepath.Ext(file.Filename)
 	baseName := file.Filename[0 : len(file.Filename)-len(ext)]
 	outputPath := filepath.Join(tmpDir, baseName+"."+targetFormat)
+	
+	sourceExt := ext
+	if len(sourceExt) > 0 {
+	    sourceExt = sourceExt[1:]
+	}
 
-	if err := uc.vidExec.ConvertVideo(inputPath, outputPath); err != nil {
+	isMedia := false
+	isDoc := false
+	
+	mediaExts := []string{"mp4", "webm", "gif", "avi", "mov", "mkv", "wmv", "flv", "m4v", "3gp", "ts", "vob", "mp3", "wav", "flac", "aac", "m4a", "ogg", "wma", "mka", "ac3", "opus", "aiff", "amr", "au"}
+	for _, e := range mediaExts {
+	    if sourceExt == e {
+	        isMedia = true
+	        break
+	    }
+	}
+	
+	docExts := []string{"docx", "doc", "rtf", "txt", "odt", "html", "pdf", "xlsx", "xls", "ods", "csv", "pptx", "ppt", "odp"}
+	for _, e := range docExts {
+	    if sourceExt == e {
+	        isDoc = true
+	        break
+	    }
+	}
+
+	var err error
+	if isMedia {
+	    err = uc.vidExec.ConvertVideo(inputPath, outputPath)
+	} else if isDoc {
+	    err = uc.docExec.ConvertDocument(inputPath, tmpDir, targetFormat)
+	} else {
+	    // Assume image
+	    err = uc.imgExec.ConvertImage(inputPath, outputPath)
+	}
+
+	if err != nil {
 		return "", cleanup, err
 	}
 
@@ -105,7 +112,7 @@ func (uc *ConverterUsecase) ConvertVideo(file *multipart.FileHeader, targetForma
 	return outputPath, cleanup, nil
 }
 
-func (uc *ConverterUsecase) ConvertYouTubeURL(url string, format string) (string, func(), error) {
+func (uc *ConverterUsecase) ConvertYouTubeURL(url string, format string, quality string) (string, func(), error) {
 	jobID := uuid.New().String()
 	tmpDir := filepath.Join(os.TempDir(), "henka_yt", jobID)
 	
@@ -118,7 +125,7 @@ func (uc *ConverterUsecase) ConvertYouTubeURL(url string, format string) (string
 	}
 
 	outputTemplate := filepath.Join(tmpDir, "%(title)s.%(ext)s")
-	if err := uc.ytExec.DownloadAudio(url, outputTemplate, format); err != nil {
+	if err := uc.ytExec.DownloadMedia(url, outputTemplate, format, quality); err != nil {
 		return "", cleanup, err
 	}
 

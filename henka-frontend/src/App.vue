@@ -18,7 +18,7 @@ const activeTab = ref<'converter' | 'youtube' | 'pdf-tools'>('converter')
       <button
         @click="activeTab = 'converter'"
         :class="[
-          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-all duration-200',
+          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-colors duration-200',
           activeTab === 'converter'
             ? 'shadow-[0_1px_0_0_var(--color-rule)] text-ink'
             : 'text-ink-3 hover:text-ink-2',
@@ -37,7 +37,7 @@ const activeTab = ref<'converter' | 'youtube' | 'pdf-tools'>('converter')
       <button
         @click="activeTab = 'youtube'"
         :class="[
-          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-all duration-200',
+          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-colors duration-200',
           activeTab === 'youtube'
             ? 'shadow-[0_1px_0_0_var(--color-rule)] text-ink'
             : 'text-ink-3 hover:text-ink-2',
@@ -56,7 +56,7 @@ const activeTab = ref<'converter' | 'youtube' | 'pdf-tools'>('converter')
       <button
         @click="activeTab = 'pdf-tools'"
         :class="[
-          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-all duration-200',
+          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-colors duration-200',
           activeTab === 'pdf-tools'
             ? 'shadow-[0_1px_0_0_var(--color-rule)] text-ink'
             : 'text-ink-3 hover:text-ink-2',
