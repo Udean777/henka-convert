@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 # Compile Go menjadi binary statis (bernama 'server')
-RUN CGO_ENABLED=0 GOOS=linux go build -o server .
+RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/server
 
 # ==========================================
 # STAGE 2: Runner (OS Ringan + LibreOffice)
