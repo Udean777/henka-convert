@@ -23,8 +23,9 @@ export class YouTubeAdapter implements ConverterPort {
   }
 
   private executeXHR(url: string, context: ConverterContext) {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', `http://localhost:8080/api/convert/youtube`, true)
+    xhr.open('POST', `${apiUrl}/convert/youtube`, true)
     xhr.setRequestHeader('Content-Type', 'application/json')
     xhr.responseType = 'blob'
 
