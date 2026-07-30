@@ -1,0 +1,21 @@
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Go workspaces
+go.work
+go.work.sum
+
+# Temporary & Logs
+logs/
+*.log
+tmp/
+.env
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
