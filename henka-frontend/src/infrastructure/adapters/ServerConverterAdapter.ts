@@ -3,8 +3,10 @@ import { createSmoothProgress } from '../../core/utils/progress'
 
 export class ServerConverterAdapter implements ConverterPort {
   canHandle(sourceExt: string, targetExt: string): boolean {
-    const isDoc = targetExt === 'pdf' && (sourceExt === 'docx' || sourceExt === 'xlsx')
-    const isMedia = ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(sourceExt) && ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(targetExt)
+    const isDoc = targetExt === 'pdf' && ['docx', 'xlsx', 'pptx'].includes(sourceExt)
+    const isMedia =
+      ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(sourceExt) &&
+      ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(targetExt)
     return isDoc || isMedia
   }
 
@@ -13,7 +15,9 @@ export class ServerConverterAdapter implements ConverterPort {
     formData.append('file', context.file)
     formData.append('targetFormat', context.targetExt)
 
-    const isMedia = ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(context.sourceExt)
+    const isMedia = ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(
+      context.sourceExt,
+    )
     const endpoint = isMedia ? '/api/convert/video' : '/api/convert/document'
 
     const xhr = new XMLHttpRequest()

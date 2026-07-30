@@ -23,11 +23,11 @@ const handleFileSelect = (e: Event) => {
 }
 
 const executeAction = () => {
-  store.resultUrl = null // Reset previous result
+  store.resultUrl = null
   if (selectedAction.value === 'merge') {
     store.mergePdfs()
   } else if (selectedAction.value === 'rotate') {
-    store.rotatePdf(90) // Rotate 90 degrees clockwise
+    store.rotatePdf(90)
   } else {
     store.error = 'Not implemented yet'
   }
@@ -35,8 +35,7 @@ const executeAction = () => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-6">
-    <!-- PDF Specific DropZone -->
+  <div class="w-full flex flex-col gap-[var(--space-lg)]">
     <div
       @dragenter.prevent="isDragging = true"
       @dragover.prevent
@@ -45,17 +44,20 @@ const executeAction = () => {
     >
       <label
         :class="[
-          'relative flex flex-col items-center justify-center w-full h-32 rounded-xl cursor-pointer border-2 border-dashed transition-colors duration-200',
+          'relative flex flex-col items-center justify-center w-full h-32 cursor-pointer border-2 border-dashed transition-all duration-200',
           isDragging
-            ? 'border-red-500 bg-red-500/5'
-            : 'border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500',
+            ? 'border-accent-3 bg-accent-3/5 scale-[1.01]'
+            : 'border-rule hover:border-ink-3/30 bg-paper-2/30',
         ]"
+        :style="{ borderRadius: 'var(--radius-card)' }"
       >
         <div class="flex flex-col items-center justify-center">
-          <p class="mb-1 text-base font-medium text-slate-200">
-            <span class="text-red-400">Click</span> or drag PDF files here
+          <p class="mb-1 text-base font-medium text-ink" style="font-size: var(--text-base)">
+            <span class="text-accent-3">Click</span> or drag PDF files here
           </p>
-          <p class="text-xs text-slate-500">Only .pdf files are supported here</p>
+          <p class="text-xs text-ink-3" style="font-size: var(--text-xs)">
+            Only .pdf files are supported here
+          </p>
         </div>
         <input
           type="file"
@@ -67,38 +69,47 @@ const executeAction = () => {
       </label>
     </div>
 
-    <!-- Error Alert -->
     <div
       v-if="store.error"
-      class="p-3 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+      class="p-3 rounded-[var(--radius-lg)] text-sm"
+      style="
+        background: var(--color-error-bg);
+        color: var(--color-error);
+        border: 1px solid color-mix(in oklch, var(--color-error) 20%, transparent);
+      "
     >
       {{ store.error }}
     </div>
 
-    <!-- Tool Selection & File List -->
-    <div v-if="store.files.length > 0" class="flex flex-col gap-4">
-      <!-- Files List -->
-      <div class="bg-slate-800 border border-slate-700 rounded-xl p-3">
+    <div v-if="store.files.length > 0" class="flex flex-col gap-[var(--space-md)]">
+      <div class="card p-3">
         <div class="flex justify-between items-center mb-2 px-1">
-          <span class="text-sm font-medium text-slate-300"
-            >Selected PDFs ({{ store.files.length }})</span
-          >
+          <span class="text-sm font-medium text-ink" style="font-size: var(--text-sm)">
+            Selected PDFs ({{ store.files.length }})
+          </span>
           <button
             @click="store.clear()"
-            class="text-xs text-slate-500 hover:text-red-400 transition-colors"
+            class="text-xs text-ink-3 hover:text-accent-3 transition-colors"
+            style="font-size: var(--text-xs)"
           >
             Clear All
           </button>
         </div>
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-[var(--space-2xs)]">
           <div
             v-for="(file, index) in store.files"
             :key="index"
-            class="flex justify-between items-center bg-slate-900/50 p-2 rounded-md border border-slate-700/50"
+            class="flex justify-between items-center p-2 rounded-[var(--radius-md)]"
+            style="background: var(--color-paper-2)"
           >
-            <span class="text-sm text-slate-300 truncate max-w-[80%]">{{ file.name }}</span>
-            <button @click="store.removeFile(index)" class="text-slate-500 hover:text-red-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="text-sm text-ink truncate max-w-[80%]" style="font-size: var(--text-sm)">{{
+              file.name
+            }}</span>
+            <button
+              @click="store.removeFile(index)"
+              class="text-ink-3 hover:text-accent-3 transition-colors p-1"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -111,18 +122,18 @@ const executeAction = () => {
         </div>
       </div>
 
-      <!-- Tool Action Bar -->
       <div
-        class="flex items-center justify-between gap-4 bg-slate-800 border border-slate-700 p-3 rounded-xl"
+        class="flex items-center justify-between gap-4 p-3"
+        style="background: var(--color-paper-2); border-radius: var(--radius-card)"
       >
         <div class="flex gap-2">
           <button
             @click="selectedAction = 'merge'"
             :class="[
-              'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-all duration-200',
               selectedAction === 'merge'
-                ? 'bg-red-600 text-white shadow-sm'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600',
+                ? 'btn btn--coral btn--sm'
+                : 'text-ink-2 hover:text-ink hover:bg-paper-3',
             ]"
           >
             Merge
@@ -130,10 +141,10 @@ const executeAction = () => {
           <button
             @click="selectedAction = 'rotate'"
             :class="[
-              'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-all duration-200',
               selectedAction === 'rotate'
-                ? 'bg-red-600 text-white shadow-sm'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600',
+                ? 'btn btn--coral btn--sm'
+                : 'text-ink-2 hover:text-ink hover:bg-paper-3',
             ]"
           >
             Rotate 90°
@@ -145,16 +156,12 @@ const executeAction = () => {
             v-if="store.resultUrl"
             :href="store.resultUrl"
             download="henka_pdf_tools_result.pdf"
-            class="px-4 py-1.5 rounded-md text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
+            class="btn btn--mint btn--sm"
           >
             Download Result
           </a>
 
-          <button
-            @click="executeAction"
-            :disabled="store.isProcessing"
-            class="px-4 py-1.5 rounded-md text-sm font-medium bg-red-600 text-white hover:bg-red-700 transition-colors flex items-center gap-2 disabled:opacity-50 shadow-sm"
-          >
+          <button @click="executeAction" :disabled="store.isProcessing" class="btn btn--coral">
             <svg
               v-if="store.isProcessing"
               class="animate-spin h-3.5 w-3.5 text-white"

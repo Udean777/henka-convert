@@ -1,6 +1,6 @@
 export function createSmoothProgress(
   onProgress: (p: number) => void,
-  onComplete: (url: string, resultName?: string) => void
+  onComplete: (url: string, resultName?: string) => void,
 ) {
   let current = 0
   let target = 90
@@ -36,6 +36,6 @@ export function createSmoothProgress(
     },
     error: () => {
       clearInterval(timer)
-    }
+    },
   }
 }

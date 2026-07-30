@@ -22,6 +22,13 @@ export const SUPPORTED_FORMATS: Record<string, Format> = {
   csv: { extension: 'csv', mimeType: 'text/csv', label: 'CSV Data' },
   json: { extension: 'json', mimeType: 'application/json', label: 'JSON Data' },
 
+  // Presentations
+  pptx: {
+    extension: 'pptx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    label: 'PowerPoint Presentation',
+  },
+
   // Audio
   mp3: { extension: 'mp3', mimeType: 'audio/mpeg', label: 'MP3 Audio' },
   wav: { extension: 'wav', mimeType: 'audio/wav', label: 'WAV Audio' },
@@ -56,6 +63,7 @@ export const CONVERSION_PATHS: ConversionPath[] = [
   // Document Conversions (Tier B - Server LibreOffice)
   { from: 'docx', to: 'pdf', tier: ProcessingTier.TierB },
   { from: 'xlsx', to: 'pdf', tier: ProcessingTier.TierB },
+  { from: 'pptx', to: 'pdf', tier: ProcessingTier.TierB },
 
   // Video Conversions (Tier B - Server FFmpeg)
   { from: 'mp4', to: 'webm', tier: ProcessingTier.TierB },
@@ -64,9 +72,9 @@ export const CONVERSION_PATHS: ConversionPath[] = [
   { from: 'webm', to: 'gif', tier: ProcessingTier.TierB },
 
   // Audio Conversions (Tier B - Server FFmpeg)
-  ...['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].flatMap(from => 
+  ...['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].flatMap((from) =>
     ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg']
-      .filter(to => to !== from)
-      .map(to => ({ from, to, tier: ProcessingTier.TierB }))
+      .filter((to) => to !== from)
+      .map((to) => ({ from, to, tier: ProcessingTier.TierB })),
   ),
 ]

@@ -50,9 +50,11 @@ export const useConversionStore = defineStore('conversion', () => {
   }
 
   function addYouTubeJob(url: string) {
-    const dummyFile = new File([url], "video.youtube", { type: "text/plain" })
-    const audioTargets = ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].map(ext => SUPPORTED_FORMATS[ext])
-    const defaultTarget = SUPPORTED_FORMATS['mp3']
+    const dummyFile = new File([url], 'video.youtube', { type: 'text/plain' })
+    const audioTargets: Format[] = ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].map(
+      (ext) => SUPPORTED_FORMATS[ext]!,
+    )
+    const defaultTarget: Format = SUPPORTED_FORMATS['mp3']!
 
     jobs.value.push({
       id: crypto.randomUUID(),

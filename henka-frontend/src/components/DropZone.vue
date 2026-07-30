@@ -18,7 +18,6 @@ const handleDragLeave = (e: DragEvent) => {
 const handleDrop = (e: DragEvent) => {
   e.preventDefault()
   isDragging.value = false
-
   if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
     store.addFiles(e.dataTransfer.files)
   }
@@ -39,25 +38,22 @@ const handleFileSelect = (e: Event) => {
     @dragover.prevent
     @dragleave="handleDragLeave"
     @drop="handleDrop"
-    class="w-full transition-colors duration-200"
+    class="w-full"
   >
     <label
       :class="[
-        'relative flex flex-col items-center justify-center w-full h-48 rounded-xl cursor-pointer border-2 border-dashed overflow-hidden transition-colors duration-200',
+        'relative flex flex-col items-center justify-center w-full h-48 cursor-pointer border-2 border-dashed overflow-hidden transition-all duration-200',
         isDragging
-          ? 'border-blue-500 bg-blue-500/5'
-          : 'border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500',
+          ? 'border-accent bg-accent/5 scale-[1.01]'
+          : 'border-rule hover:border-accent-2/50 bg-paper-2/30',
       ]"
+      :style="{ borderRadius: 'var(--radius-card)' }"
     >
       <div class="flex flex-col items-center justify-center pt-5 pb-6">
-        <div class="p-3 rounded-lg bg-slate-700/50 mb-4 text-slate-400">
-          <svg
-            class="w-8 h-8"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+        <div
+          class="flex items-center justify-center mb-4 w-12 h-12 rounded-[var(--radius-lg)] bg-paper-2/50 text-ink-3 shadow-[inset_0_1px_0_0_var(--color-rule)]"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -66,13 +62,15 @@ const handleFileSelect = (e: Event) => {
             ></path>
           </svg>
         </div>
-        <p class="mb-1 text-lg font-medium text-slate-200">
-          <span class="text-blue-400">Click to upload</span> or drag and drop
+        <p class="mb-1 text-lg font-medium text-ink" style="font-size: var(--text-lg)">
+          <span class="text-accent-2">Click to upload</span> or drag and drop
         </p>
-        <p class="text-sm text-slate-500 mt-1 text-center">
-          Supports Images, Spreadsheets, JSON, Word Docs, and .ZIP archives<br /><span
-            class="text-xs text-slate-600"
-            >(Local & Server Processing)</span
+        <p class="text-sm text-ink-3 mt-1 text-center" style="font-size: var(--text-sm)">
+          Supports Images, Spreadsheets, JSON, Word Docs, Presentations, and .ZIP archives<br />
+          <span
+            class="text-xs"
+            style="font-size: var(--text-xs); color: var(--color-ink-3); opacity: 0.7"
+            >Local & Server Processing</span
           >
         </p>
       </div>

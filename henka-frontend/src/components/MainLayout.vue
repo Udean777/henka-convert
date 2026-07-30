@@ -1,45 +1,35 @@
-<script setup lang="ts">
-// MainLayout.vue - Kerangka utama aplikasi yang bersih dan profesional
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div class="min-h-screen bg-slate-900 text-slate-100 font-sans selection:bg-blue-500/30">
-    <!-- Header Aplikasi -->
-    <header class="p-6 flex items-center justify-between border-b border-slate-800">
+  <div class="min-h-dvh bg-paper text-ink font-[family-name:var(--font-body)]">
+    <header
+      class="sticky top-0 z-50 bg-paper/85 backdrop-blur-sm border-b border-rule flex items-center justify-between px-[var(--page-gutter)] py-4">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
-          <svg
-            class="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-            ></path>
+        <div
+          class="w-9 h-9 rounded-[var(--radius-lg)] bg-accent flex items-center justify-center shadow-[0_2px_0_0_var(--color-accent-deep)]">
+          <svg class="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
           </svg>
         </div>
-        <h1 class="text-xl font-bold tracking-tight text-slate-100">
-          Henka<span class="font-normal text-slate-400">Convert</span>
+        <h1 class="text-xl font-bold tracking-tight" style="font-family: var(--font-display)">
+          Henka<span class="font-normal text-ink-2">Convert</span>
         </h1>
       </div>
-      <div
-        class="text-xs font-medium px-3 py-1.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700"
-      >
-        100% Local (Tier A)
+      <div class="flex items-center gap-4">
+        <span class="tag">100% Local</span>
       </div>
     </header>
 
-    <!-- Konten Utama -->
-    <main class="flex flex-col items-center justify-center min-h-[calc(100vh-85px)] p-6">
-      <div class="w-full max-w-2xl flex flex-col items-center gap-8">
-        <div class="text-center space-y-3 mb-2">
-          <h2 class="text-4xl font-bold text-slate-100">Convert Anything, Locally.</h2>
-          <p class="text-slate-400 text-base max-w-lg mx-auto">
+    <main class="flex flex-col items-center px-[var(--page-gutter)] py-[var(--space-xl)]">
+      <div class="w-full max-w-[var(--page-max)] flex flex-col items-center gap-[var(--space-lg)]"
+        style="--page-max: 48rem">
+        <div class="text-center space-y-3 mb-1">
+          <h2 class="text-4xl font-bold tracking-tight"
+            style="font-family: var(--font-display); font-size: var(--text-4xl)">
+            Convert <span class="hl">Anything</span>, Locally.
+          </h2>
+          <p class="text-ink-2 text-base max-w-lg mx-auto" style="font-size: var(--text-base)">
             Your files never leave your device. Fast, secure, and private conversion powered by
             WebAssembly.
           </p>
@@ -48,5 +38,38 @@
         <slot></slot>
       </div>
     </main>
+
+    <footer class="border-t border-rule overflow-hidden py-4">
+      <div class="flex whitespace-nowrap" style="animation: ft8-scroll 32s linear infinite">
+        <span class="inline-flex items-center gap-2 px-4 text-sm text-ink-3 font-mono">
+          HENKA CONVERT <span class="text-accent-3">·</span> CONVERT ANYTHING
+          <span class="text-accent-3">·</span> 100% LOCAL
+          <span class="text-accent-3">·</span> PRIVATE BY DESIGN
+          <span class="text-accent-3">·</span> HENKA CONVERT
+          <span class="text-accent-3">·</span> CONVERT ANYTHING
+          <span class="text-accent-3">·</span> 100% LOCAL <span class="text-accent-3">·</span>
+          PRIVATE BY DESIGN
+        </span>
+      </div>
+
+    </footer>
   </div>
 </template>
+
+<style scoped>
+@keyframes ft8-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [style*='ft8-scroll'] {
+    animation: none;
+  }
+}
+</style>

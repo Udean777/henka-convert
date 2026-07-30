@@ -11,49 +11,73 @@ const activeTab = ref<'converter' | 'youtube' | 'pdf-tools'>('converter')
 
 <template>
   <MainLayout>
-    <!-- Tab Navigation -->
     <div
-      class="w-full max-w-2xl flex p-1 bg-slate-800/50 rounded-lg mb-6 border border-slate-700/50 shadow-sm"
+      class="w-full max-w-[var(--page-max)] flex p-1 rounded-[var(--radius-card)] mb-[var(--space-md)]"
+      style="background: var(--color-paper-2)"
     >
       <button
         @click="activeTab = 'converter'"
         :class="[
-          'flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200',
+          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-all duration-200',
           activeTab === 'converter'
-            ? 'bg-slate-700 text-white shadow-md'
-            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/30',
+            ? 'shadow-[0_1px_0_0_var(--color-rule)] text-ink'
+            : 'text-ink-3 hover:text-ink-2',
         ]"
+        :style="
+          activeTab === 'converter'
+            ? {
+                background: 'var(--color-paper)',
+                boxShadow: '0 1px 0 0 var(--color-rule), 0 1px 4px oklch(0 0 0 / 0.06)',
+              }
+            : {}
+        "
       >
         File Converter
       </button>
       <button
         @click="activeTab = 'youtube'"
         :class="[
-          'flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200',
+          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-all duration-200',
           activeTab === 'youtube'
-            ? 'bg-slate-700 text-white shadow-md'
-            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/30',
+            ? 'shadow-[0_1px_0_0_var(--color-rule)] text-ink'
+            : 'text-ink-3 hover:text-ink-2',
         ]"
+        :style="
+          activeTab === 'youtube'
+            ? {
+                background: 'var(--color-paper)',
+                boxShadow: '0 1px 0 0 var(--color-rule), 0 1px 4px oklch(0 0 0 / 0.06)',
+              }
+            : {}
+        "
       >
         YouTube to Audio
       </button>
       <button
         @click="activeTab = 'pdf-tools'"
         :class="[
-          'flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200',
+          'flex-1 py-2 text-sm font-medium rounded-[var(--radius-pill)] transition-all duration-200',
           activeTab === 'pdf-tools'
-            ? 'bg-slate-700 text-white shadow-md'
-            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/30',
+            ? 'shadow-[0_1px_0_0_var(--color-rule)] text-ink'
+            : 'text-ink-3 hover:text-ink-2',
         ]"
+        :style="
+          activeTab === 'pdf-tools'
+            ? {
+                background: 'var(--color-paper)',
+                boxShadow: '0 1px 0 0 var(--color-rule), 0 1px 4px oklch(0 0 0 / 0.06)',
+              }
+            : {}
+        "
       >
         PDF Tools
       </button>
     </div>
 
-    <!-- Views -->
     <div
       v-if="activeTab === 'converter'"
-      class="w-full flex flex-col items-center gap-4 transition-opacity duration-300"
+      class="w-full flex flex-col items-center gap-[var(--space-md)] transition-opacity duration-300"
+      style="animation: reveal 420ms var(--ease-out) forwards"
     >
       <DropZone />
       <JobQueue />
@@ -61,7 +85,8 @@ const activeTab = ref<'converter' | 'youtube' | 'pdf-tools'>('converter')
 
     <div
       v-else-if="activeTab === 'youtube'"
-      class="w-full flex flex-col items-center gap-4 transition-opacity duration-300"
+      class="w-full flex flex-col items-center gap-[var(--space-md)] transition-opacity duration-300"
+      style="animation: reveal 420ms var(--ease-out) forwards"
     >
       <YouTubeInput />
       <JobQueue />
@@ -69,7 +94,8 @@ const activeTab = ref<'converter' | 'youtube' | 'pdf-tools'>('converter')
 
     <div
       v-else-if="activeTab === 'pdf-tools'"
-      class="w-full max-w-2xl transition-opacity duration-300"
+      class="w-full max-w-[var(--page-max)] transition-opacity duration-300"
+      style="animation: reveal 420ms var(--ease-out) forwards"
     >
       <PdfTools />
     </div>

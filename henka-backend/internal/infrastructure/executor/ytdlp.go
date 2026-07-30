@@ -20,14 +20,17 @@ func (e *YtDlpExecutor) DownloadAudio(url, outputTemplate string, format string)
 		return fmt.Errorf("yt-dlp binary not found")
 	}
 
-	cmd := exec.Command(binPath,
-		"-x",
-		"--audio-format", format,
-		"--embed-metadata",
-		"--embed-thumbnail",
-		"--js-runtimes", "nodejs",
-		"-o", outputTemplate,
-		url)
+	ytFmt := format
+	if format == "ogg" {
+		ytFmt = "vorbis"
+	}
+	// ponytail: wav can't embed thumbnail, skip it
+	args := []string{binPath, "-x", "--audio-format", ytFmt, "--embed-metadata", "--js-runtimes", "node", "-o", outputTemplate, url}
+	if format != "wav" {
+		args = append(args[:1], append([]string{"--embed-thumbnail"}, args[1:]...)...)
+	}
+
+	cmd := exec.Command(args[0], args[1:]...)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("yt-dlp Error: %v\nOutput: %s", err, string(output))

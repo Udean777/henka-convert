@@ -3,7 +3,9 @@ import { createSmoothProgress } from '../../core/utils/progress'
 
 export class YouTubeAdapter implements ConverterPort {
   canHandle(sourceExt: string, targetExt: string): boolean {
-    return sourceExt === 'youtube' && ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(targetExt)
+    return (
+      sourceExt === 'youtube' && ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(targetExt)
+    )
   }
 
   convert(context: ConverterContext): void {
@@ -14,7 +16,7 @@ export class YouTubeAdapter implements ConverterPort {
       this.executeXHR(url, context)
     }
     reader.onerror = () => {
-        context.onError('Gagal membaca URL dari memori')
+      context.onError('Gagal membaca URL dari memori')
     }
     reader.readAsText(context.file)
   }
@@ -32,10 +34,10 @@ export class YouTubeAdapter implements ConverterPort {
         let fileName = undefined
         const disposition = xhr.getResponseHeader('Content-Disposition')
         if (disposition && disposition.indexOf('filename=') !== -1) {
-            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition)
-            if (matches != null && matches[1]) {
-                fileName = matches[1].replace(/['"]/g, '')
-            }
+          const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition)
+          if (matches != null && matches[1]) {
+            fileName = matches[1].replace(/['"]/g, '')
+          }
         }
         smoothProgress.finish(URL.createObjectURL(xhr.response), fileName)
       } else {

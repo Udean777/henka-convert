@@ -15,19 +15,25 @@ const handleAdd = () => {
 
 <template>
   <div
-    class="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl border-slate-700 bg-slate-800/50">
+    class="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-rule bg-paper-2/30 transition-colors duration-200 hover:border-accent-2/50"
+    :style="{ borderRadius: 'var(--radius-card)' }"
+  >
     <div class="w-full max-w-md">
-      <label class="block text-sm font-medium text-slate-300 mb-2">Paste YouTube Link</label>
-      <div class="flex space-x-2">
-        <input v-model="url" type="text" placeholder="https://youtube.com/watch?v=..."
-          class="flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
-          @keyup.enter="handleAdd" />
-        <button @click="handleAdd"
-          class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-          Add to Queue
-        </button>
+      <label class="block text-sm font-medium text-ink mb-2" style="font-size: var(--text-sm)"
+        >Paste YouTube Link</label
+      >
+      <div class="flex gap-2">
+        <input
+          v-model="url"
+          type="text"
+          placeholder="https://youtube.com/watch?v=..."
+          class="flex-1 border border-rule rounded-[var(--radius-lg)] px-4 py-2 text-ink bg-paper outline-none transition-all duration-200 placeholder:text-ink-3/50 focus:border-accent-2 focus:shadow-[0_0_0_3px_var(--color-accent-2/15)]"
+          style="font-size: var(--text-sm)"
+          @keyup.enter="handleAdd"
+        />
+        <button @click="handleAdd" class="btn btn--primary btn--sm shrink-0">Add to Queue</button>
       </div>
-      <p class="text-xs text-slate-500 mt-3 text-center">
+      <p class="text-xs text-ink-3 mt-3 text-center" style="font-size: var(--text-xs)">
         Video will be downloaded and converted to high-quality audio formats.
       </p>
     </div>

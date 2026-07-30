@@ -21,7 +21,7 @@ export class JobExecutionService {
 
     updateJob({ status: 'PROCESSING', progress: 10, error: null })
 
-    const adapter = this.adapters.find(a => a.canHandle(sourceExt, targetExt))
+    const adapter = this.adapters.find((a) => a.canHandle(sourceExt, targetExt))
     if (!adapter) {
       updateJob({ status: 'ERROR', progress: 0, error: 'No converter available for this format' })
       return
@@ -32,8 +32,9 @@ export class JobExecutionService {
       sourceExt,
       targetExt,
       onProgress: (p) => updateJob({ progress: p }),
-      onSuccess: (url, name) => updateJob({ status: 'COMPLETED', progress: 100, resultUrl: url, resultName: name }),
-      onError: (err) => updateJob({ status: 'ERROR', progress: 0, error: err })
+      onSuccess: (url, name) =>
+        updateJob({ status: 'COMPLETED', progress: 100, resultUrl: url, resultName: name }),
+      onError: (err) => updateJob({ status: 'ERROR', progress: 0, error: err }),
     })
   }
 }
