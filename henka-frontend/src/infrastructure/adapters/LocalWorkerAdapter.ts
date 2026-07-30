@@ -18,7 +18,7 @@ export class LocalWorkerAdapter implements ConverterPort {
 
     worker.onmessage = (e) => {
       if (e.data.status === 'success') {
-        smoothProgress.finish(URL.createObjectURL(e.data.blob))
+        smoothProgress.finish(URL.createObjectURL(e.data.blob), undefined, e.data.blob.size)
       } else {
         smoothProgress.error()
         context.onError(e.data.error)

@@ -1,9 +1,11 @@
 package executor
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os/exec"
+	"time"
 )
 
 type FFmpegExecutor struct{}
@@ -20,7 +22,10 @@ func (f *FFmpegExecutor) ConvertVideo(inputPath, outputPath string) error {
 		return fmt.Errorf("FFmpeg binary not found")
 	}
 
-	cmd := exec.Command(binPath, "-y", "-i", inputPath, outputPath)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, binPath, "-y", "-i", inputPath, outputPath)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("FFmpeg Error: %v\nOutput: %s", err, string(output))

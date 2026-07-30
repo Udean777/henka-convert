@@ -44,7 +44,7 @@ const executeAction = () => {
     >
       <label
         :class="[
-          'relative flex flex-col items-center justify-center w-full h-32 cursor-pointer border-2 border-dashed transition-all duration-200',
+          'relative flex flex-col items-center justify-center w-full h-32 cursor-pointer border-2 border-dashed transition-colors duration-200',
           isDragging
             ? 'border-accent-3 bg-accent-3/5 scale-[1.01]'
             : 'border-rule hover:border-ink-3/30 bg-paper-2/30',
@@ -109,7 +109,13 @@ const executeAction = () => {
               @click="store.removeFile(index)"
               class="text-ink-3 hover:text-accent-3 transition-colors p-1"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -130,7 +136,7 @@ const executeAction = () => {
           <button
             @click="selectedAction = 'merge'"
             :class="[
-              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-all duration-200',
+              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-colors duration-200',
               selectedAction === 'merge'
                 ? 'btn btn--coral btn--sm'
                 : 'text-ink-2 hover:text-ink hover:bg-paper-3',
@@ -141,7 +147,7 @@ const executeAction = () => {
           <button
             @click="selectedAction = 'rotate'"
             :class="[
-              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-all duration-200',
+              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-colors duration-200',
               selectedAction === 'rotate'
                 ? 'btn btn--coral btn--sm'
                 : 'text-ink-2 hover:text-ink hover:bg-paper-3',

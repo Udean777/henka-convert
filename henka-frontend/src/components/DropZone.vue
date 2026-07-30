@@ -42,7 +42,7 @@ const handleFileSelect = (e: Event) => {
   >
     <label
       :class="[
-        'relative flex flex-col items-center justify-center w-full h-48 cursor-pointer border-2 border-dashed overflow-hidden transition-all duration-200',
+        'relative flex flex-col items-center justify-center w-full h-48 cursor-pointer border-2 border-dashed overflow-hidden transition-colors duration-200',
         isDragging
           ? 'border-accent bg-accent/5 scale-[1.01]'
           : 'border-rule hover:border-accent-2/50 bg-paper-2/30',
@@ -53,7 +53,13 @@ const handleFileSelect = (e: Event) => {
         <div
           class="flex items-center justify-center mb-4 w-12 h-12 rounded-[var(--radius-lg)] bg-paper-2/50 text-ink-3 shadow-[inset_0_1px_0_0_var(--color-rule)]"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -66,7 +72,7 @@ const handleFileSelect = (e: Event) => {
           <span class="text-accent-2">Click to upload</span> or drag and drop
         </p>
         <p class="text-sm text-ink-3 mt-1 text-center" style="font-size: var(--text-sm)">
-          Supports Images, Spreadsheets, JSON, Word Docs, Presentations, and .ZIP archives<br />
+          Supports 40+ Formats across Images, Audio, Video, Documents, and Archives<br />
           <span
             class="text-xs"
             style="font-size: var(--text-xs); color: var(--color-ink-3); opacity: 0.7"

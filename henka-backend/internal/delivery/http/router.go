@@ -27,8 +27,7 @@ func SetupRouter(handler *ConversionHandler) *gin.Engine {
 	api := r.Group("/api")
 	api.Use(middleware.RateLimitMiddleware())
 	
-	api.POST("/convert/document", handler.HandleDocument)
-	api.POST("/convert/video", handler.HandleVideo)
+	api.POST("/convert", handler.HandleConvert)
 	api.POST("/convert/youtube", handler.HandleYouTubeConvert)
 
 	return r

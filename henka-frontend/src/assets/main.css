@@ -21,7 +21,9 @@
   --color-error-bg: oklch(80% 0.12 18 / 0.15);
   --color-focus: oklch(66% 0.18 235);
 
-  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --color-white: oklch(100% 0 0);
+
+  --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
@@ -119,13 +121,13 @@ body {
     --btn-face: var(--color-accent-2);
     --btn-edge: var(--color-accent-2-deep);
     --btn-cast: oklch(56% 0.18 235 / 0.35);
-    --btn-ink: #fff;
+    --btn-ink: var(--color-white);
   }
   .btn--coral {
     --btn-face: var(--color-accent-3);
     --btn-edge: var(--color-accent-3-deep);
     --btn-cast: oklch(58% 0.24 18 / 0.35);
-    --btn-ink: #fff;
+    --btn-ink: var(--color-white);
   }
   .btn--mint {
     --btn-face: var(--color-mint);
@@ -145,14 +147,14 @@ body {
   .card {
     background: var(--color-paper);
     border-radius: var(--radius-card);
-    box-shadow: 0 12px 32px -16px oklch(20% 0.012 250 / 0.12);
+    box-shadow: var(--shadow-card);
     transition:
-      transform 220ms var(--ease-spring),
-      box-shadow 220ms var(--ease-spring);
+      transform 220ms var(--ease-out),
+      box-shadow 220ms var(--ease-out);
   }
   .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 24px 48px -24px oklch(20% 0.012 250 / 0.18);
+    box-shadow: var(--shadow-card-hover);
   }
 
   .tag {

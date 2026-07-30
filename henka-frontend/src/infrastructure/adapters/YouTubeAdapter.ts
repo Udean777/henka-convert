@@ -4,7 +4,8 @@ import { createSmoothProgress } from '../../core/utils/progress'
 export class YouTubeAdapter implements ConverterPort {
   canHandle(sourceExt: string, targetExt: string): boolean {
     return (
-      sourceExt === 'youtube' && ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(targetExt)
+      sourceExt === 'youtube' &&
+      ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg', 'mp4', 'webm'].includes(targetExt)
     )
   }
 
@@ -39,7 +40,7 @@ export class YouTubeAdapter implements ConverterPort {
             fileName = matches[1].replace(/['"]/g, '')
           }
         }
-        smoothProgress.finish(URL.createObjectURL(xhr.response), fileName)
+        smoothProgress.finish(URL.createObjectURL(xhr.response), fileName, xhr.response.size)
       } else {
         smoothProgress.error()
         const reader = new FileReader()
@@ -60,6 +61,11 @@ export class YouTubeAdapter implements ConverterPort {
       context.onError('Koneksi terputus')
     }
 
-    xhr.send(JSON.stringify({ url, format: context.targetExt }))
+    const payload = {
+      url,
+      format: context.targetExt,
+      quality: context.options?.quality,
+    }
+    xhr.send(JSON.stringify(payload))
   }
 }

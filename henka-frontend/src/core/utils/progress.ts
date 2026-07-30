@@ -1,12 +1,13 @@
 export function createSmoothProgress(
   onProgress: (p: number) => void,
-  onComplete: (url: string, resultName?: string) => void,
+  onComplete: (url: string, resultName?: string, resultSize?: number) => void,
 ) {
   let current = 0
   let target = 90
   let isFinishing = false
   let finalUrl = ''
   let finalName: string | undefined = undefined
+  let finalSize: number | undefined = undefined
 
   const timer = setInterval(() => {
     if (current < target) {
@@ -23,16 +24,17 @@ export function createSmoothProgress(
 
     if (isFinishing && current >= 100) {
       clearInterval(timer)
-      onComplete(finalUrl, finalName)
+      onComplete(finalUrl, finalName, finalSize)
     }
   }, 50) // Update setiap 50ms (20fps) untuk animasi angka yang mulus
 
   return {
-    finish: (url: string, resultName?: string) => {
+    finish: (url: string, resultName?: string, resultSize?: number) => {
       isFinishing = true
       target = 100
       finalUrl = url
       finalName = resultName
+      finalSize = resultSize
     },
     error: () => {
       clearInterval(timer)

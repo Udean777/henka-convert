@@ -3,11 +3,7 @@ import { createSmoothProgress } from '../../core/utils/progress'
 
 export class ServerConverterAdapter implements ConverterPort {
   canHandle(sourceExt: string, targetExt: string): boolean {
-    const isDoc = targetExt === 'pdf' && ['docx', 'xlsx', 'pptx'].includes(sourceExt)
-    const isMedia =
-      ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(sourceExt) &&
-      ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(targetExt)
-    return isDoc || isMedia
+    return true
   }
 
   convert(context: ConverterContext): void {
@@ -15,10 +11,7 @@ export class ServerConverterAdapter implements ConverterPort {
     formData.append('file', context.file)
     formData.append('targetFormat', context.targetExt)
 
-    const isMedia = ['mp4', 'webm', 'gif', 'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(
-      context.sourceExt,
-    )
-    const endpoint = isMedia ? '/api/convert/video' : '/api/convert/document'
+    const endpoint = '/api/convert'
 
     const xhr = new XMLHttpRequest()
     xhr.open('POST', `http://localhost:8080${endpoint}`, true)
@@ -28,7 +21,7 @@ export class ServerConverterAdapter implements ConverterPort {
 
     xhr.onload = () => {
       if (xhr.status === 200) {
-        smoothProgress.finish(URL.createObjectURL(xhr.response))
+        smoothProgress.finish(URL.createObjectURL(xhr.response), undefined, xhr.response.size)
       } else {
         smoothProgress.error()
         const reader = new FileReader()

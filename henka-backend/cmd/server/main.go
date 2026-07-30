@@ -13,9 +13,10 @@ func main() {
 	docExec := executor.NewLibreOfficeExecutor()
 	vidExec := executor.NewFFmpegExecutor()
 	ytExec := executor.NewYtDlpExecutor()
+	imgExec := executor.NewImageMagickExecutor()
 
 	// 2. Setup Usecases (Business Logic)
-	converterUC := usecase.NewConverterUsecase(docExec, vidExec, ytExec)
+	converterUC := usecase.NewConverterUsecase(docExec, vidExec, ytExec, imgExec)
 
 	// 3. Setup Delivery Handlers (HTTP/REST)
 	handler := deliveryHttp.NewConversionHandler(converterUC)

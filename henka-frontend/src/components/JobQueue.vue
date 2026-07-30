@@ -81,7 +81,7 @@ async function downloadAll() {
         <div class="flex gap-2">
           <button
             @click="store.clearAll()"
-            class="text-xs font-medium px-3 py-1.5 rounded-[var(--radius-pill)] text-ink-3 hover:text-accent-3 hover:bg-accent-3/5 transition-all duration-200"
+            class="text-xs font-medium px-3 py-1.5 rounded-[var(--radius-pill)] text-ink-3 hover:text-accent-3 hover:bg-accent-3/5 transition-colors duration-200"
             style="font-size: var(--text-xs)"
           >
             Clear All
@@ -112,8 +112,12 @@ async function downloadAll() {
           >
             {{ job.resultName || job.file.name }}
           </span>
-          <span class="text-xs text-ink-3 font-mono shrink-0" style="font-size: var(--text-xs)">
-            {{ (job.file.size / 1024 / 1024).toFixed(2) }} MB
+          <span
+            v-if="job.status === 'COMPLETED' && job.resultSize"
+            class="text-xs text-ink-3 font-mono shrink-0"
+            style="font-size: var(--text-xs); font-variant-numeric: tabular-nums"
+          >
+            {{ (job.resultSize / 1024 / 1024).toFixed(2) }} MB
           </span>
         </div>
 
@@ -165,7 +169,7 @@ async function downloadAll() {
 
       <div class="flex items-center gap-3 shrink-0">
         <select
-          v-if="job.status === 'IDLE' || job.status === 'ERROR'"
+          v-if="(job.status === 'IDLE' || job.status === 'ERROR') && job.availableTargets.length > 0"
           :value="job.targetFormat?.extension"
           @change="
             (e) => {
@@ -174,14 +178,21 @@ async function downloadAll() {
               if (fmt) store.setTargetFormat(job.id, fmt)
             }
           "
-          class="border border-rule text-ink text-sm rounded-[var(--radius-lg)] px-2 py-1 outline-none cursor-pointer bg-paper transition-all duration-200 focus:border-accent-2"
+          class="border border-rule text-ink text-sm rounded-[var(--radius-lg)] px-2 py-1 outline-none cursor-pointer bg-paper transition-colors duration-200 focus:border-accent-2"
           style="font-size: var(--text-sm)"
         >
           <option v-for="fmt in job.availableTargets" :key="fmt.extension" :value="fmt.extension">
             {{ fmt.extension.toUpperCase() }}
           </option>
-          <option v-if="job.availableTargets.length === 0" value="" disabled>No target</option>
         </select>
+        
+        <span
+          v-else-if="job.availableTargets.length === 0"
+          class="text-xs font-medium px-2 py-1 rounded-[var(--radius-md)] bg-paper-2 text-ink-3 border border-rule"
+          style="font-size: var(--text-xs)"
+        >
+          Unsupported
+        </span>
 
         <span
           v-else-if="job.targetFormat"
@@ -192,9 +203,9 @@ async function downloadAll() {
         </span>
 
         <button
-          v-if="job.status === 'IDLE' || job.status === 'ERROR'"
+          v-if="(job.status === 'IDLE' || job.status === 'ERROR') && job.availableTargets.length > 0"
           @click="store.startJob(job.id)"
-          :disabled="!job.targetFormat || job.availableTargets.length === 0"
+          :disabled="!job.targetFormat"
           class="btn btn--primary btn--sm"
         >
           Convert
@@ -211,10 +222,16 @@ async function downloadAll() {
 
         <button
           @click="store.removeJob(job.id)"
-          class="p-1.5 text-ink-3 hover:text-accent-3 hover:bg-accent-3/5 rounded-[var(--radius-md)] transition-all duration-200"
+          class="p-1.5 text-ink-3 hover:text-accent-3 hover:bg-accent-3/5 rounded-[var(--radius-md)] transition-colors duration-200"
           title="Remove"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"

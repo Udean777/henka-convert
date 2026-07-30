@@ -12,7 +12,9 @@ export class FormatRouter {
 
     const targetExts = registryPaths.filter((path) => path.from === cleanExt).map((path) => path.to)
 
-    return targetExts.map((ext) => SUPPORTED_FORMATS[ext]).filter((f): f is Format => f !== undefined)
+    return targetExts
+      .map((ext) => SUPPORTED_FORMATS[ext])
+      .filter((f): f is Format => f !== undefined)
   }
 
   /**
