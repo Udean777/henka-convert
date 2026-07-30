@@ -20,9 +20,9 @@ const openModal = (type: 'features' | 'formats') => {
         <div class="flex items-center cursor-default group">
           <img src="/logo.png" alt="Henka Convert Logo"
             class="w-12 h-12 object-contain group-hover:-translate-y-0.5 transition-transform duration-200 drop-shadow-sm" />
-          <h1 class="text-lg font-bold tracking-tight text-ink" style="font-family: var(--font-display)">
+          <div class="text-lg font-bold tracking-tight text-ink" style="font-family: var(--font-display)">
             Henka<span class="font-normal text-ink-3 transition-colors">Convert</span>
-          </h1>
+          </div>
         </div>
 
         <!-- Right Side Badges & Links -->
@@ -45,6 +45,8 @@ const openModal = (type: 'features' | 'formats') => {
         </div>
       </div>
     </header>
+
+    <h1 class="sr-only">Free Online File Converter - Convert PDF, Image, Audio, Video to Any Format Privately</h1>
 
     <main class="flex flex-col items-center px-[var(--page-gutter)] py-[var(--space-xl)]">
       <div class="w-full max-w-[var(--page-max)] flex flex-col items-center gap-[var(--space-lg)]"

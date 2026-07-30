@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"henka-backend/internal/usecase"
 
@@ -61,7 +62,16 @@ type YouTubeRequest struct {
 func (h *ConversionHandler) HandleYouTubeConvert(c *gin.Context) {
 	var req YouTubeRequest
 	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "URL YouTube tidak valid"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "URL tidak valid"})
+		return
+	}
+
+	// Security: SSRF Protection
+	// Pastikan URL hanya mengarah ke layanan publik yang aman (YouTube)
+	if !strings.HasPrefix(req.URL, "https://www.youtube.com/") && 
+	   !strings.HasPrefix(req.URL, "https://youtube.com/") && 
+	   !strings.HasPrefix(req.URL, "https://youtu.be/") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Hanya URL YouTube yang diizinkan untuk alasan keamanan"})
 		return
 	}
 
