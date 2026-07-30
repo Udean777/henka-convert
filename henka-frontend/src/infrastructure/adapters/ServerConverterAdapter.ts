@@ -11,10 +11,10 @@ export class ServerConverterAdapter implements ConverterPort {
     formData.append('file', context.file)
     formData.append('targetFormat', context.targetExt)
 
-    const endpoint = '/api/convert'
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', `http://localhost:8080${endpoint}`, true)
+    xhr.open('POST', `${apiUrl}/convert`, true)
     xhr.responseType = 'blob'
 
     const smoothProgress = createSmoothProgress(context.onProgress, context.onSuccess)
