@@ -31,7 +31,7 @@ func (e *YtDlpExecutor) DownloadMedia(url, outputTemplate string, format string,
 		} else {
 			formatArg = fmt.Sprintf("bestvideo[height<=%s]+bestaudio/best[height<=%s]", quality, quality)
 		}
-		args = []string{binPath, "-f", formatArg, "--merge-output-format", format, "--embed-metadata", "--embed-thumbnail", "--js-runtimes", "node", "-o", outputTemplate, "--", url}
+		args = []string{binPath, "-f", formatArg, "--merge-output-format", format, "--embed-metadata", "--embed-thumbnail", "--geo-bypass", "--js-runtimes", "node", "-o", outputTemplate, "--", url}
 	} else {
 		// Audio mode
 		ytFmt := format
@@ -39,7 +39,7 @@ func (e *YtDlpExecutor) DownloadMedia(url, outputTemplate string, format string,
 			ytFmt = "vorbis"
 		}
 		// ponytail: wav can't embed thumbnail, skip it
-		args = []string{binPath, "-x", "--audio-format", ytFmt, "--embed-metadata", "--js-runtimes", "node", "-o", outputTemplate, "--", url}
+		args = []string{binPath, "-x", "--audio-format", ytFmt, "--embed-metadata", "--geo-bypass", "--js-runtimes", "node", "-o", outputTemplate, "--", url}
 		if format != "wav" {
 			args = append(args[:1], append([]string{"--embed-thumbnail"}, args[1:]...)...)
 		}
