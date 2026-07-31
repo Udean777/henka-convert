@@ -15,21 +15,49 @@ export const SUPPORTED_FORMATS: Record<string, Format> = {
 
   // Documents
   pdf: { extension: 'pdf', mimeType: 'application/pdf', label: 'PDF Document' },
-  docx: { extension: 'docx', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', label: 'Word Document' },
+  docx: {
+    extension: 'docx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    label: 'Word Document',
+  },
   doc: { extension: 'doc', mimeType: 'application/msword', label: 'Word (Legacy)' },
   rtf: { extension: 'rtf', mimeType: 'application/rtf', label: 'Rich Text Format' },
   txt: { extension: 'txt', mimeType: 'text/plain', label: 'Plain Text' },
-  odt: { extension: 'odt', mimeType: 'application/vnd.oasis.opendocument.text', label: 'OpenDocument Text' },
+  odt: {
+    extension: 'odt',
+    mimeType: 'application/vnd.oasis.opendocument.text',
+    label: 'OpenDocument Text',
+  },
   html: { extension: 'html', mimeType: 'text/html', label: 'HTML Document' },
   epub: { extension: 'epub', mimeType: 'application/epub+zip', label: 'EPUB eBook' },
-  xlsx: { extension: 'xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', label: 'Excel Spreadsheet' },
+  xlsx: {
+    extension: 'xlsx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    label: 'Excel Spreadsheet',
+  },
   xls: { extension: 'xls', mimeType: 'application/vnd.ms-excel', label: 'Excel (Legacy)' },
-  ods: { extension: 'ods', mimeType: 'application/vnd.oasis.opendocument.spreadsheet', label: 'OpenDocument Spreadsheet' },
+  ods: {
+    extension: 'ods',
+    mimeType: 'application/vnd.oasis.opendocument.spreadsheet',
+    label: 'OpenDocument Spreadsheet',
+  },
   csv: { extension: 'csv', mimeType: 'text/csv', label: 'CSV Data' },
   json: { extension: 'json', mimeType: 'application/json', label: 'JSON Data' },
-  pptx: { extension: 'pptx', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', label: 'PowerPoint' },
-  ppt: { extension: 'ppt', mimeType: 'application/vnd.ms-powerpoint', label: 'PowerPoint (Legacy)' },
-  odp: { extension: 'odp', mimeType: 'application/vnd.oasis.opendocument.presentation', label: 'OpenDocument Presentation' },
+  pptx: {
+    extension: 'pptx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    label: 'PowerPoint',
+  },
+  ppt: {
+    extension: 'ppt',
+    mimeType: 'application/vnd.ms-powerpoint',
+    label: 'PowerPoint (Legacy)',
+  },
+  odp: {
+    extension: 'odp',
+    mimeType: 'application/vnd.oasis.opendocument.presentation',
+    label: 'OpenDocument Presentation',
+  },
 
   // Audio
   mp3: { extension: 'mp3', mimeType: 'audio/mpeg', label: 'MP3 Audio' },
@@ -66,9 +94,9 @@ export const CONVERSION_PATHS: ConversionPath[] = [
   ...['jpg', 'png', 'webp'].flatMap((from) =>
     ['jpg', 'png', 'webp']
       .filter((to) => to !== from)
-      .map((to) => ({ from, to, tier: ProcessingTier.TierA }))
+      .map((to) => ({ from, to, tier: ProcessingTier.TierA })),
   ),
-  
+
   // Extended Image Conversions (Tier B - Server ImageMagick)
   ...['jpg', 'png', 'webp', 'bmp', 'tiff', 'ico', 'svg', 'heic', 'eps'].flatMap((from) =>
     ['jpg', 'png', 'webp', 'bmp', 'tiff', 'ico', 'pdf']
@@ -76,10 +104,11 @@ export const CONVERSION_PATHS: ConversionPath[] = [
         // Skip if same format
         if (to === from) return false
         // Skip basic to basic because TierA already covers it
-        const isBasicToBasic = ['jpg', 'png', 'webp'].includes(from) && ['jpg', 'png', 'webp'].includes(to)
+        const isBasicToBasic =
+          ['jpg', 'png', 'webp'].includes(from) && ['jpg', 'png', 'webp'].includes(to)
         return !isBasicToBasic
       })
-      .map((to) => ({ from, to, tier: ProcessingTier.TierB }))
+      .map((to) => ({ from, to, tier: ProcessingTier.TierB })),
   ),
 
   // Data Conversions (Tier A - Local JS)
@@ -95,7 +124,7 @@ export const CONVERSION_PATHS: ConversionPath[] = [
   ...['docx', 'doc', 'rtf', 'txt', 'odt', 'html'].flatMap((from) =>
     ['pdf', 'docx', 'doc', 'rtf', 'txt', 'odt', 'html']
       .filter((to) => to !== from)
-      .map((to) => ({ from, to, tier: ProcessingTier.TierB }))
+      .map((to) => ({ from, to, tier: ProcessingTier.TierB })),
   ),
   // Spreadsheets
   ...['xlsx', 'xls', 'ods', 'csv'].flatMap((from) =>
@@ -106,26 +135,41 @@ export const CONVERSION_PATHS: ConversionPath[] = [
         if ((from === 'csv' && to === 'xlsx') || (from === 'xlsx' && to === 'csv')) return false
         return true
       })
-      .map((to) => ({ from, to, tier: ProcessingTier.TierB }))
+      .map((to) => ({ from, to, tier: ProcessingTier.TierB })),
   ),
   // Presentations
   ...['pptx', 'ppt', 'odp'].flatMap((from) =>
     ['pdf', 'pptx', 'ppt', 'odp']
       .filter((to) => to !== from)
-      .map((to) => ({ from, to, tier: ProcessingTier.TierB }))
+      .map((to) => ({ from, to, tier: ProcessingTier.TierB })),
   ),
 
   // Video Conversions (Tier B - Server FFmpeg)
-  ...['mp4', 'webm', 'gif', 'avi', 'mov', 'mkv', 'wmv', 'flv', 'm4v', '3gp', 'ts', 'vob'].flatMap((from) =>
-    ['mp4', 'webm', 'gif', 'avi', 'mov', 'mkv', 'wmv', 'flv', 'm4v', '3gp', 'ts', 'vob', 'mp3']
-      .filter((to) => to !== from)
-      .map((to) => ({ from, to, tier: ProcessingTier.TierB }))
+  ...['mp4', 'webm', 'gif', 'avi', 'mov', 'mkv', 'wmv', 'flv', 'm4v', '3gp', 'ts', 'vob'].flatMap(
+    (from) =>
+      ['mp4', 'webm', 'gif', 'avi', 'mov', 'mkv', 'wmv', 'flv', 'm4v', '3gp', 'ts', 'vob', 'mp3']
+        .filter((to) => to !== from)
+        .map((to) => ({ from, to, tier: ProcessingTier.TierB })),
   ),
 
   // Audio Conversions (Tier B - Server FFmpeg)
-  ...['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg', 'wma', 'mka', 'ac3', 'opus', 'aiff', 'amr', 'au'].flatMap((from) =>
+  ...[
+    'mp3',
+    'wav',
+    'flac',
+    'aac',
+    'm4a',
+    'ogg',
+    'wma',
+    'mka',
+    'ac3',
+    'opus',
+    'aiff',
+    'amr',
+    'au',
+  ].flatMap((from) =>
     ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg', 'wma', 'mka', 'ac3', 'opus', 'aiff', 'amr', 'au']
       .filter((to) => to !== from)
-      .map((to) => ({ from, to, tier: ProcessingTier.TierB }))
+      .map((to) => ({ from, to, tier: ProcessingTier.TierB })),
   ),
 ]
