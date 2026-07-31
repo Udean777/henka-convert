@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useConversionStore } from '../stores/conversion'
+import { useI18nStore, translations } from '../stores/i18n'
 
 const store = useConversionStore()
+const i18nStore = useI18nStore()
+const t = computed(() => translations[i18nStore.currentLang])
+
 const url = ref('')
 const mediaType = ref<'audio' | 'video'>('audio')
 const videoQuality = ref('720')
@@ -25,21 +29,23 @@ const handleAdd = () => {
     :style="{ borderRadius: 'var(--radius-card)' }"
   >
     <div class="w-full max-w-md">
-      <label class="block text-sm font-medium text-ink mb-2" style="font-size: var(--text-sm)"
-        >Paste YouTube Link</label
-      >
+      <label class="block text-sm font-medium text-ink mb-2" style="font-size: var(--text-sm)">
+        {{ t.youtubeToSomething }}
+      </label>
       <div class="flex flex-col gap-3">
         <!-- Input Row -->
         <div class="flex gap-2">
           <input
             v-model="url"
             type="text"
-            placeholder="https://youtube.com/watch?v=..."
+            :placeholder="t.youtubePlaceholder"
             class="flex-1 border border-rule rounded-[var(--radius-lg)] px-4 py-2 text-ink bg-paper outline-none transition-colors duration-200 placeholder:text-ink-3/50 focus:border-accent-2 focus:shadow-[0_0_0_3px_color-mix(in_oklch,var(--color-accent-2)_15%,transparent)]"
             style="font-size: var(--text-sm)"
             @keyup.enter="handleAdd"
           />
-          <button @click="handleAdd" class="btn btn--primary btn--sm shrink-0">Add to Queue</button>
+          <button @click="handleAdd" class="btn btn--primary btn--sm shrink-0">
+            {{ t.addQueue }}
+          </button>
         </div>
 
         <!-- Options Row -->
@@ -51,14 +57,14 @@ const handleAdd = () => {
             <input type="radio" value="audio" v-model="mediaType" class="hidden peer" />
             <span
               class="text-xs font-medium px-3 py-1.5 rounded-[var(--radius-lg)] border border-rule text-ink-3 peer-checked:bg-accent-2 peer-checked:text-paper peer-checked:border-accent-2 transition-all duration-200"
-              >Audio</span
+              >{{ t.audio }}</span
             >
           </label>
           <label class="flex items-center cursor-pointer select-none">
             <input type="radio" value="video" v-model="mediaType" class="hidden peer" />
             <span
               class="text-xs font-medium px-3 py-1.5 rounded-[var(--radius-lg)] border border-rule text-ink-3 peer-checked:bg-accent-2 peer-checked:text-paper peer-checked:border-accent-2 transition-all duration-200"
-              >Video</span
+              >{{ t.video }}</span
             >
           </label>
 
@@ -76,7 +82,7 @@ const handleAdd = () => {
         </div>
       </div>
       <p class="text-xs text-ink-3 mt-4 text-center" style="font-size: var(--text-xs)">
-        Download and convert YouTube videos to high-quality audio or video formats.
+        {{ t.youtubeGuide }}
       </p>
     </div>
   </div>

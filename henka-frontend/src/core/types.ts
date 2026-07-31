@@ -10,6 +10,7 @@ export interface Format {
   extension: FileExtension
   mimeType: MimeType
   label: string
+  category: 'Image' | 'Document' | 'Audio' | 'Video' | 'Data'
 }
 
 export interface ConversionPath {

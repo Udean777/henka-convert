@@ -28,6 +28,27 @@
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
+html.dark {
+  --color-paper: oklch(18% 0.015 250);
+  --color-paper-2: oklch(23% 0.018 250);
+  --color-paper-3: oklch(28% 0.022 250);
+  --color-ink: oklch(95% 0.01 95);
+  --color-ink-2: oklch(78% 0.012 95);
+  --color-ink-3: oklch(62% 0.014 95);
+  --color-rule: oklch(30% 0.018 250);
+  --color-accent: oklch(75% 0.16 95);
+  --color-accent-deep: oklch(65% 0.18 95);
+  --color-accent-2: oklch(62% 0.18 235);
+  --color-accent-2-deep: oklch(52% 0.2 235);
+  --color-accent-3: oklch(68% 0.24 18);
+  --color-accent-3-deep: oklch(58% 0.26 18);
+  --color-mint: oklch(75% 0.16 150);
+  --color-mint-deep: oklch(65% 0.18 150);
+  --color-success: oklch(72% 0.18 150);
+  --color-error-bg: oklch(30% 0.12 18 / 0.3);
+  --color-focus: oklch(66% 0.18 235);
+}
+
 html {
   overflow-x: clip;
 }

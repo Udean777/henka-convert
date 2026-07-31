@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { usePdfStore } from '../stores/pdf'
+import { useI18nStore, translations } from '../stores/i18n'
 
 const store = usePdfStore()
+const i18nStore = useI18nStore()
+const t = computed(() => translations[i18nStore.currentLang])
+
 const isDragging = ref(false)
 const selectedAction = ref<'merge' | 'rotate' | 'split'>('merge')
 
@@ -53,10 +57,10 @@ const executeAction = () => {
       >
         <div class="flex flex-col items-center justify-center">
           <p class="mb-1 text-base font-medium text-ink" style="font-size: var(--text-base)">
-            <span class="text-accent-3">Click</span> or drag PDF files here
+            {{ t.pdfDropTitle }}
           </p>
           <p class="text-xs text-ink-3" style="font-size: var(--text-xs)">
-            Only .pdf files are supported here
+            {{ t.pdfDropSubtitle }}
           </p>
         </div>
         <input
@@ -85,14 +89,14 @@ const executeAction = () => {
       <div class="card p-3">
         <div class="flex justify-between items-center mb-2 px-1">
           <span class="text-sm font-medium text-ink" style="font-size: var(--text-sm)">
-            Selected PDFs ({{ store.files.length }})
+            {{ t.selectedPdfs }} ({{ store.files.length }})
           </span>
           <button
             @click="store.clear()"
-            class="text-xs text-ink-3 hover:text-accent-3 transition-colors"
+            class="text-xs text-ink-3 hover:text-accent-3 transition-colors cursor-pointer"
             style="font-size: var(--text-xs)"
           >
-            Clear All
+            {{ t.clearAll }}
           </button>
         </div>
         <div class="flex flex-col gap-[var(--space-2xs)]">
@@ -107,7 +111,7 @@ const executeAction = () => {
             }}</span>
             <button
               @click="store.removeFile(index)"
-              class="text-ink-3 hover:text-accent-3 transition-colors p-1"
+              class="text-ink-3 hover:text-accent-3 transition-colors p-1 cursor-pointer"
             >
               <svg
                 class="w-4 h-4"
@@ -136,24 +140,24 @@ const executeAction = () => {
           <button
             @click="selectedAction = 'merge'"
             :class="[
-              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-colors duration-200',
+              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-colors duration-200 cursor-pointer',
               selectedAction === 'merge'
                 ? 'btn btn--coral btn--sm'
                 : 'text-ink-2 hover:text-ink hover:bg-paper-3',
             ]"
           >
-            Merge
+            {{ t.merge }}
           </button>
           <button
             @click="selectedAction = 'rotate'"
             :class="[
-              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-colors duration-200',
+              'px-3 py-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-colors duration-200 cursor-pointer',
               selectedAction === 'rotate'
                 ? 'btn btn--coral btn--sm'
                 : 'text-ink-2 hover:text-ink hover:bg-paper-3',
             ]"
           >
-            Rotate 90°
+            {{ t.rotate }}
           </button>
         </div>
 
@@ -164,10 +168,14 @@ const executeAction = () => {
             download="henka_pdf_tools_result.pdf"
             class="btn btn--mint btn--sm"
           >
-            Download Result
+            {{ t.downloadResult }}
           </a>
 
-          <button @click="executeAction" :disabled="store.isProcessing" class="btn btn--coral">
+          <button
+            @click="executeAction"
+            :disabled="store.isProcessing"
+            class="btn btn--coral cursor-pointer"
+          >
             <svg
               v-if="store.isProcessing"
               class="animate-spin h-3.5 w-3.5 text-white"
@@ -189,8 +197,8 @@ const executeAction = () => {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span v-if="store.isProcessing">Processing...</span>
-            <span v-else>Execute</span>
+            <span v-if="store.isProcessing">{{ t.processing }}</span>
+            <span v-else>{{ t.execute }}</span>
           </button>
         </div>
       </div>

@@ -44,7 +44,7 @@ export const useConversionStore = defineStore('conversion', () => {
         availableTargets,
         progress: 0,
         resultUrl: null,
-        error: availableTargets.length === 0 ? (ext === 'pdf' ? 'Use PDF Tools tab for PDFs' : 'Format not supported') : null,
+        error: availableTargets.length === 0 ? 'Format not supported' : null,
       })
     }
   }

@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useConversionStore } from '../stores/conversion'
+import { useI18nStore, translations } from '../stores/i18n'
+import FormatSelector from './FormatSelector.vue'
 import JSZip from 'jszip'
 
 const store = useConversionStore()
+const i18nStore = useI18nStore()
+const t = computed(() => translations[i18nStore.currentLang])
 const appendSuffix = ref(true)
 
 const reversedJobs = computed(() => store.jobs.slice().reverse())
@@ -62,7 +66,7 @@ async function downloadAll() {
   >
     <div class="flex justify-between items-center px-1 mb-1">
       <h3 class="text-sm font-medium text-ink" style="font-size: var(--text-sm)">
-        Queue ({{ store.jobs.length }})
+        {{ t.queueTitle }} ({{ store.jobs.length }})
       </h3>
       <div class="flex items-center gap-4">
         <label
@@ -75,7 +79,7 @@ async function downloadAll() {
             class="rounded border-rule bg-paper text-accent-2"
             style="accent-color: var(--color-accent-2)"
           />
-          <span>Add suffix</span>
+          <span>{{ t.addSuffix }}</span>
         </label>
 
         <div class="flex gap-2">
@@ -84,15 +88,15 @@ async function downloadAll() {
             class="text-xs font-medium px-3 py-1.5 rounded-[var(--radius-pill)] text-ink-3 hover:text-accent-3 hover:bg-accent-3/5 transition-colors duration-200"
             style="font-size: var(--text-xs)"
           >
-            Clear All
+            {{ t.clearAll }}
           </button>
 
           <button v-if="hasIdleOrError" @click="store.startAll()" class="btn btn--primary btn--sm">
-            Convert All
+            {{ t.convertAll }}
           </button>
 
           <button v-else-if="allCompleted" @click="downloadAll()" class="btn btn--mint btn--sm">
-            Download ZIP
+            {{ t.downloadZip }}
           </button>
         </div>
       </div>
@@ -127,14 +131,14 @@ async function downloadAll() {
             class="text-xs"
             style="font-size: var(--text-xs); color: var(--color-error)"
           >
-            {{ job.error || 'Failed' }}
+            {{ job.error || t.statusError }}
           </span>
           <span
             v-else-if="job.status === 'COMPLETED'"
             class="text-xs font-medium"
             style="font-size: var(--text-xs); color: var(--color-mint)"
           >
-            Completed
+            {{ t.statusCompleted }}
           </span>
           <span
             v-else-if="job.status === 'PROCESSING'"
@@ -161,37 +165,30 @@ async function downloadAll() {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            Processing {{ job.progress > 0 ? job.progress + '%' : '...' }}
+            {{ t.statusProcessing }} {{ job.progress > 0 ? job.progress + '%' : '...' }}
           </span>
-          <span v-else class="text-xs text-ink-3" style="font-size: var(--text-xs)">Ready</span>
+          <span v-else class="text-xs text-ink-3" style="font-size: var(--text-xs)">{{
+            t.statusReady
+          }}</span>
         </div>
       </div>
 
       <div class="flex items-center gap-3 shrink-0">
-        <select
-          v-if="(job.status === 'IDLE' || job.status === 'ERROR') && job.availableTargets.length > 0"
-          :value="job.targetFormat?.extension"
-          @change="
-            (e) => {
-              const val = (e.target as HTMLSelectElement).value
-              const fmt = job.availableTargets.find((t) => t.extension === val)
-              if (fmt) store.setTargetFormat(job.id, fmt)
-            }
+        <FormatSelector
+          v-if="
+            (job.status === 'IDLE' || job.status === 'ERROR') && job.availableTargets.length > 0
           "
-          class="border border-rule text-ink text-sm rounded-[var(--radius-lg)] px-2 py-1 outline-none cursor-pointer bg-paper transition-colors duration-200 focus:border-accent-2"
-          style="font-size: var(--text-sm)"
-        >
-          <option v-for="fmt in job.availableTargets" :key="fmt.extension" :value="fmt.extension">
-            {{ fmt.extension.toUpperCase() }}
-          </option>
-        </select>
-        
+          :modelValue="job.targetFormat"
+          :options="job.availableTargets"
+          @update:modelValue="(fmt) => store.setTargetFormat(job.id, fmt)"
+        />
+
         <span
           v-else-if="job.availableTargets.length === 0"
           class="text-xs font-medium px-2 py-1 rounded-[var(--radius-md)] bg-paper-2 text-ink-3 border border-rule"
           style="font-size: var(--text-xs)"
         >
-          Unsupported
+          {{ t.unsupported }}
         </span>
 
         <span
@@ -203,12 +200,14 @@ async function downloadAll() {
         </span>
 
         <button
-          v-if="(job.status === 'IDLE' || job.status === 'ERROR') && job.availableTargets.length > 0"
+          v-if="
+            (job.status === 'IDLE' || job.status === 'ERROR') && job.availableTargets.length > 0
+          "
           @click="store.startJob(job.id)"
           :disabled="!job.targetFormat"
           class="btn btn--primary btn--sm"
         >
-          Convert
+          {{ t.convert }}
         </button>
 
         <a
@@ -217,13 +216,13 @@ async function downloadAll() {
           :download="getFileName(job)"
           class="btn btn--mint btn--sm"
         >
-          Download
+          {{ t.download }}
         </a>
 
         <button
           @click="store.removeJob(job.id)"
           class="p-1.5 text-ink-3 hover:text-accent-3 hover:bg-accent-3/5 rounded-[var(--radius-md)] transition-colors duration-200"
-          title="Remove"
+          :title="t.remove"
         >
           <svg
             class="w-4 h-4"

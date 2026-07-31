@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, computed } from 'vue'
+import { useI18nStore, translations } from '../stores/i18n'
 
 const props = defineProps<{
   isOpen: boolean
@@ -9,6 +10,9 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
+
+const i18nStore = useI18nStore()
+const t = computed(() => translations[i18nStore.currentLang])
 
 // Close on escape key
 const handleKeydown = (e: KeyboardEvent) => {
@@ -64,9 +68,9 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
           <div class="px-6 py-4 border-t border-rule bg-paper-2 flex justify-end">
             <button
               @click="emit('close')"
-              class="px-4 py-2 text-sm font-medium text-ink bg-paper border border-rule rounded-[var(--radius-md)] hover:bg-paper-2 transition-colors"
+              class="px-4 py-2 text-sm font-medium text-ink bg-paper border border-rule rounded-[var(--radius-md)] hover:bg-paper-2 transition-colors cursor-pointer"
             >
-              Tutup
+              {{ t.close }}
             </button>
           </div>
         </div>
