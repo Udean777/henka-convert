@@ -1,10 +1,9 @@
 import { removeExtension } from "../shared/files";
 import type { ConversionOutput } from "../shared/types";
 import type { ImageFormat } from "./types";
-import { convertInWorker, getImageOutputFormats } from "./worker-client";
+import { getImageExtension } from "./formats";
+import { convertInWorker } from "./worker-client";
 import { decodeSvg, isSvgFile, prepareSvgForRasterization } from "./svg";
-
-export { getImageOutputFormats };
 
 export async function convertImage(
   file: File,
@@ -12,8 +11,13 @@ export async function convertImage(
   quality: number,
   svgOutputWidth: number,
 ): Promise<ConversionOutput> {
-  const extension =
-    target === "image/jpeg" ? "jpg" : target.slice("image/".length);
+  if (target === "image/svg+xml" && isSvgFile(file)) {
+    return {
+      name: `${removeExtension(file.name)}.svg`,
+      blob: file,
+    };
+  }
+  const extension = getImageExtension(target);
   const name = `${removeExtension(file.name)}.${extension}`;
   const svg = isSvgFile(file);
   const source = svg

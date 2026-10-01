@@ -1,13 +1,38 @@
 import type { Language, messages } from "$lib/i18n/messages";
-import type { DocumentFormat } from "./documents/types";
-import type { ImageConversionErrorCode, ImageFormat } from "./image/types";
-import type { PdfFormat } from "./pdf/types";
+import { DocumentConversionError } from "./documents/errors";
+import type {
+  DocumentConversionErrorCode,
+  DocumentFormat,
+} from "./documents/types";
+import { DOCUMENT_FORMATS } from "./documents/formats";
+import { ImageConversionError } from "./image/errors";
+import type {
+  ImageConversionErrorCode,
+  ImageFormat,
+  ImageTargetFormat,
+} from "./image/types";
+import type { PdfFormat, PdfImageFormat } from "./pdf/types";
 import type { VideoConversionErrorCode, VideoFormat } from "./video/types";
 import type { AudioConversionErrorCode, AudioFormat } from "./audio/types";
+import { AUDIO_FORMATS } from "./audio/formats";
+import { VIDEO_FORMATS } from "./video/formats";
+import { type DataConversionErrorCode, type DataFormat } from "./data/types";
+import { DataConversionError } from "./data/errors";
+import { DATA_FORMATS } from "./data/formats";
+import { IMAGE_OUTPUT_FORMATS } from "./image/formats";
+import { PDF_IMAGE_FORMATS } from "./pdf/types";
+import { PdfConversionError } from "./pdf/errors";
 import type { ConversionOutput, FileJob } from "./shared/types";
+import { VideoConversionError } from "./video/errors";
+import { AudioConversionError } from "./audio/errors";
 
 export type ConversionTarget =
-  ImageFormat | PdfFormat | DocumentFormat | VideoFormat | AudioFormat;
+  | ImageTargetFormat
+  | PdfFormat
+  | DocumentFormat
+  | VideoFormat
+  | AudioFormat
+  | DataFormat;
 type WorkspaceText = (typeof messages)[Language];
 
 interface ConversionOptions {
@@ -24,6 +49,17 @@ export async function runConversion(
   onProgress: (progress: number) => void,
 ): Promise<ConversionOutput[]> {
   if (job.kind === "image") {
+    if (options.target === "application/pdf") {
+      const { convertImageToPdf } = await import("./pdf/convert");
+      onProgress(20);
+      const output = await convertImageToPdf(
+        job.file,
+        options.quality,
+        options.svgOutputWidth,
+      );
+      onProgress(100);
+      return [output];
+    }
     if (!isImageFormat(options.target)) {
       throw new Error(options.text.imageOutputUnsupported);
     }
@@ -69,14 +105,37 @@ export async function runConversion(
     return [await convertAudio(job.file, options.target, onProgress)];
   }
 
-  if (!isDocumentFormat(options.target)) {
-    throw new Error(options.text.errorPrefix);
+  if (job.kind === "data") {
+    if (!isDataFormat(options.target)) {
+      throw new Error(options.text.dataConversionFailed);
+    }
+    const { convertData } = await import("./data/convert");
+    return [
+      await convertData(
+        job.file,
+        options.target,
+        onProgress,
+        job.selectedWorksheet,
+      ),
+    ];
   }
-  const { convertDocx } = await import("./documents/convert");
-  onProgress(30);
-  const output = await convertDocx(job.file, options.target, options.language);
-  onProgress(100);
-  return [output];
+
+  if (job.kind === "docx") {
+    if (!isDocumentFormat(options.target)) {
+      throw new Error(options.text.errorPrefix);
+    }
+    const { convertDocument } = await import("./documents/convert");
+    onProgress(20);
+    const output = await convertDocument(
+      job.file,
+      options.target,
+      options.language,
+      onProgress,
+    );
+    onProgress(100);
+    return [output];
+  }
+  throw new Error(options.text.errorPrefix);
 }
 
 export function getConversionErrorMessage(
@@ -84,7 +143,21 @@ export function getConversionErrorMessage(
   text: WorkspaceText,
 ): string {
   if (!(error instanceof Error)) return text.errorPrefix;
-  if (isVideoConversionErrorCode(error)) {
+  if (error instanceof PdfConversionError) {
+    if (error.code === "no-selectable-text") return text.pdfNoSelectableText;
+    return text.pdfPageImageUnavailable;
+  }
+  if (error instanceof DocumentConversionError) {
+    const documentErrors: Record<DocumentConversionErrorCode, string> = {
+      "worker-unsupported": text.documentWorkerUnsupported,
+      "document-too-large": text.documentTooLarge,
+      "document-output-too-large": text.documentOutputTooLarge,
+      "document-input-unsupported": text.documentInputUnsupported,
+      "document-conversion-failed": text.documentConversionFailed,
+    };
+    return documentErrors[error.code];
+  }
+  if (error instanceof VideoConversionError) {
     const videoErrors: Record<VideoConversionErrorCode, string> = {
       "worker-unsupported": text.videoWorkerUnsupported,
       "input-unsupported": text.videoInputUnsupported,
@@ -92,12 +165,13 @@ export function getConversionErrorMessage(
       "video-too-large": text.videoTooLarge,
       "video-too-long": text.videoTooLong,
       "video-duration-unavailable": text.videoDurationUnavailable,
+      "video-output-too-large": text.videoOutputTooLarge,
       "video-resolution-too-large": text.videoResolutionTooLarge,
       "video-conversion-failed": text.videoConversionFailed,
     };
     return videoErrors[error.code];
   }
-  if (isAudioConversionErrorCode(error)) {
+  if (error instanceof AudioConversionError) {
     const audioErrors: Record<AudioConversionErrorCode, string> = {
       "worker-unsupported": text.audioWorkerUnsupported,
       "input-unsupported": text.audioInputUnsupported,
@@ -105,12 +179,27 @@ export function getConversionErrorMessage(
       "audio-too-large": text.audioTooLarge,
       "audio-too-long": text.audioTooLong,
       "audio-duration-unavailable": text.audioDurationUnavailable,
-      "audio-wav-too-large": text.audioWavTooLarge,
+      "audio-output-too-large": text.audioOutputTooLarge,
       "audio-conversion-failed": text.audioConversionFailed,
     };
     return audioErrors[error.code];
   }
-  if (!isImageConversionErrorCode(error)) return error.message;
+  if (error instanceof DataConversionError) {
+    const dataErrors: Record<DataConversionErrorCode, string> = {
+      "worker-unsupported": text.dataWorkerUnsupported,
+      "data-too-large": text.dataTooLarge,
+      "data-output-too-large": text.dataOutputTooLarge,
+      "data-invalid-input": text.dataInvalidInput,
+      "data-invalid-headers": text.dataInvalidHeaders,
+      "data-json-structure-unsupported": text.dataJsonStructureUnsupported,
+      "data-sheet-selection-required": text.dataSheetSelectionRequired,
+      "data-sheet-unavailable": text.dataSheetUnavailable,
+      "data-sheet-too-large": text.dataSheetTooLarge,
+      "data-conversion-failed": text.dataConversionFailed,
+    };
+    return dataErrors[error.code];
+  }
+  if (!(error instanceof ImageConversionError)) return error.message;
 
   const imageErrors: Record<ImageConversionErrorCode, string> = {
     "worker-unsupported": text.imageWorkerUnsupported,
@@ -125,76 +214,31 @@ export function getConversionErrorMessage(
   return imageErrors[error.code];
 }
 
-function isImageConversionErrorCode(
-  error: Error,
-): error is Error & { code: ImageConversionErrorCode } {
-  if (!("code" in error) || typeof error.code !== "string") return false;
-  return [
-    "worker-unsupported",
-    "input-unsupported",
-    "output-unsupported",
-    "invalid-svg",
-    "svg-unsupported",
-    "svg-dimensions-missing",
-    "image-too-large",
-    "conversion-failed",
-  ].includes(error.code);
-}
-
 function isImageFormat(value: ConversionTarget): value is ImageFormat {
-  return ["image/jpeg", "image/png", "image/webp", "image/avif"].some(
-    (format) => format === value,
+  return IMAGE_OUTPUT_FORMATS.some(
+    (format) => format.value === value && format.value !== "application/pdf",
   );
 }
 
 function isPdfFormat(value: ConversionTarget): value is PdfFormat {
-  return ["image/png", "image/jpeg", "text/plain"].some(
-    (format) => format === value,
+  return (
+    value === "text/plain" ||
+    PDF_IMAGE_FORMATS.includes(value as PdfImageFormat)
   );
 }
 
 function isDocumentFormat(value: ConversionTarget): value is DocumentFormat {
-  return ["text/html", "text/plain", "text/markdown"].some(
-    (format) => format === value,
-  );
+  return DOCUMENT_FORMATS.includes(value as DocumentFormat);
 }
 
 function isVideoFormat(value: ConversionTarget): value is VideoFormat {
-  return value === "video/mp4" || value === "video/webm";
+  return VIDEO_FORMATS.includes(value as VideoFormat);
 }
 
 function isAudioFormat(value: ConversionTarget): value is AudioFormat {
-  return value === "audio/mpeg" || value === "audio/wav";
+  return AUDIO_FORMATS.includes(value as AudioFormat);
 }
 
-function isVideoConversionErrorCode(
-  error: Error,
-): error is Error & { code: VideoConversionErrorCode } {
-  if (!("code" in error) || typeof error.code !== "string") return false;
-  return [
-    "worker-unsupported",
-    "input-unsupported",
-    "output-unsupported",
-    "video-too-large",
-    "video-too-long",
-    "video-duration-unavailable",
-    "video-resolution-too-large",
-    "video-conversion-failed",
-  ].includes(error.code);
-}
-
-function isAudioConversionErrorCode(
-  error: Error,
-): error is Error & { code: AudioConversionErrorCode } {
-  if (!("code" in error) || typeof error.code !== "string") return false;
-  return [
-    "worker-unsupported",
-    "input-unsupported",
-    "output-unsupported",
-    "audio-too-large",
-    "audio-too-long",
-    "audio-duration-unavailable",
-    "audio-wav-too-large",
-    "audio-conversion-failed",
-  ].includes(error.code);
+function isDataFormat(value: ConversionTarget): value is DataFormat {
+  return DATA_FORMATS.includes(value as DataFormat);
 }

@@ -2,12 +2,14 @@ import type { ConverterKind } from "./types";
 
 export const FILE_ACCEPT: Record<ConverterKind, string> = {
   image:
-    ".jpg,.jpeg,.png,.webp,.avif,.svg,.bmp,.tif,.tiff,.heic,.heif,image/jpeg,image/png,image/webp,image/avif,image/svg+xml,image/bmp,image/tiff,image/x-tiff,image/heic,image/heif",
+    ".jpg,.jpeg,.png,.webp,.avif,.svg,.bmp,.tif,.tiff,.heic,.heif,.gif,.ico,.jxl,image/jpeg,image/png,image/webp,image/avif,image/svg+xml,image/bmp,image/tiff,image/x-tiff,image/heic,image/heif,image/gif,image/x-icon,image/jxl",
   pdf: ".pdf,application/pdf",
-  docx: ".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  video: ".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm",
+  docx: ".docx,.html,.htm,.txt,.md,.markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/html,text/plain,text/markdown",
+  video:
+    ".mp4,.mov,.webm,.mkv,.avi,.m4v,.3gp,.3gpp,.mpeg,.mpg,.ts,video/mp4,video/quicktime,video/webm,video/x-matroska,video/x-msvideo,video/x-m4v,video/3gpp,video/mpeg,video/mp2t",
   audio:
-    ".mp3,.wav,.m4a,.aac,.ogg,.opus,.flac,audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/aac,audio/ogg,audio/opus,audio/flac",
+    ".mp3,.wav,.m4a,.aac,.ogg,.opus,.flac,.aif,.aiff,.wma,audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/aac,audio/ogg,audio/opus,audio/flac,audio/aiff,audio/x-ms-wma",
+  data: ".csv,.tsv,.json,.xlsx,.xls,.ods,.html,.htm,text/csv,text/tab-separated-values,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.oasis.opendocument.spreadsheet,text/html",
 };
 
 const extensions: Record<ConverterKind, string[]> = {
@@ -23,11 +25,38 @@ const extensions: Record<ConverterKind, string[]> = {
     ".tiff",
     ".heic",
     ".heif",
+    ".gif",
+    ".ico",
+    ".jxl",
   ],
   pdf: [".pdf"],
-  docx: [".docx"],
-  video: [".mp4", ".mov", ".webm"],
-  audio: [".mp3", ".wav", ".m4a", ".aac", ".ogg", ".opus", ".flac"],
+  docx: [".docx", ".html", ".htm", ".txt", ".md", ".markdown"],
+  video: [
+    ".mp4",
+    ".mov",
+    ".webm",
+    ".mkv",
+    ".avi",
+    ".m4v",
+    ".3gp",
+    ".3gpp",
+    ".mpeg",
+    ".mpg",
+    ".ts",
+  ],
+  audio: [
+    ".mp3",
+    ".wav",
+    ".m4a",
+    ".aac",
+    ".ogg",
+    ".opus",
+    ".flac",
+    ".aif",
+    ".aiff",
+    ".wma",
+  ],
+  data: [".csv", ".tsv", ".json", ".xlsx", ".xls", ".ods", ".html", ".htm"],
 };
 
 export function isSupportedFile(file: File, kind: ConverterKind): boolean {

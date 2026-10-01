@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { getContext } from "svelte";
   import FileDropzone from "$lib/components/FileDropzone.svelte";
   import {
     PREFERENCES_CONTEXT,
@@ -8,24 +8,15 @@
   import { messages } from "$lib/i18n/messages";
   import ConversionJobList from "./ConversionJobList.svelte";
   import ConversionOptions from "./ConversionOptions.svelte";
-  import type { DocumentFormat } from "./documents/types";
-  import type { PdfFormat } from "./pdf/types";
-  import type { VideoFormat } from "./video/types";
-  import type { AudioFormat } from "./audio/types";
+  import { DOCUMENT_FORMAT_OPTIONS } from "./documents/formats";
+  import { PDF_OUTPUT_FORMATS } from "./pdf/formats";
+  import { IMAGE_OUTPUT_FORMATS } from "./image/formats";
+  import { VIDEO_FORMAT_OPTIONS } from "./video/formats";
+  import { AUDIO_FORMAT_OPTIONS } from "./audio/formats";
+  import { DATA_FORMAT_OPTIONS } from "./data/formats";
   import { downloadBlob, downloadOutputs } from "./shared/download";
   import type { ConverterKind, FileJob } from "./shared/types";
   import { createConverterWorkspace } from "./workspace.svelte";
-
-  const pdfFormats: { value: PdfFormat; label: string }[] = [
-    { value: "image/png", label: "PNG (one image per page)" },
-    { value: "image/jpeg", label: "JPEG (one image per page)" },
-    { value: "text/plain", label: "Plain text (selectable text only)" },
-  ];
-  const documentFormats: { value: DocumentFormat; label: string }[] = [
-    { value: "text/html", label: "HTML" },
-    { value: "text/plain", label: "Plain text" },
-    { value: "text/markdown", label: "Markdown" },
-  ];
 
   const preferences = getContext<Preferences>(PREFERENCES_CONTEXT);
   const workspace = createConverterWorkspace(
@@ -34,7 +25,14 @@
   );
   const state = workspace.state;
   const text = $derived(messages[preferences.language]);
-  const kinds: ConverterKind[] = ["image", "pdf", "docx", "video", "audio"];
+  const kinds: ConverterKind[] = [
+    "image",
+    "pdf",
+    "docx",
+    "video",
+    "audio",
+    "data",
+  ];
   const currentJobs = $derived(workspace.currentJobs());
   const finishedOutputs = $derived(workspace.finishedOutputs());
   const busy = $derived(workspace.busy());
@@ -49,44 +47,26 @@
   );
   const formats = $derived.by(() => {
     if (state.kind === "image") {
-      return state.imageOutputs.map((value) => ({
-        value,
-        label:
-          value === "image/jpeg"
-            ? "JPEG"
-            : value === "image/avif"
-              ? "AVIF"
-              : value.slice("image/".length).toUpperCase(),
-      }));
+      return IMAGE_OUTPUT_FORMATS;
     }
-    if (state.kind === "pdf") return pdfFormats;
-    if (state.kind === "docx") return documentFormats;
-    if (state.kind === "video") {
-      return state.videoOutputs.map((value) => ({
-        value: value satisfies VideoFormat,
-        label: value === "video/mp4" ? "MP4" : "WebM",
-      }));
-    }
-    return state.audioOutputs.map((value) => ({
-      value: value satisfies AudioFormat,
-      label: value === "audio/mpeg" ? "MP3" : "WAV",
-    }));
+    if (state.kind === "pdf") return PDF_OUTPUT_FORMATS;
+    if (state.kind === "docx") return DOCUMENT_FORMAT_OPTIONS;
+    if (state.kind === "video") return VIDEO_FORMAT_OPTIONS;
+    if (state.kind === "audio") return AUDIO_FORMAT_OPTIONS;
+    return DATA_FORMAT_OPTIONS;
   });
   const canConvert = $derived(
-    (state.kind !== "image" ||
-      (state.imageCapabilitiesReady && state.imageOutputs.length > 0)) &&
-      (state.kind !== "video" ||
-        (state.videoCapabilitiesReady && state.videoOutputs.length > 0)) &&
-      (state.kind !== "audio" ||
-        (state.audioCapabilitiesReady && state.audioOutputs.length > 0)) &&
+    !currentJobs.some(
+      (job) =>
+        job.worksheetNamesLoading ||
+        (job.worksheetNames !== undefined &&
+          job.worksheetNames.length > 1 &&
+          !job.selectedWorksheet),
+    ) &&
       currentJobs.some(
         (job) => job.status === "ready" || job.status === "error",
       ),
   );
-
-  onMount(() => {
-    void workspace.loadImageCapabilities();
-  });
 
   function labelsForDropzone() {
     return {
@@ -101,7 +81,9 @@
               ? text.docxTypes
               : state.kind === "video"
                 ? text.videoTypes
-                : text.audioTypes,
+                : state.kind === "audio"
+                  ? text.audioTypes
+                  : text.dataTypes,
     };
   }
 
@@ -126,11 +108,11 @@
   }
 </script>
 
-<section class="w-full max-w-4xl text-left" aria-label="File converter">
+<section class="w-full max-w-4xl text-left" aria-label={text.fileConverter}>
   <div
     class="mb-8 flex flex-wrap gap-2 border-b border-border"
     role="tablist"
-    aria-label="Conversion type"
+    aria-label={text.conversionType}
   >
     {#each kinds as item (item)}
       <button
@@ -152,7 +134,9 @@
               ? text.featureDocx
               : item === "video"
                 ? text.featureVideo
-                : text.featureAudio}
+                : item === "audio"
+                  ? text.featureAudio
+                  : text.featureData}
       </button>
     {/each}
   </div>
@@ -170,12 +154,6 @@
     {formats}
     quality={state.quality}
     svgOutputWidth={state.svgOutputWidth}
-    imageCapabilitiesReady={state.imageCapabilitiesReady}
-    imageFormatsAvailable={state.imageOutputs.length > 0}
-    videoCapabilitiesReady={state.videoCapabilitiesReady}
-    videoFormatsAvailable={state.videoOutputs.length > 0}
-    audioCapabilitiesReady={state.audioCapabilitiesReady}
-    audioFormatsAvailable={state.audioOutputs.length > 0}
     {hasSvgInput}
     {hasTiffInput}
     {busy}
@@ -206,6 +184,7 @@
     onDownloadAll={downloadAll}
     onClear={workspace.clearCurrentJobs}
     onRemove={workspace.removeJob}
+    onSelectWorksheet={workspace.selectWorksheet}
     onDownload={handleDownload}
   />
 </section>

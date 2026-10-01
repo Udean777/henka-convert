@@ -15,6 +15,7 @@
     onDownloadAll: () => void;
     onClear: () => void;
     onRemove: (id: string) => void;
+    onSelectWorksheet: (id: string, worksheetName: string) => void;
     onDownload: (output: ConversionOutput) => void;
   }
 
@@ -30,6 +31,7 @@
     onDownloadAll,
     onClear,
     onRemove,
+    onSelectWorksheet,
     onDownload,
   }: Props = $props();
 </script>
@@ -108,6 +110,28 @@
                 {formatBytes(job.file.size)}
               {/if}
             </p>
+            {#if job.worksheetNamesLoading}
+              <p class="mt-2 text-sm text-muted" role="status">
+                {text.dataWorksheetNamesLoading}
+              </p>
+            {:else if job.worksheetNames && job.worksheetNames.length > 1}
+              <label class="mt-3 flex max-w-sm flex-col gap-1.5 text-sm">
+                {text.dataSelectWorksheet}
+                <select
+                  class="max-w-full rounded-lg border border-border bg-background px-3 py-2 font-normal"
+                  value={job.selectedWorksheet ?? ""}
+                  disabled={busy}
+                  aria-label={`${text.dataSelectWorksheet}: ${job.file.name}`}
+                  onchange={(event) =>
+                    onSelectWorksheet(job.id, event.currentTarget.value)}
+                >
+                  <option value="" disabled>{text.dataSelectWorksheet}</option>
+                  {#each job.worksheetNames as worksheetName (worksheetName)}
+                    <option value={worksheetName}>{worksheetName}</option>
+                  {/each}
+                </select>
+              </label>
+            {/if}
             {#if job.status === "converting"}
               <div
                 class="mt-3 h-1.5 overflow-hidden rounded-full bg-border"

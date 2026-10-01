@@ -13,12 +13,6 @@
     formats: FormatOption[];
     quality: number;
     svgOutputWidth: number;
-    imageCapabilitiesReady: boolean;
-    imageFormatsAvailable: boolean;
-    videoCapabilitiesReady: boolean;
-    videoFormatsAvailable: boolean;
-    audioCapabilitiesReady: boolean;
-    audioFormatsAvailable: boolean;
     hasSvgInput: boolean;
     hasTiffInput: boolean;
     busy: boolean;
@@ -34,12 +28,6 @@
     formats,
     quality,
     svgOutputWidth,
-    imageCapabilitiesReady,
-    imageFormatsAvailable,
-    videoCapabilitiesReady,
-    videoFormatsAvailable,
-    audioCapabilitiesReady,
-    audioFormatsAvailable,
     hasSvgInput,
     hasTiffInput,
     busy,
@@ -59,37 +47,15 @@
       <select
         class="min-w-56 max-w-full rounded-lg border border-border bg-background px-3 py-2.5 font-normal"
         value={target}
-        disabled={busy ||
-          (kind === "image" && !imageCapabilitiesReady) ||
-          (kind === "video" && !videoCapabilitiesReady) ||
-          (kind === "audio" && !audioCapabilitiesReady)}
+        disabled={busy}
         onchange={(event) => onTargetChange(event.currentTarget.value)}
       >
-        {#if kind === "image" && formats.length === 0}
-          <option value={target} disabled>
-            {imageCapabilitiesReady
-              ? text.imageFormatUnavailableShort
-              : text.checkingImageFormats}
-          </option>
-        {:else if kind === "video" && formats.length === 0}
-          <option value={target} disabled>
-            {videoCapabilitiesReady
-              ? text.videoFormatUnavailableShort
-              : text.checkingVideoFormats}
-          </option>
-        {:else if kind === "audio" && formats.length === 0}
-          <option value={target} disabled>
-            {audioCapabilitiesReady
-              ? text.audioFormatUnavailableShort
-              : text.checkingAudioFormats}
-          </option>
-        {/if}
         {#each formats as format (format.value)}
           <option value={format.value}>{format.label}</option>
         {/each}
       </select>
     </label>
-    {#if kind === "image" && target !== "image/png"}
+    {#if kind === "image" && ["image/jpeg", "image/webp", "image/avif", "image/jxl"].includes(target)}
       <label class="flex min-w-52 flex-col gap-2 text-sm font-medium">
         {text.quality}
         <span class="font-normal text-muted">{Math.round(quality * 100)}%</span>
@@ -107,7 +73,7 @@
       </label>
     {/if}
   </div>
-  {#if kind === "image" && hasSvgInput}
+  {#if kind === "image" && hasSvgInput && target !== "image/svg+xml"}
     <label class="flex flex-col gap-2 text-sm font-medium">
       {text.svgWidth}
       <span class="flex items-center gap-2">
@@ -129,45 +95,18 @@
       >
     </label>
   {/if}
-  {#if kind === "image" && target === "image/jpeg"}
-    <p class="max-w-sm text-xs leading-5 text-muted">
-      {text.transparencyNote}
-    </p>
-  {/if}
 </div>
-
-{#if kind === "image" && !imageCapabilitiesReady}
-  <p class="mt-3 text-sm leading-6 text-muted" role="status">
-    {text.checkingImageFormats}
-  </p>
-{:else if kind === "image" && !imageFormatsAvailable}
-  <p class="mt-3 text-sm leading-6 text-muted" role="status">
-    {text.imageFormatsUnavailable}
-  </p>
-{/if}
-
-{#if kind === "audio" && !audioCapabilitiesReady}
-  <p class="mt-3 text-sm leading-6 text-muted" role="status">
-    {text.checkingAudioFormats}
-  </p>
-{:else if kind === "audio" && !audioFormatsAvailable}
-  <p class="mt-3 text-sm leading-6 text-muted" role="status">
-    {text.audioFormatsUnavailable}
-  </p>
-{/if}
-
-{#if kind === "video" && !videoCapabilitiesReady}
-  <p class="mt-3 text-sm leading-6 text-muted" role="status">
-    {text.checkingVideoFormats}
-  </p>
-{:else if kind === "video" && !videoFormatsAvailable}
-  <p class="mt-3 text-sm leading-6 text-muted" role="status">
-    {text.videoFormatsUnavailable}
-  </p>
-{/if}
 
 {#if kind === "pdf" && target === "text/plain"}
   <p class="mt-3 text-sm leading-6 text-muted">{text.pdfTextNote}</p>
+{:else if kind === "pdf"}
+  <p class="mt-3 text-sm leading-6 text-muted">{text.pdfOutput}</p>
+{:else if kind === "image" && target === "image/svg+xml" && !hasSvgInput}
+  <p class="mt-3 text-sm leading-6 text-muted">{text.svgOutputNote}</p>
+{:else if kind === "image" && target === "application/pdf"}
+  <p class="mt-3 text-sm leading-6 text-muted">{text.imagePdfNote}</p>
+{:else if kind === "image" && ["image/jpeg", "image/bmp", "image/gif"].includes(target)}
+  <p class="mt-3 text-sm leading-6 text-muted">{text.transparencyNote}</p>
 {:else if kind === "docx"}
   <p class="mt-3 text-sm leading-6 text-muted">{text.docxNote}</p>
 {/if}
@@ -186,5 +125,11 @@
     {#if target === "audio/wav"}
       <br />{text.audioWavNote}
     {/if}
+  </p>
+{/if}
+
+{#if kind === "data"}
+  <p class="mt-3 text-sm leading-6 text-muted">
+    {text.dataLimitsNote}<br />{text.dataStructureNote}
   </p>
 {/if}

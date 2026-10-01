@@ -1,6 +1,7 @@
 import type { ImageConversionErrorCode, ImageFormat } from "./types";
 import { MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS } from "../shared/limits";
-import { decodeWithWasm, encodeWithWasm } from "./codecs";
+import { decodeWithWasm } from "./codecs";
+import { encodeImageData } from "./encoders";
 import { decodeTiff, isTiffFile } from "./tiff";
 
 interface ConvertRequest {
@@ -80,9 +81,14 @@ workerScope.addEventListener("message", async ({ data }) => {
     }
 
     if (!imageData) throw conversionError("input-unsupported");
-    if (data.target === "image/jpeg") flattenAlpha(imageData);
-    const bytes = await encodeWithWasm(imageData, data.target, data.quality);
-    const blob = new Blob([bytes], { type: data.target });
+    if (
+      data.target === "image/jpeg" ||
+      data.target === "image/bmp" ||
+      data.target === "image/gif"
+    ) {
+      flattenAlpha(imageData);
+    }
+    const blob = await encodeImageData(imageData, data.target, data.quality);
     workerScope.postMessage({ type: "convert", ok: true, blob });
   } catch (error) {
     bitmap?.close();

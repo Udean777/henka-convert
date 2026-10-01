@@ -12,11 +12,8 @@
 </script>
 
 <svelte:head>
-  <title>Henka Convert</title>
-  <meta
-    name="description"
-    content="Convert images, documents, and short videos locally in your browser."
-  />
+  <title>{text.seoTitle}</title>
+  <meta name="description" content={text.seoDescription} />
 </svelte:head>
 
 <main
