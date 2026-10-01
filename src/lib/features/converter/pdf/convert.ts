@@ -1,6 +1,7 @@
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { removeExtension } from "../shared/files";
-import type { ConversionOutput, ImageFormat } from "../shared/types";
+import type { ConversionOutput } from "../shared/types";
+import type { PdfImageFormat } from "./types";
 
 export async function convertPdfToText(file: File): Promise<ConversionOutput> {
   const pdfjs = await import("pdfjs-dist");
@@ -34,7 +35,7 @@ export async function convertPdfToText(file: File): Promise<ConversionOutput> {
 
 export async function convertPdfToImages(
   file: File,
-  format: ImageFormat,
+  format: PdfImageFormat,
   onProgress: (current: number, total: number) => void,
 ): Promise<ConversionOutput[]> {
   const pdfjs = await import("pdfjs-dist");
@@ -92,7 +93,7 @@ export async function convertPdfToImages(
 
 function canvasToBlob(
   canvas: HTMLCanvasElement,
-  type: ImageFormat,
+  type: PdfImageFormat,
   quality?: number,
 ) {
   return new Promise<Blob>((resolve, reject) => {

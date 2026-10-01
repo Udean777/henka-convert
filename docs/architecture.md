@@ -31,27 +31,52 @@ src/lib/features/converter/
 ├── shared/
 │   ├── download.ts                     # Local single-file and ZIP downloads
 │   ├── files.ts                        # File type checks and display helpers
+│   ├── limits.ts                       # Shared pixel and output-size limits
 │   └── types.ts                        # Shared jobs and conversion output types
 ├── image/
-│   ├── convert.ts                      # Worker entry point
-│   └── image.worker.ts                 # Native decode / HEIC decode and encode
+│   ├── capabilities.worker.ts          # Check browser worker and WebAssembly support
+│   ├── codecs.ts                       # Local WASM codec loading and per-format options
+│   ├── convert.ts                      # Small image-conversion entry point
+│   ├── errors.ts                       # Image-specific conversion error type
+│   ├── image.worker.ts                 # Decode, normalize, and encode orchestration
+│   ├── svg.ts                          # SVG validation, sizing, and rasterization
+│   ├── types.ts                        # Image formats and image error codes
+│   └── worker-client.ts                # Worker lifecycle and message protocol
 ├── pdf/
-│   └── convert.ts                      # PDF pages to images or selectable text
+│   ├── convert.ts                      # PDF pages to images or selectable text
+│   └── types.ts                        # PDF-only output formats
 └── documents/
-    └── convert.ts                      # Experimental DOCX to HTML, text, Markdown
+    ├── convert.ts                      # Experimental DOCX to HTML, text, Markdown
+    └── types.ts                        # DOCX output formats
 
 src/lib/components/
 └── FileDropzone.svelte                 # Shared accessible file picker and drop area
 
 src/lib/features/converter/
-└── ConverterWorkspace.svelte           # Queue, format controls, progress, downloads
+├── ConverterWorkspace.svelte           # Compose converter UI and shared preferences
+├── ConversionOptions.svelte            # Target format and format-specific options
+├── ConversionJobList.svelte            # Job progress, actions, and downloads
+├── run-conversion.ts                    # Dispatch a typed job to its converter
+└── workspace.svelte.ts                 # Per-instance queue and conversion orchestration
 ```
 
-The first MVP supports JPG/JPEG, PNG, WebP, HEIC/HEIF input to JPG, PNG, or
-WebP; PDF pages to PNG/JPG or selectable text to TXT; and experimental DOCX
-export to HTML, TXT, or Markdown. Audio and video are not part of this release.
-Heavy PDF and DOCX code is dynamically imported, and image conversion runs in
-a Web Worker. PDF pages are rendered one at a time and capped at 16 megapixels
+The image converter accepts JPG/JPEG, PNG, WebP, AVIF, SVG, BMP, and HEIC/HEIF.
+It offers JPG, PNG, WebP, and AVIF output when the browser supports workers,
+OffscreenCanvas, and WebAssembly. JPEG, PNG, WebP, and AVIF output use bundled
+WebAssembly codecs so the available formats do not depend on each browser's
+native canvas encoders. Native image decoding is used when available; bundled
+WebAssembly decoders provide a fallback for JPEG, PNG, WebP, and AVIF. Codecs
+load only when a conversion needs them. HEIC/HEIF decoding remains a separate
+lazy-loaded path.
+SVG output is rasterized at a user-selected width with its aspect ratio
+preserved; the resulting bitmap is transferred to the image worker for encoding.
+Raster inputs and rendered SVG outputs are limited to 40 megapixels and 16,384
+pixels per side to reduce memory pressure. PDF pages can be exported to PNG/JPG
+or selectable text; DOCX export to HTML, TXT, or Markdown remains experimental.
+Audio and video are not part of this release. Heavy PDF and DOCX code is
+dynamically imported. Raster conversion and output encoding run in a Web Worker;
+SVG is decoded through the browser's image loader, then its bitmap is transferred
+to the worker. PDF pages are rendered one at a time and capped at 16 megapixels
 per output page. Multi-file outputs can be downloaded together as a ZIP.
 
 ## Boundaries
@@ -60,8 +85,16 @@ per output page. Multi-file outputs can be downloaded together as a ZIP.
   and SvelteKit route options. Route-only components may stay beside their
   route; reusable cross-feature UI belongs in `src/lib/components`.
 - Keep each converter's implementation and UI inside its feature. Put only
-  genuinely shared format metadata, request/result types, and limits in
-  `converter/shared`.
+  genuinely shared job/result types and limits in `converter/shared`. Keep
+  format types beside their converter so unsupported format combinations are
+  excluded by the type system.
+- Keep the converter workspace as composition. Queue state and conversion
+  orchestration belong in the per-instance `workspace.svelte.ts` factory; UI
+  components should own a small, coherent part of the workspace.
+- Keep image worker protocol and pixel normalization in the worker, while SVG
+  preparation, worker lifecycle, and WASM codec configuration stay in their
+  own image modules. Add new modules when they establish a useful boundary,
+  rather than splitting every helper into a separate file.
 - Create browser APIs (`File`, `Blob`, canvas, media elements, object URLs,
   `localStorage`, and `Worker`) in client lifecycle code or in response to a
   user action. Do not touch them at module initialization, so prerendering stays

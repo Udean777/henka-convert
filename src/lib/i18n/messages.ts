@@ -17,7 +17,7 @@ export const messages = {
     featureDocx: "DOCX (experimental)",
     dropFiles: "Drop files here, or browse your device",
     chooseFiles: "Choose files",
-    imageTypes: "JPG, PNG, WebP, HEIC, HEIF",
+    imageTypes: "JPG, PNG, WebP, AVIF, SVG, BMP, HEIC, HEIF",
     pdfTypes: "PDF documents",
     docxTypes: "DOCX documents",
     convertTo: "Convert to",
@@ -41,7 +41,27 @@ export const messages = {
     noFiles: "No files added yet.",
     invalidFiles:
       "Some files were skipped because their format does not match this converter.",
-    imageOutput: "JPG, PNG, or WebP",
+    imageOutput: "JPG, PNG, WebP, or AVIF",
+    checkingImageFormats: "Checking image format support in this browser…",
+    imageFormatsUnavailable:
+      "This browser does not support local image conversion. Try a current version of Safari, Firefox, or Chrome.",
+    imageFormatUnavailableShort: "No supported formats",
+    imageInputUnsupported:
+      "This browser could not read this image. The file may be damaged or this format may not be supported.",
+    imageOutputUnsupported:
+      "This browser cannot create that output format. Choose another format.",
+    imageWorkerUnsupported:
+      "This browser does not support the background processing needed for image conversion.",
+    imageTooLarge:
+      "Images must be 40 megapixels or smaller, with no side over 16,384 pixels.",
+    invalidSvg: "This SVG file is invalid or could not be read.",
+    svgUnsupported: "This browser cannot rasterize this SVG image.",
+    svgDimensionsMissing:
+      "This SVG needs a valid viewBox or width and height before it can be converted.",
+    imageConversionFailed:
+      "Image conversion failed. Check the file and try another output format.",
+    svgWidth: "SVG output width",
+    svgWidthHint: "pixels; height is calculated to preserve the aspect ratio.",
     pdfOutput: "PNG pages, JPG pages, or text",
     docxOutput: "HTML, plain text, or Markdown",
     file: "file",
@@ -63,7 +83,7 @@ export const messages = {
     featureDocx: "DOCX (eksperimental)",
     dropFiles: "Letakkan file di sini atau pilih dari perangkat",
     chooseFiles: "Pilih file",
-    imageTypes: "JPG, PNG, WebP, HEIC, HEIF",
+    imageTypes: "JPG, PNG, WebP, AVIF, SVG, BMP, HEIC, HEIF",
     pdfTypes: "Dokumen PDF",
     docxTypes: "Dokumen DOCX",
     convertTo: "Ubah ke",
@@ -87,7 +107,27 @@ export const messages = {
     noFiles: "Belum ada file.",
     invalidFiles:
       "Beberapa file dilewati karena formatnya tidak sesuai dengan konverter ini.",
-    imageOutput: "JPG, PNG, atau WebP",
+    imageOutput: "JPG, PNG, WebP, atau AVIF",
+    checkingImageFormats: "Memeriksa dukungan format gambar di browser ini…",
+    imageFormatsUnavailable:
+      "Browser ini tidak mendukung konversi gambar lokal. Coba Safari, Firefox, atau Chrome versi terbaru.",
+    imageFormatUnavailableShort: "Format tidak tersedia",
+    imageInputUnsupported:
+      "Browser ini tidak dapat membaca gambar. File mungkin rusak atau formatnya belum didukung.",
+    imageOutputUnsupported:
+      "Browser ini tidak dapat membuat format keluaran tersebut. Pilih format lain.",
+    imageWorkerUnsupported:
+      "Browser ini tidak mendukung pemrosesan latar belakang untuk konversi gambar.",
+    imageTooLarge:
+      "Ukuran gambar maksimal 40 megapiksel dan tiap sisinya maksimal 16.384 piksel.",
+    invalidSvg: "File SVG ini tidak valid atau tidak dapat dibaca.",
+    svgUnsupported: "Browser ini tidak dapat merasterisasi gambar SVG ini.",
+    svgDimensionsMissing:
+      "SVG ini perlu memiliki viewBox atau lebar dan tinggi yang valid agar dapat dikonversi.",
+    imageConversionFailed:
+      "Konversi gambar gagal. Periksa file atau coba format keluaran lain.",
+    svgWidth: "Lebar hasil SVG",
+    svgWidthHint: "piksel; tinggi dihitung untuk mempertahankan rasio gambar.",
     pdfOutput: "Halaman PNG, halaman JPG, atau teks",
     docxOutput: "HTML, teks biasa, atau Markdown",
     file: "file",

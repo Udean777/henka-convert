@@ -4,6 +4,12 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	worker: {
+		format: 'es'
+	},
+	optimizeDeps: {
+		exclude: ['@jsquash/avif', '@jsquash/jpeg', '@jsquash/png', '@jsquash/webp']
+	},
 	plugins: [
 		tailwindcss(),
 		sveltekit({

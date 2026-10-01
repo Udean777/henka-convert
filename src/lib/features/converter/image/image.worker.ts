@@ -1,6 +1,12 @@
-interface ImageWorkerRequest {
+import type { ImageConversionErrorCode, ImageFormat } from "./types";
+import { MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS } from "../shared/limits";
+import { decodeWithWasm, encodeWithWasm } from "./codecs";
+
+interface ConvertRequest {
   file: File;
-  target: "image/jpeg" | "image/png" | "image/webp";
+  source: Blob;
+  bitmap?: ImageBitmap;
+  target: ImageFormat;
   quality: number;
   background: string;
 }
@@ -8,59 +14,109 @@ interface ImageWorkerRequest {
 const workerScope = self as unknown as {
   addEventListener: (
     type: "message",
-    listener: (event: MessageEvent<ImageWorkerRequest>) => void,
+    listener: (event: MessageEvent<ConvertRequest>) => void,
   ) => void;
   postMessage: (message: unknown) => void;
 };
 
 workerScope.addEventListener("message", async ({ data }) => {
-  let bitmap: ImageBitmap | undefined;
+  let bitmap: ImageBitmap | undefined = data.bitmap;
   try {
     if (typeof OffscreenCanvas === "undefined") {
-      throw new Error(
-        "This browser does not support image conversion in a worker.",
-      );
+      throw conversionError("worker-unsupported");
     }
 
+    let imageData: ImageData | undefined;
     if (
-      /\.(heic|heif)$/i.test(data.file.name) ||
-      /image\/(heic|heif)/i.test(data.file.type)
+      !bitmap &&
+      (/\.(heic|heif)$/i.test(data.file.name) ||
+        /image\/(heic|heif)/i.test(data.file.type))
     ) {
-      const { heicTo } = await import("heic-to/next");
-      bitmap = await heicTo({ blob: data.file, type: "bitmap" });
-    } else {
-      bitmap = await createImageBitmap(data.file);
+      try {
+        const { heicTo } = await import("heic-to/next");
+        bitmap = await heicTo({ blob: data.file, type: "bitmap" });
+      } catch {
+        throw conversionError("input-unsupported");
+      }
+    } else if (!bitmap) {
+      try {
+        bitmap = await createImageBitmap(data.source);
+      } catch {
+      try {
+        imageData = await decodeWithWasm(data.source, data.file);
+      } catch {
+        throw conversionError("input-unsupported");
+      }
+      }
     }
 
-    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("Could not create an image canvas.");
-    if (data.target === "image/jpeg") {
-      context.fillStyle = data.background;
-      context.fillRect(0, 0, canvas.width, canvas.height);
+    const width = bitmap?.width ?? imageData?.width;
+    const height = bitmap?.height ?? imageData?.height;
+    if (
+      !width ||
+      !height ||
+      width * height > MAX_IMAGE_PIXELS ||
+      width > MAX_IMAGE_DIMENSION ||
+      height > MAX_IMAGE_DIMENSION
+    ) {
+      throw conversionError("image-too-large");
     }
-    context.drawImage(bitmap, 0, 0);
-    bitmap.close();
-    bitmap = undefined;
 
-    const blob = await canvas.convertToBlob({
-      type: data.target,
-      quality: data.target === "image/png" ? undefined : data.quality,
-    });
-    if (blob.type !== data.target)
-      throw new Error("This browser cannot create that image format.");
-    workerScope.postMessage({
-      ok: true,
-      blob,
-      width: canvas.width,
-      height: canvas.height,
-    });
+    if (bitmap) {
+      const canvas = new OffscreenCanvas(width, height);
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) throw conversionError("conversion-failed");
+      if (data.target === "image/jpeg") {
+        context.fillStyle = data.background;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      context.drawImage(bitmap, 0, 0);
+      bitmap.close();
+      bitmap = undefined;
+      imageData = context.getImageData(0, 0, width, height);
+    }
+
+    if (!imageData) throw conversionError("input-unsupported");
+    if (data.target === "image/jpeg") flattenAlpha(imageData);
+    const bytes = await encodeWithWasm(imageData, data.target, data.quality);
+    const blob = new Blob([bytes], { type: data.target });
+    workerScope.postMessage({ type: "convert", ok: true, blob });
   } catch (error) {
     bitmap?.close();
-    workerScope.postMessage({
-      ok: false,
-      error:
-        error instanceof Error ? error.message : "Image conversion failed.",
-    });
+    const code = isImageConversionErrorCode(error)
+      ? error.code
+      : "conversion-failed";
+    workerScope.postMessage({ type: "convert", ok: false, code });
   }
 });
+
+function flattenAlpha(imageData: ImageData): void {
+  const pixels = imageData.data;
+  for (let index = 0; index < pixels.length; index += 4) {
+    const alpha = pixels[index + 3] / 255;
+    if (alpha < 1) {
+      pixels[index] = Math.round(pixels[index] * alpha + 255 * (1 - alpha));
+      pixels[index + 1] = Math.round(
+        pixels[index + 1] * alpha + 255 * (1 - alpha),
+      );
+      pixels[index + 2] = Math.round(
+        pixels[index + 2] * alpha + 255 * (1 - alpha),
+      );
+      pixels[index + 3] = 255;
+    }
+  }
+}
+
+function conversionError(code: ImageConversionErrorCode): Error & {
+  code: ImageConversionErrorCode;
+} {
+  return Object.assign(new Error(code), { code });
+}
+
+function isImageConversionErrorCode(
+  error: unknown,
+): error is Error & { code: ImageConversionErrorCode } {
+  return (
+    error instanceof Error && "code" in error && typeof error.code === "string"
+  );
+}

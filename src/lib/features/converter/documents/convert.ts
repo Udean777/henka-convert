@@ -1,5 +1,6 @@
 import { removeExtension } from "../shared/files";
-import type { ConversionOutput, DocumentFormat } from "../shared/types";
+import type { ConversionOutput } from "../shared/types";
+import type { DocumentFormat } from "./types";
 
 export async function convertDocx(
   file: File,

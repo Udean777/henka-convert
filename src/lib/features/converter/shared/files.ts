@@ -2,13 +2,23 @@ import type { ConverterKind } from "./types";
 
 export const FILE_ACCEPT: Record<ConverterKind, string> = {
   image:
-    ".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif",
+    ".jpg,.jpeg,.png,.webp,.avif,.svg,.bmp,.heic,.heif,image/jpeg,image/png,image/webp,image/avif,image/svg+xml,image/bmp,image/heic,image/heif",
   pdf: ".pdf,application/pdf",
   docx: ".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 };
 
 const extensions: Record<ConverterKind, string[]> = {
-  image: [".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"],
+  image: [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp",
+    ".avif",
+    ".svg",
+    ".bmp",
+    ".heic",
+    ".heif",
+  ],
   pdf: [".pdf"],
   docx: [".docx"],
 };

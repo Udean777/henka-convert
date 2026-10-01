@@ -1,0 +1,3 @@
+export const MAX_IMAGE_PIXELS = 40_000_000;
+export const MAX_IMAGE_DIMENSION = 16_384;
+export const MAX_SVG_OUTPUT_WIDTH = 4096;
