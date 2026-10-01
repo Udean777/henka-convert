@@ -35,6 +35,7 @@
     "heic-to": "^1.6.5",
     "mammoth": "^1.13.0",
     "pdfjs-dist": "^6.3.289",
-    "turndown": "^7.2.4"
+    "turndown": "^7.2.4",
+    "utif2": "^4.1.0"
   }
 }

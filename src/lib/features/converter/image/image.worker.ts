@@ -1,6 +1,7 @@
 import type { ImageConversionErrorCode, ImageFormat } from "./types";
 import { MAX_IMAGE_DIMENSION, MAX_IMAGE_PIXELS } from "../shared/limits";
 import { decodeWithWasm, encodeWithWasm } from "./codecs";
+import { decodeTiff, isTiffFile } from "./tiff";
 
 interface ConvertRequest {
   file: File;
@@ -27,7 +28,9 @@ workerScope.addEventListener("message", async ({ data }) => {
     }
 
     let imageData: ImageData | undefined;
-    if (
+    if (!bitmap && isTiffFile(data.file)) {
+      imageData = await decodeTiff(data.source);
+    } else if (
       !bitmap &&
       (/\.(heic|heif)$/i.test(data.file.name) ||
         /image\/(heic|heif)/i.test(data.file.type))
@@ -42,11 +45,11 @@ workerScope.addEventListener("message", async ({ data }) => {
       try {
         bitmap = await createImageBitmap(data.source);
       } catch {
-      try {
-        imageData = await decodeWithWasm(data.source, data.file);
-      } catch {
-        throw conversionError("input-unsupported");
-      }
+        try {
+          imageData = await decodeWithWasm(data.source, data.file);
+        } catch {
+          throw conversionError("input-unsupported");
+        }
       }
     }
 

@@ -16,6 +16,7 @@
     imageCapabilitiesReady: boolean;
     imageFormatsAvailable: boolean;
     hasSvgInput: boolean;
+    hasTiffInput: boolean;
     busy: boolean;
     text: WorkspaceText;
     onTargetChange: (value: string) => void;
@@ -32,6 +33,7 @@
     imageCapabilitiesReady,
     imageFormatsAvailable,
     hasSvgInput,
+    hasTiffInput,
     busy,
     text,
     onTargetChange,
@@ -125,4 +127,8 @@
   <p class="mt-3 text-sm leading-6 text-muted">{text.pdfTextNote}</p>
 {:else if kind === "docx"}
   <p class="mt-3 text-sm leading-6 text-muted">{text.docxNote}</p>
+{/if}
+
+{#if kind === "image" && hasTiffInput}
+  <p class="mt-3 text-sm leading-6 text-muted">{text.tiffFirstPageNote}</p>
 {/if}

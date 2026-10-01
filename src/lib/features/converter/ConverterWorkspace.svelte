@@ -43,6 +43,9 @@
         /\.svg$/i.test(job.file.name) || job.file.type === "image/svg+xml",
     ),
   );
+  const hasTiffInput = $derived(
+    currentJobs.some((job) => /\.tiff?$/i.test(job.file.name)),
+  );
   const formats = $derived.by(() => {
     if (state.kind === "image") {
       return state.imageOutputs.map((value) => ({
@@ -146,6 +149,7 @@
     imageCapabilitiesReady={state.imageCapabilitiesReady}
     imageFormatsAvailable={state.imageOutputs.length > 0}
     {hasSvgInput}
+    {hasTiffInput}
     {busy}
     {text}
     onTargetChange={workspace.selectTarget}

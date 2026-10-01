@@ -40,6 +40,7 @@ src/lib/features/converter/
 │   ├── errors.ts                       # Image-specific conversion error type
 │   ├── image.worker.ts                 # Decode, normalize, and encode orchestration
 │   ├── svg.ts                          # SVG validation, sizing, and rasterization
+│   ├── tiff.ts                         # Lazy TIFF decode; first page only
 │   ├── types.ts                        # Image formats and image error codes
 │   └── worker-client.ts                # Worker lifecycle and message protocol
 ├── pdf/
@@ -60,14 +61,15 @@ src/lib/features/converter/
 └── workspace.svelte.ts                 # Per-instance queue and conversion orchestration
 ```
 
-The image converter accepts JPG/JPEG, PNG, WebP, AVIF, SVG, BMP, and HEIC/HEIF.
+The image converter accepts JPG/JPEG, PNG, WebP, AVIF, SVG, BMP, TIFF, and HEIC/HEIF.
 It offers JPG, PNG, WebP, and AVIF output when the browser supports workers,
 OffscreenCanvas, and WebAssembly. JPEG, PNG, WebP, and AVIF output use bundled
 WebAssembly codecs so the available formats do not depend on each browser's
 native canvas encoders. Native image decoding is used when available; bundled
 WebAssembly decoders provide a fallback for JPEG, PNG, WebP, and AVIF. Codecs
-load only when a conversion needs them. HEIC/HEIF decoding remains a separate
-lazy-loaded path.
+load only when a conversion needs them. TIFF decoding is also lazy-loaded in
+the worker; multi-page TIFF input converts its first page. HEIC/HEIF decoding
+remains a separate lazy-loaded path.
 SVG output is rasterized at a user-selected width with its aspect ratio
 preserved; the resulting bitmap is transferred to the image worker for encoding.
 Raster inputs and rendered SVG outputs are limited to 40 megapixels and 16,384
