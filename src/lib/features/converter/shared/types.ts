@@ -1,4 +1,4 @@
-export type ConverterKind = "image" | "pdf" | "docx";
+export type ConverterKind = "image" | "pdf" | "docx" | "video" | "audio";
 
 export interface ConversionOutput {
   name: string;

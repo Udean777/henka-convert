@@ -15,7 +15,7 @@
   <title>Henka Convert</title>
   <meta
     name="description"
-    content="Convert images and documents locally in your browser."
+    content="Convert images, documents, and short videos locally in your browser."
   />
 </svelte:head>
 

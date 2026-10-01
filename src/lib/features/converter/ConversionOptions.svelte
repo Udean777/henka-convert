@@ -15,6 +15,10 @@
     svgOutputWidth: number;
     imageCapabilitiesReady: boolean;
     imageFormatsAvailable: boolean;
+    videoCapabilitiesReady: boolean;
+    videoFormatsAvailable: boolean;
+    audioCapabilitiesReady: boolean;
+    audioFormatsAvailable: boolean;
     hasSvgInput: boolean;
     hasTiffInput: boolean;
     busy: boolean;
@@ -32,6 +36,10 @@
     svgOutputWidth,
     imageCapabilitiesReady,
     imageFormatsAvailable,
+    videoCapabilitiesReady,
+    videoFormatsAvailable,
+    audioCapabilitiesReady,
+    audioFormatsAvailable,
     hasSvgInput,
     hasTiffInput,
     busy,
@@ -51,7 +59,10 @@
       <select
         class="min-w-56 max-w-full rounded-lg border border-border bg-background px-3 py-2.5 font-normal"
         value={target}
-        disabled={busy || (kind === "image" && !imageCapabilitiesReady)}
+        disabled={busy ||
+          (kind === "image" && !imageCapabilitiesReady) ||
+          (kind === "video" && !videoCapabilitiesReady) ||
+          (kind === "audio" && !audioCapabilitiesReady)}
         onchange={(event) => onTargetChange(event.currentTarget.value)}
       >
         {#if kind === "image" && formats.length === 0}
@@ -59,6 +70,18 @@
             {imageCapabilitiesReady
               ? text.imageFormatUnavailableShort
               : text.checkingImageFormats}
+          </option>
+        {:else if kind === "video" && formats.length === 0}
+          <option value={target} disabled>
+            {videoCapabilitiesReady
+              ? text.videoFormatUnavailableShort
+              : text.checkingVideoFormats}
+          </option>
+        {:else if kind === "audio" && formats.length === 0}
+          <option value={target} disabled>
+            {audioCapabilitiesReady
+              ? text.audioFormatUnavailableShort
+              : text.checkingAudioFormats}
           </option>
         {/if}
         {#each formats as format (format.value)}
@@ -123,6 +146,26 @@
   </p>
 {/if}
 
+{#if kind === "audio" && !audioCapabilitiesReady}
+  <p class="mt-3 text-sm leading-6 text-muted" role="status">
+    {text.checkingAudioFormats}
+  </p>
+{:else if kind === "audio" && !audioFormatsAvailable}
+  <p class="mt-3 text-sm leading-6 text-muted" role="status">
+    {text.audioFormatsUnavailable}
+  </p>
+{/if}
+
+{#if kind === "video" && !videoCapabilitiesReady}
+  <p class="mt-3 text-sm leading-6 text-muted" role="status">
+    {text.checkingVideoFormats}
+  </p>
+{:else if kind === "video" && !videoFormatsAvailable}
+  <p class="mt-3 text-sm leading-6 text-muted" role="status">
+    {text.videoFormatsUnavailable}
+  </p>
+{/if}
+
 {#if kind === "pdf" && target === "text/plain"}
   <p class="mt-3 text-sm leading-6 text-muted">{text.pdfTextNote}</p>
 {:else if kind === "docx"}
@@ -131,4 +174,17 @@
 
 {#if kind === "image" && hasTiffInput}
   <p class="mt-3 text-sm leading-6 text-muted">{text.tiffFirstPageNote}</p>
+{/if}
+
+{#if kind === "video"}
+  <p class="mt-3 text-sm leading-6 text-muted">{text.videoLimitsNote}</p>
+{/if}
+
+{#if kind === "audio"}
+  <p class="mt-3 text-sm leading-6 text-muted">
+    {text.audioLimitsNote}
+    {#if target === "audio/wav"}
+      <br />{text.audioWavNote}
+    {/if}
+  </p>
 {/if}

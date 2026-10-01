@@ -1,13 +1,16 @@
 import type { DocumentFormat } from "./documents/types";
 import type { ImageFormat } from "./image/types";
 import type { PdfFormat } from "./pdf/types";
+import type { VideoFormat } from "./video/types";
+import type { AudioFormat } from "./audio/types";
 import type { Language } from "$lib/i18n/messages";
 import type { messages } from "$lib/i18n/messages";
 import { getConversionErrorMessage, runConversion } from "./run-conversion";
 import { isSupportedFile } from "./shared/files";
 import type { ConversionOutput, ConverterKind, FileJob } from "./shared/types";
 
-type OutputTarget = ImageFormat | PdfFormat | DocumentFormat;
+type OutputTarget =
+  ImageFormat | PdfFormat | DocumentFormat | VideoFormat | AudioFormat;
 export type WorkspaceText = (typeof messages)[Language];
 
 interface WorkspaceState {
@@ -17,6 +20,12 @@ interface WorkspaceState {
   svgOutputWidth: number;
   imageOutputs: ImageFormat[];
   imageCapabilitiesReady: boolean;
+  videoOutputs: VideoFormat[];
+  videoCapabilitiesReady: boolean;
+  videoCapabilitiesLoading: boolean;
+  audioOutputs: AudioFormat[];
+  audioCapabilitiesReady: boolean;
+  audioCapabilitiesLoading: boolean;
   jobs: FileJob[];
   invalidFiles: boolean;
   downloadError: string;
@@ -41,6 +50,12 @@ export function createConverterWorkspace(
     svgOutputWidth: 1024,
     imageOutputs: [],
     imageCapabilitiesReady: false,
+    videoOutputs: [],
+    videoCapabilitiesReady: false,
+    videoCapabilitiesLoading: false,
+    audioOutputs: [],
+    audioCapabilitiesReady: false,
+    audioCapabilitiesLoading: false,
     jobs: [],
     invalidFiles: false,
     downloadError: "",
@@ -71,8 +86,54 @@ export function createConverterWorkspace(
     }
   }
 
+  async function loadVideoCapabilities() {
+    if (state.videoCapabilitiesReady || state.videoCapabilitiesLoading) return;
+    state.videoCapabilitiesLoading = true;
+    try {
+      const { getVideoOutputFormats } = await import("./video/worker-client");
+      state.videoOutputs = await getVideoOutputFormats();
+      if (
+        state.kind === "video" &&
+        (!isVideoFormat(state.target) ||
+          !state.videoOutputs.includes(state.target))
+      ) {
+        state.target = state.videoOutputs[0] ?? "video/mp4";
+      }
+    } catch {
+      state.videoOutputs = [];
+    } finally {
+      state.videoCapabilitiesReady = true;
+      state.videoCapabilitiesLoading = false;
+    }
+  }
+
+  async function loadAudioCapabilities() {
+    if (state.audioCapabilitiesReady || state.audioCapabilitiesLoading) return;
+    state.audioCapabilitiesLoading = true;
+    try {
+      const { getAudioOutputFormats } = await import("./audio/worker-client");
+      state.audioOutputs = await getAudioOutputFormats();
+      if (
+        state.kind === "audio" &&
+        (!isAudioFormat(state.target) ||
+          !state.audioOutputs.includes(state.target))
+      ) {
+        state.target = state.audioOutputs.includes("audio/mpeg")
+          ? "audio/mpeg"
+          : (state.audioOutputs[0] ?? "audio/wav");
+      }
+    } catch {
+      state.audioOutputs = [];
+    } finally {
+      state.audioCapabilitiesReady = true;
+      state.audioCapabilitiesLoading = false;
+    }
+  }
+
   function selectKind(kind: ConverterKind) {
     state.kind = kind;
+    if (kind === "video") void loadVideoCapabilities();
+    if (kind === "audio") void loadAudioCapabilities();
     state.target =
       kind === "image"
         ? state.imageOutputs.includes("image/webp")
@@ -80,7 +141,15 @@ export function createConverterWorkspace(
           : (state.imageOutputs[0] ?? "image/png")
         : kind === "pdf"
           ? "image/png"
-          : "text/html";
+          : kind === "docx"
+            ? "text/html"
+            : kind === "video"
+              ? state.videoOutputs.includes("video/mp4")
+                ? "video/mp4"
+                : (state.videoOutputs[0] ?? "video/mp4")
+              : state.audioOutputs.includes("audio/mpeg")
+                ? "audio/mpeg"
+                : (state.audioOutputs[0] ?? "audio/wav");
     state.invalidFiles = false;
   }
 
@@ -90,6 +159,10 @@ export function createConverterWorkspace(
     } else if (state.kind === "pdf" && isPdfFormat(value)) {
       state.target = value;
     } else if (state.kind === "docx" && isDocumentFormat(value)) {
+      state.target = value;
+    } else if (state.kind === "video" && isVideoFormat(value)) {
+      state.target = value;
+    } else if (state.kind === "audio" && isAudioFormat(value)) {
       state.target = value;
     }
   }
@@ -187,6 +260,8 @@ export function createConverterWorkspace(
     finishedOutputs,
     busy,
     loadImageCapabilities,
+    loadVideoCapabilities,
+    loadAudioCapabilities,
     selectKind,
     selectTarget,
     setQuality,
@@ -213,4 +288,12 @@ function isPdfFormat(value: string): value is PdfFormat {
 
 function isDocumentFormat(value: string): value is DocumentFormat {
   return documentFormats.some((format) => format === value);
+}
+
+function isVideoFormat(value: string): value is VideoFormat {
+  return value === "video/mp4" || value === "video/webm";
+}
+
+function isAudioFormat(value: string): value is AudioFormat {
+  return value === "audio/mpeg" || value === "audio/wav";
 }

@@ -50,9 +50,9 @@ export async function decodeTiff(source: Blob): Promise<ImageData> {
   }
 }
 
-function getDimensions(page: TiffPage):
-  | { width: number; height: number }
-  | undefined {
+function getDimensions(
+  page: TiffPage,
+): { width: number; height: number } | undefined {
   const width = page.width ?? page.t256?.[0];
   const height = page.height ?? page.t257?.[0];
   if (width === undefined || height === undefined) return undefined;

@@ -1,9 +1,6 @@
 <script lang="ts">
   import { formatBytes } from "./shared/files";
-  import type {
-    ConversionOutput,
-    FileJob,
-  } from "./shared/types";
+  import type { ConversionOutput, FileJob } from "./shared/types";
   import type { WorkspaceText } from "./workspace.svelte";
 
   interface Props {
@@ -83,20 +80,34 @@
   {:else}
     <ul class="divide-y divide-border rounded-xl border border-border">
       {#each jobs as job (job.id)}
+        {@const singleOutput =
+          job.status === "done" && job.outputs.length === 1
+            ? job.outputs[0]
+            : undefined}
         <li
           class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-2">
               <p class="max-w-full truncate text-sm font-medium">
-                {job.file.name}
+                {singleOutput?.name ?? job.file.name}
               </p>
               <span
                 class="rounded-full bg-surface px-2 py-0.5 text-xs text-muted"
                 >{statusLabel(job.status)}</span
               >
             </div>
-            <p class="mt-1 text-xs text-muted">{formatBytes(job.file.size)}</p>
+            <p class="mt-1 text-xs text-muted">
+              {#if singleOutput}
+                {formatBytes(singleOutput.blob.size)}
+                <span aria-hidden="true"> · </span>
+                {text.convertedFrom}
+                {job.file.name}
+                ({formatBytes(job.file.size)})
+              {:else}
+                {formatBytes(job.file.size)}
+              {/if}
+            </p>
             {#if job.status === "converting"}
               <div
                 class="mt-3 h-1.5 overflow-hidden rounded-full bg-border"
@@ -111,6 +122,20 @@
                   style={`width: ${Math.max(4, job.progress)}%`}
                 ></div>
               </div>
+            {/if}
+            {#if job.status === "done" && job.outputs.length > 1}
+              <ul class="mt-3 space-y-1.5" aria-label={text.convertedFiles}>
+                {#each job.outputs as output (output.name)}
+                  <li
+                    class="flex min-w-0 items-baseline justify-between gap-3 text-xs"
+                  >
+                    <span class="min-w-0 truncate">{output.name}</span>
+                    <span class="shrink-0 text-muted"
+                      >{formatBytes(output.blob.size)}</span
+                    >
+                  </li>
+                {/each}
+              </ul>
             {/if}
             {#if job.error}
               <p

@@ -12,7 +12,8 @@ export async function convertImage(
   quality: number,
   svgOutputWidth: number,
 ): Promise<ConversionOutput> {
-  const extension = target === "image/jpeg" ? "jpg" : target.slice("image/".length);
+  const extension =
+    target === "image/jpeg" ? "jpg" : target.slice("image/".length);
   const name = `${removeExtension(file.name)}.${extension}`;
   const svg = isSvgFile(file);
   const source = svg

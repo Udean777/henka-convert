@@ -8,19 +8,23 @@ export const messages = {
     privacy: "Your files stay on your device",
     title: "File conversion, right in your browser.",
     description:
-      "Convert images, PDFs, and Word documents on your device. Your files are not uploaded.",
+      "Convert images, PDFs, Word documents, and short videos on your device. Your files are not uploaded.",
     status: "Choose a file type to get started.",
     footer:
       "No backend conversion service. Files are processed in your browser.",
     featureImage: "Images",
     featurePdf: "PDF",
     featureDocx: "DOCX (experimental)",
+    featureVideo: "Video",
+    featureAudio: "Audio",
     dropFiles: "Drop files here, or browse your device",
     chooseFiles: "Choose files",
     imageTypes: "JPG, PNG, WebP, AVIF, SVG, BMP, TIFF, HEIC, HEIF",
     tiffFirstPageNote: "Only the first page of a multi-page TIFF is converted.",
     pdfTypes: "PDF documents",
     docxTypes: "DOCX documents",
+    videoTypes: "MP4, MOV, or WebM videos (up to 20 MB)",
+    audioTypes: "MP3, WAV, M4A/AAC, OGG/Opus, or FLAC audio",
     convertTo: "Convert to",
     quality: "Image quality",
     transparencyNote:
@@ -34,6 +38,8 @@ export const messages = {
     convert: "Convert files",
     download: "Download",
     downloadAll: "Download all as ZIP",
+    convertedFrom: "Converted from",
+    convertedFiles: "Converted files",
     remove: "Remove",
     ready: "Ready",
     converting: "Converting",
@@ -65,6 +71,48 @@ export const messages = {
     svgWidthHint: "pixels; height is calculated to preserve the aspect ratio.",
     pdfOutput: "PNG pages, JPG pages, or text",
     docxOutput: "HTML, plain text, or Markdown",
+    checkingVideoFormats: "Checking video encoding support in this browser…",
+    videoFormatUnavailableShort: "No supported output formats",
+    videoFormatsUnavailable:
+      "This browser cannot encode MP4 or WebM locally at the supported video size.",
+    videoLimitsNote:
+      "Videos stay on your device. Files can be up to 20 MB and 60 seconds. High-resolution videos are resized automatically. Available output formats depend on this browser and device.",
+    videoInputUnsupported:
+      "This browser could not read the video. The file may be damaged or use an unsupported codec.",
+    videoOutputUnsupported:
+      "This browser cannot create that video format. Choose another available format.",
+    videoWorkerUnsupported:
+      "This browser does not support the background processing needed for video conversion.",
+    videoTooLarge: "Videos must be 20 MB or smaller.",
+    videoTooLong: "Videos must be 60 seconds or shorter.",
+    videoDurationUnavailable:
+      "Could not determine the video duration. Check that the file plays, then try again.",
+    videoResolutionTooLarge:
+      "This video’s resolution is too high to convert on this device. Try a smaller or lower-resolution file.",
+    videoConversionFailed:
+      "Video conversion failed. Check the file and try another output format.",
+    checkingAudioFormats: "Checking local audio encoding support…",
+    audioFormatUnavailableShort: "No supported output formats",
+    audioFormatsUnavailable:
+      "This browser could not prepare local audio conversion. Try reloading the page or a current browser.",
+    audioLimitsNote:
+      "Audio stays on your device. Files can be up to 20 MB and 10 minutes. FLAC input depends on browser support.",
+    audioWavNote:
+      "WAV can be much larger than the original. Choose MP3 for a smaller file.",
+    audioInputUnsupported:
+      "This audio file could not be read. It may be damaged or use a codec unsupported by this browser.",
+    audioOutputUnsupported:
+      "This browser cannot create that audio format. Choose another available format.",
+    audioWorkerUnsupported:
+      "This browser does not support the background processing needed for audio conversion.",
+    audioTooLarge: "Audio files must be 20 MB or smaller.",
+    audioTooLong: "Audio must be 10 minutes or shorter.",
+    audioDurationUnavailable:
+      "Could not determine the audio duration. Check that the file plays, then try again.",
+    audioWavTooLarge:
+      "This WAV result would be too large to create safely in the browser. Choose MP3 instead.",
+    audioConversionFailed:
+      "Audio conversion failed. Check the file and try another output format.",
     file: "file",
     files: "files",
     errorPrefix: "Conversion failed",
@@ -76,12 +124,14 @@ export const messages = {
     privacy: "File Anda tetap di perangkat ini",
     title: "Konversi file, langsung di browser Anda.",
     description:
-      "Konversi gambar, PDF, dan dokumen Word langsung di perangkat. File Anda tidak diunggah.",
+      "Konversi gambar, PDF, dokumen Word, dan video pendek langsung di perangkat. File Anda tidak diunggah.",
     status: "Pilih jenis file untuk memulai.",
     footer: "Tanpa layanan konversi backend. File diproses di browser Anda.",
     featureImage: "Gambar",
     featurePdf: "PDF",
     featureDocx: "DOCX (eksperimental)",
+    featureVideo: "Video",
+    featureAudio: "Audio",
     dropFiles: "Letakkan file di sini atau pilih dari perangkat",
     chooseFiles: "Pilih file",
     imageTypes: "JPG, PNG, WebP, AVIF, SVG, BMP, TIFF, HEIC, HEIF",
@@ -89,6 +139,8 @@ export const messages = {
       "Hanya halaman pertama dari TIFF multi-halaman yang dikonversi.",
     pdfTypes: "Dokumen PDF",
     docxTypes: "Dokumen DOCX",
+    videoTypes: "Video MP4, MOV, atau WebM (maksimal 20 MB)",
+    audioTypes: "Audio MP3, WAV, M4A/AAC, OGG/Opus, atau FLAC",
     convertTo: "Ubah ke",
     quality: "Kualitas gambar",
     transparencyNote:
@@ -102,6 +154,8 @@ export const messages = {
     convert: "Konversi file",
     download: "Unduh",
     downloadAll: "Unduh semua sebagai ZIP",
+    convertedFrom: "Dikonversi dari",
+    convertedFiles: "File hasil konversi",
     remove: "Hapus",
     ready: "Siap",
     converting: "Mengonversi",
@@ -133,6 +187,48 @@ export const messages = {
     svgWidthHint: "piksel; tinggi dihitung untuk mempertahankan rasio gambar.",
     pdfOutput: "Halaman PNG, halaman JPG, atau teks",
     docxOutput: "HTML, teks biasa, atau Markdown",
+    checkingVideoFormats: "Memeriksa dukungan encoding video di browser ini…",
+    videoFormatUnavailableShort: "Format keluaran tidak tersedia",
+    videoFormatsUnavailable:
+      "Browser ini tidak dapat membuat MP4 atau WebM lokal pada batas ukuran video yang didukung.",
+    videoLimitsNote:
+      "Video tetap di perangkat Anda. Ukuran file maksimal 20 MB dan durasi 60 detik. Resolusi tinggi akan diperkecil otomatis. Format keluaran yang tersedia bergantung pada browser dan perangkat.",
+    videoInputUnsupported:
+      "Browser ini tidak dapat membaca video. File mungkin rusak atau memakai codec yang tidak didukung.",
+    videoOutputUnsupported:
+      "Browser ini tidak dapat membuat format video tersebut. Pilih format lain yang tersedia.",
+    videoWorkerUnsupported:
+      "Browser ini tidak mendukung pemrosesan latar belakang untuk konversi video.",
+    videoTooLarge: "Ukuran video maksimal 20 MB.",
+    videoTooLong: "Durasi video maksimal 60 detik.",
+    videoDurationUnavailable:
+      "Durasi video tidak dapat dibaca. Pastikan file dapat diputar, lalu coba lagi.",
+    videoResolutionTooLarge:
+      "Resolusi video ini terlalu tinggi untuk dikonversi di perangkat ini. Coba file dengan resolusi lebih rendah.",
+    videoConversionFailed:
+      "Konversi video gagal. Periksa file atau coba format keluaran lain.",
+    checkingAudioFormats: "Memeriksa dukungan konversi audio lokal…",
+    audioFormatUnavailableShort: "Format keluaran tidak tersedia",
+    audioFormatsUnavailable:
+      "Browser ini belum dapat menyiapkan konversi audio lokal. Muat ulang halaman atau coba browser versi terbaru.",
+    audioLimitsNote:
+      "Audio tetap di perangkat Anda. Ukuran file maksimal 20 MB dan durasi 10 menit. Dukungan input FLAC bergantung pada browser.",
+    audioWavNote:
+      "Ukuran WAV bisa jauh lebih besar dari file asal. Pilih MP3 untuk hasil yang lebih kecil.",
+    audioInputUnsupported:
+      "File audio tidak dapat dibaca. File mungkin rusak atau memakai codec yang tidak didukung browser ini.",
+    audioOutputUnsupported:
+      "Browser ini tidak dapat membuat format audio tersebut. Pilih format lain yang tersedia.",
+    audioWorkerUnsupported:
+      "Browser ini tidak mendukung pemrosesan latar belakang untuk konversi audio.",
+    audioTooLarge: "Ukuran file audio maksimal 20 MB.",
+    audioTooLong: "Durasi audio maksimal 10 menit.",
+    audioDurationUnavailable:
+      "Durasi audio tidak dapat dibaca. Pastikan file dapat diputar, lalu coba lagi.",
+    audioWavTooLarge:
+      "Hasil WAV ini terlalu besar untuk dibuat dengan aman di browser. Coba pilih MP3.",
+    audioConversionFailed:
+      "Konversi audio gagal. Periksa file atau coba format keluaran lain.",
     file: "file",
     files: "file",
     errorPrefix: "Konversi gagal",

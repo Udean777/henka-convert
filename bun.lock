@@ -10,10 +10,12 @@
         "@jsquash/png": "^3.1.1",
         "@jsquash/webp": "^1.5.0",
         "@lucide/svelte": "^1.49.0",
+        "@mediabunny/mp3-encoder": "^1.61.0",
         "bits-ui": "^2.19.4",
         "fflate": "^0.8.3",
         "heic-to": "^1.6.5",
         "mammoth": "^1.13.0",
+        "mediabunny": "^1.61.0",
         "pdfjs-dist": "^6.3.289",
         "turndown": "^7.2.4",
         "utif2": "^4.1.0",
@@ -24,6 +26,8 @@
         "@sveltejs/vite-plugin-svelte": "^7.1.2",
         "@tailwindcss/vite": "^4.3.3",
         "@types/turndown": "^5.0.6",
+        "prettier": "^3.9.9",
+        "prettier-plugin-svelte": "^4.1.1",
         "svelte": "^5.56.1",
         "svelte-check": "^4.6.0",
         "tailwindcss": "^4.3.3",
@@ -60,6 +64,8 @@
     "@jsquash/webp": ["@jsquash/webp@1.5.0", "", { "dependencies": { "wasm-feature-detect": "^1.2.11" } }, "sha512-KggLoj2MnRSfIqTeKe1EmbljTX2vuV7mh79k89PCL1pyqiDULcPM1L47twxXt0hkb68F70bXiL31MxsuoZtKFw=="],
 
     "@lucide/svelte": ["@lucide/svelte@1.49.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-RFH6Vx7dj6hshcBa1qJ0nKAWwkh385jJbDwF1WVg7yflC89310BsA55SEmJnaSRfr03dAyZMMLUC1EMGBu0Z0Q=="],
+
+    "@mediabunny/mp3-encoder": ["@mediabunny/mp3-encoder@1.61.0", "", { "peerDependencies": { "mediabunny": "^1.0.0" } }, "sha512-b9IFKx5Dm2+OZNqXd0of+jPPGiHCGzuD5B0oCbx73Z051KyRPbrg+yMZODKbKZeyPOlgJWh8CtZFw0l4DkLGWQ=="],
 
     "@mixmark-io/domino": ["@mixmark-io/domino@2.2.0", "", {}, "sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw=="],
 
@@ -169,6 +175,10 @@
 
     "@types/cookie": ["@types/cookie@0.6.0", "", {}, "sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA=="],
 
+    "@types/dom-mediacapture-transform": ["@types/dom-mediacapture-transform@0.1.12", "", { "dependencies": { "@types/dom-webcodecs": "*" } }, "sha512-d7/QsLRwF864A5mgIM/YrfiglHoYn7zgCcAoJgW404r+2DwnNr7EBbLnCWpmOMgH8y0te73L1AV6H1bmauaWFw=="],
+
+    "@types/dom-webcodecs": ["@types/dom-webcodecs@0.1.13", "", {}, "sha512-O5hkiFIcjjszPIYyUSyvScyvrBoV3NOEEZx/pMlsu44TKzWNkLVBBxnxJz42in5n3QIolYOcBYFCPZZ0h8SkwQ=="],
+
     "@types/estree": ["@types/estree@1.0.9", "", {}, "sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg=="],
 
     "@types/turndown": ["@types/turndown@5.0.6", "", {}, "sha512-ru00MoyeeouE5BX4gRL+6m/BsDfbRayOskWqUvh7CLGW+UXxHQItqALa38kKnOiZPqJrtzJUgAC2+F0rL1S4Pg=="],
@@ -275,6 +285,8 @@
 
     "mammoth": ["mammoth@1.13.0", "", { "dependencies": { "@xmldom/xmldom": "^0.8.6", "argparse": "~1.0.3", "base64-js": "^1.5.1", "dingbat-to-unicode": "^1.0.1", "jszip": "^3.7.1", "lop": "^0.4.2", "underscore": "^1.13.1", "xmlbuilder": "^10.0.0" }, "bin": { "mammoth": "bin/mammoth" } }, "sha512-2cawcYFcP7ISfXbBcL9lmVgTNWo88v/52ND1gnywHtVT/pX0//puPnf0iMPV9ZgmuvNOE+zkIhDgZ9M2c2dDDg=="],
 
+    "mediabunny": ["mediabunny@1.61.0", "", { "dependencies": { "@types/dom-mediacapture-transform": "^0.1.11", "@types/dom-webcodecs": "0.1.13" } }, "sha512-WciPOYwKZwgYkoBKcEK6JzzIf+w5whypPzFdOihOylZ/5Qv19FmNfRnTcaprH+jD136YpEASU30Eb6VNCJiz3A=="],
+
     "mri": ["mri@1.2.0", "", {}, "sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA=="],
 
     "mrmime": ["mrmime@2.0.1", "", {}, "sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ=="],
@@ -294,6 +306,10 @@
     "picomatch": ["picomatch@4.0.7", "", {}, "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA=="],
 
     "postcss": ["postcss@8.5.28", "", { "dependencies": { "nanoid": "^3.3.18", "picocolors": "^1.1.1", "source-map-js": "^1.2.1" } }, "sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A=="],
+
+    "prettier": ["prettier@3.9.9", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg=="],
+
+    "prettier-plugin-svelte": ["prettier-plugin-svelte@4.1.1", "", { "peerDependencies": { "prettier": "^3.0.0", "svelte": "^5.0.0" } }, "sha512-wXvbXMjSvb4C9ENWTHXyd+ihakKCsJ6rJhLP6/8HFNj4GkZr48jqL9PoKsl2sk7SyCZRTnJ7O2TTowUpOxP/KA=="],
 
     "process-nextick-args": ["process-nextick-args@2.0.1", "", {}, "sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag=="],
 

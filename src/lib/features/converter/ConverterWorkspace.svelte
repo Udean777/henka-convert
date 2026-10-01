@@ -9,8 +9,9 @@
   import ConversionJobList from "./ConversionJobList.svelte";
   import ConversionOptions from "./ConversionOptions.svelte";
   import type { DocumentFormat } from "./documents/types";
-  import type { ImageFormat } from "./image/types";
   import type { PdfFormat } from "./pdf/types";
+  import type { VideoFormat } from "./video/types";
+  import type { AudioFormat } from "./audio/types";
   import { downloadBlob, downloadOutputs } from "./shared/download";
   import type { ConverterKind, FileJob } from "./shared/types";
   import { createConverterWorkspace } from "./workspace.svelte";
@@ -33,7 +34,7 @@
   );
   const state = workspace.state;
   const text = $derived(messages[preferences.language]);
-  const kinds: ConverterKind[] = ["image", "pdf", "docx"];
+  const kinds: ConverterKind[] = ["image", "pdf", "docx", "video", "audio"];
   const currentJobs = $derived(workspace.currentJobs());
   const finishedOutputs = $derived(workspace.finishedOutputs());
   const busy = $derived(workspace.busy());
@@ -58,11 +59,26 @@
               : value.slice("image/".length).toUpperCase(),
       }));
     }
-    return state.kind === "pdf" ? pdfFormats : documentFormats;
+    if (state.kind === "pdf") return pdfFormats;
+    if (state.kind === "docx") return documentFormats;
+    if (state.kind === "video") {
+      return state.videoOutputs.map((value) => ({
+        value: value satisfies VideoFormat,
+        label: value === "video/mp4" ? "MP4" : "WebM",
+      }));
+    }
+    return state.audioOutputs.map((value) => ({
+      value: value satisfies AudioFormat,
+      label: value === "audio/mpeg" ? "MP3" : "WAV",
+    }));
   });
   const canConvert = $derived(
     (state.kind !== "image" ||
       (state.imageCapabilitiesReady && state.imageOutputs.length > 0)) &&
+      (state.kind !== "video" ||
+        (state.videoCapabilitiesReady && state.videoOutputs.length > 0)) &&
+      (state.kind !== "audio" ||
+        (state.audioCapabilitiesReady && state.audioOutputs.length > 0)) &&
       currentJobs.some(
         (job) => job.status === "ready" || job.status === "error",
       ),
@@ -81,7 +97,11 @@
           ? text.imageTypes
           : state.kind === "pdf"
             ? text.pdfTypes
-            : text.docxTypes,
+            : state.kind === "docx"
+              ? text.docxTypes
+              : state.kind === "video"
+                ? text.videoTypes
+                : text.audioTypes,
     };
   }
 
@@ -128,7 +148,11 @@
           ? text.featureImage
           : item === "pdf"
             ? text.featurePdf
-            : text.featureDocx}
+            : item === "docx"
+              ? text.featureDocx
+              : item === "video"
+                ? text.featureVideo
+                : text.featureAudio}
       </button>
     {/each}
   </div>
@@ -148,6 +172,10 @@
     svgOutputWidth={state.svgOutputWidth}
     imageCapabilitiesReady={state.imageCapabilitiesReady}
     imageFormatsAvailable={state.imageOutputs.length > 0}
+    videoCapabilitiesReady={state.videoCapabilitiesReady}
+    videoFormatsAvailable={state.videoOutputs.length > 0}
+    audioCapabilitiesReady={state.audioCapabilitiesReady}
+    audioFormatsAvailable={state.audioOutputs.length > 0}
     {hasSvgInput}
     {hasTiffInput}
     {busy}

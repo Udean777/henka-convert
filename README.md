@@ -9,8 +9,9 @@ Henka Convert is a local-first file conversion web app. Conversion engines run i
 - Vite and Tailwind CSS v4 (`@tailwindcss/vite`)
 - Bits UI for accessible, unstyled interaction primitives
 - `@lucide/svelte` for icons
+- Mediabunny for local video and audio conversion, with the official MP3 encoder extension for MP3 output
 
-The converter and format-specific engines will be added as client-side modules and Web Workers. Avoid importing browser-only conversion engines from server-rendered module scope; load them in browser code when needed.
+Format-specific conversion engines are client-side modules and Web Workers. Browser-only engines load when their converter is selected; conversion does not send files to an API or backend. Avoid importing browser-only conversion engines from server-rendered module scope.
 
 ## Development
 
