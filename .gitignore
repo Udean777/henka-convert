@@ -1,21 +1,23 @@
-# IDEs and Editors
-.vscode/
-.idea/
-*.swp
-*.swo
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
 .DS_Store
+Thumbs.db
 
-# Go workspaces
-go.work
-go.work.sum
-
-# Temporary & Logs
-logs/
-*.log
-tmp/
+# Env
 .env
+.env.*
+!.env.example
+!.env.test
 
-# MacOS
-.DS_Store
-.AppleDouble
-.LSOverride
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
