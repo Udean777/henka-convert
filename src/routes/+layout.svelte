@@ -41,6 +41,7 @@
 </script>
 
 <svelte:head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1" />
   <link rel="icon" type="image/webp" sizes="32x32" href="/favicon-32.webp" />
   <link rel="icon" type="image/webp" sizes="512x512" href="/favicon.webp" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.webp" />
