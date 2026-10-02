@@ -1,30 +1,30 @@
 import type { Language, messages } from "$lib/i18n/messages";
-import { DocumentConversionError } from "./documents/errors";
+import { DocumentConversionError } from "../documents/errors";
 import type {
   DocumentConversionErrorCode,
   DocumentFormat,
-} from "./documents/types";
-import { DOCUMENT_FORMATS } from "./documents/formats";
-import { ImageConversionError } from "./image/errors";
+} from "../documents/types";
+import { DOCUMENT_FORMATS } from "../documents/formats";
+import { ImageConversionError } from "../image/errors";
 import type {
   ImageConversionErrorCode,
   ImageFormat,
   ImageTargetFormat,
-} from "./image/types";
-import type { PdfFormat, PdfImageFormat } from "./pdf/types";
-import type { VideoConversionErrorCode, VideoFormat } from "./video/types";
-import type { AudioConversionErrorCode, AudioFormat } from "./audio/types";
-import { AUDIO_FORMATS } from "./audio/formats";
-import { VIDEO_FORMATS } from "./video/formats";
-import { type DataConversionErrorCode, type DataFormat } from "./data/types";
-import { DataConversionError } from "./data/errors";
-import { DATA_FORMATS } from "./data/formats";
-import { IMAGE_OUTPUT_FORMATS } from "./image/formats";
-import { PDF_IMAGE_FORMATS } from "./pdf/types";
-import { PdfConversionError } from "./pdf/errors";
-import type { ConversionOutput, FileJob } from "./shared/types";
-import { VideoConversionError } from "./video/errors";
-import { AudioConversionError } from "./audio/errors";
+} from "../image/types";
+import type { PdfFormat, PdfImageFormat } from "../pdf/types";
+import type { VideoConversionErrorCode, VideoFormat } from "../video/types";
+import type { AudioConversionErrorCode, AudioFormat } from "../audio/types";
+import { AUDIO_FORMATS } from "../audio/formats";
+import { VIDEO_FORMATS } from "../video/formats";
+import { type DataConversionErrorCode, type DataFormat } from "../data/types";
+import { DataConversionError } from "../data/errors";
+import { DATA_FORMATS } from "../data/formats";
+import { IMAGE_OUTPUT_FORMATS } from "../image/formats";
+import { PDF_IMAGE_FORMATS } from "../pdf/types";
+import { PdfConversionError } from "../pdf/errors";
+import type { ConversionOutput, FileJob } from "../shared/types";
+import { VideoConversionError } from "../video/errors";
+import { AudioConversionError } from "../audio/errors";
 
 export type ConversionTarget =
   | ImageTargetFormat
@@ -50,7 +50,7 @@ export async function runConversion(
 ): Promise<ConversionOutput[]> {
   if (job.kind === "image") {
     if (options.target === "application/pdf") {
-      const { convertImageToPdf } = await import("./pdf/convert");
+      const { convertImageToPdf } = await import("../pdf/convert");
       onProgress(20);
       const output = await convertImageToPdf(
         job.file,
@@ -63,7 +63,7 @@ export async function runConversion(
     if (!isImageFormat(options.target)) {
       throw new Error(options.text.imageOutputUnsupported);
     }
-    const { convertImage } = await import("./image/convert");
+    const { convertImage } = await import("../image/convert");
     return [
       await convertImage(
         job.file,
@@ -77,13 +77,13 @@ export async function runConversion(
   if (job.kind === "pdf") {
     if (!isPdfFormat(options.target)) throw new Error(options.text.errorPrefix);
     if (options.target === "text/plain") {
-      const { convertPdfToText } = await import("./pdf/convert");
+      const { convertPdfToText } = await import("../pdf/convert");
       onProgress(20);
       const output = await convertPdfToText(job.file);
       onProgress(100);
       return [output];
     }
-    const { convertPdfToImages } = await import("./pdf/convert");
+    const { convertPdfToImages } = await import("../pdf/convert");
     return convertPdfToImages(job.file, options.target, (current, total) =>
       onProgress(Math.round((current / total) * 100)),
     );
@@ -93,7 +93,7 @@ export async function runConversion(
     if (!isVideoFormat(options.target)) {
       throw new Error(options.text.videoOutputUnsupported);
     }
-    const { convertVideo } = await import("./video/convert");
+    const { convertVideo } = await import("../video/convert");
     return [await convertVideo(job.file, options.target, onProgress)];
   }
 
@@ -101,7 +101,7 @@ export async function runConversion(
     if (!isAudioFormat(options.target)) {
       throw new Error(options.text.audioOutputUnsupported);
     }
-    const { convertAudio } = await import("./audio/convert");
+    const { convertAudio } = await import("../audio/convert");
     return [await convertAudio(job.file, options.target, onProgress)];
   }
 
@@ -109,7 +109,7 @@ export async function runConversion(
     if (!isDataFormat(options.target)) {
       throw new Error(options.text.dataConversionFailed);
     }
-    const { convertData } = await import("./data/convert");
+    const { convertData } = await import("../data/convert");
     return [
       await convertData(
         job.file,
@@ -124,7 +124,7 @@ export async function runConversion(
     if (!isDocumentFormat(options.target)) {
       throw new Error(options.text.errorPrefix);
     }
-    const { convertDocument } = await import("./documents/convert");
+    const { convertDocument } = await import("../documents/convert");
     onProgress(20);
     const output = await convertDocument(
       job.file,

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { formatBytes } from "./shared/files";
-  import type { ConversionOutput, FileJob } from "./shared/types";
-  import type { WorkspaceText } from "./workspace.svelte";
+  import { formatBytes } from "../shared/files";
+  import type { ConversionOutput, FileJob } from "../shared/types";
+  import type { WorkspaceText } from "../application/workspace.svelte";
 
   interface Props {
     jobs: FileJob[];
@@ -44,22 +44,20 @@
     </h2>
     <div class="flex flex-wrap gap-2">
       {#if finishedOutputCount > 1}
-        <button
-          class="rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface"
-          type="button"
-          onclick={onDownloadAll}>{text.downloadAll}</button
+        <button class="utility-button" type="button" onclick={onDownloadAll}
+          >{text.downloadAll}</button
         >
       {/if}
       {#if jobs.length}
         <button
-          class="rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface disabled:opacity-50"
+          class="utility-button"
           type="button"
           disabled={busy}
           onclick={onClear}>{text.clear}</button
         >
       {/if}
       <button
-        class="rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+        class="convert-button"
         type="button"
         disabled={busy || !canConvert}
         onclick={onConvert}>{text.convert}</button
@@ -68,19 +66,17 @@
   </div>
 
   {#if downloadError}
-    <p class="mb-3 text-sm text-red-700 dark:text-red-300" role="alert">
+    <p class="download-error mb-3 text-sm" role="alert">
       {downloadError}
     </p>
   {/if}
 
   {#if jobs.length === 0}
-    <div
-      class="rounded-xl border border-border px-4 py-8 text-center text-sm text-muted"
-    >
+    <div class="empty-jobs">
       {text.noFiles}
     </div>
   {:else}
-    <ul class="divide-y divide-border rounded-xl border border-border">
+    <ul class="job-list divide-y divide-border">
       {#each jobs as job (job.id)}
         {@const singleOutput =
           job.status === "done" && job.outputs.length === 1
@@ -94,8 +90,7 @@
               <p class="max-w-full truncate text-sm font-medium">
                 {singleOutput?.name ?? job.file.name}
               </p>
-              <span
-                class="rounded-full bg-surface px-2 py-0.5 text-xs text-muted"
+              <span class="job-status status-{job.status}"
                 >{statusLabel(job.status)}</span
               >
             </div>
@@ -118,7 +113,7 @@
               <label class="mt-3 flex max-w-sm flex-col gap-1.5 text-sm">
                 {text.dataSelectWorksheet}
                 <select
-                  class="max-w-full rounded-lg border border-border bg-background px-3 py-2 font-normal"
+                  class="worksheet-select"
                   value={job.selectedWorksheet ?? ""}
                   disabled={busy}
                   aria-label={`${text.dataSelectWorksheet}: ${job.file.name}`}
@@ -134,7 +129,7 @@
             {/if}
             {#if job.status === "converting"}
               <div
-                class="mt-3 h-1.5 overflow-hidden rounded-full bg-border"
+                class="mt-3 h-1.5 overflow-hidden bg-border"
                 role="progressbar"
                 aria-valuenow={job.progress}
                 aria-valuemin="0"
@@ -142,7 +137,7 @@
                 aria-label={`${text.converting} ${job.file.name}`}
               >
                 <div
-                  class="h-full bg-foreground transition-[width]"
+                  class="progress-fill transition-[width]"
                   style={`width: ${Math.max(4, job.progress)}%`}
                 ></div>
               </div>
@@ -162,10 +157,7 @@
               </ul>
             {/if}
             {#if job.error}
-              <p
-                class="mt-2 text-sm text-red-700 dark:text-red-300"
-                role="alert"
-              >
+              <p class="job-error mt-2 text-sm" role="alert">
                 {text.errorPrefix}: {job.error}
               </p>
             {/if}
@@ -181,7 +173,7 @@
             {#if job.status === "done"}
               {#each job.outputs as output (output.name)}
                 <button
-                  class="min-w-0 max-w-full whitespace-normal break-words rounded-lg border border-border px-3 py-2 text-left text-sm hover:bg-surface"
+                  class="download-button"
                   type="button"
                   onclick={() => onDownload(output)}
                   >{text.download}{job.outputs.length > 1
@@ -191,7 +183,7 @@
               {/each}
             {/if}
             <button
-              class="rounded-lg px-3 py-2 text-sm text-muted hover:bg-surface hover:text-foreground disabled:opacity-50"
+              class="remove-button"
               type="button"
               aria-label={`${text.remove} ${job.file.name}`}
               disabled={busy}
@@ -203,3 +195,121 @@
     </ul>
   {/if}
 </div>
+
+<style>
+  .utility-button,
+  .download-button {
+    min-height: 2.55rem;
+    border: 1px solid var(--ink);
+    background: transparent;
+    padding: 0.55rem 0.75rem;
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: background-color 120ms ease;
+  }
+
+  .utility-button:hover,
+  .download-button:hover {
+    background: var(--riso-blue-soft);
+  }
+
+  .utility-button:disabled,
+  .convert-button:disabled,
+  .remove-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .convert-button {
+    min-height: 2.65rem;
+    border: 1px solid var(--ink);
+    background: var(--riso-pink);
+    padding: 0.6rem 1rem;
+    color: #201e1e;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 850;
+    transition:
+      background-color 120ms ease,
+      transform 120ms ease;
+  }
+
+  .convert-button:hover:not(:disabled) {
+    background: var(--riso-blue-soft);
+    transform: translate(-1px, -1px);
+  }
+
+  .empty-jobs {
+    border-block: 1px solid var(--rule);
+    padding: 1.5rem 0;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .job-list {
+    border-block: 1px solid var(--rule);
+    border-inline: 0;
+    border-radius: 0;
+  }
+
+  .job-status {
+    display: inline-block;
+    background: transparent;
+    padding: 0.15rem 0;
+    font-size: 0.73rem;
+    font-weight: 750;
+  }
+
+  .status-ready {
+    color: var(--ink-muted);
+  }
+
+  .status-converting {
+    color: var(--riso-blue);
+  }
+
+  .status-done {
+    color: var(--success);
+  }
+
+  .status-error {
+    color: var(--danger);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--riso-blue);
+  }
+
+  .download-error,
+  .job-error {
+    color: var(--danger);
+  }
+
+  .worksheet-select {
+    max-width: 100%;
+    border: 1px solid var(--ink);
+    background: var(--paper-raised);
+    padding: 0.5rem 0.7rem;
+    color: var(--ink);
+  }
+
+  .remove-button {
+    min-height: 2.5rem;
+    border: 0;
+    background: transparent;
+    padding: 0.5rem 0.65rem;
+    color: var(--ink-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+
+  .remove-button:hover:not(:disabled) {
+    color: var(--danger);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

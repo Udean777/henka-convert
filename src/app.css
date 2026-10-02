@@ -1,23 +1,29 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
-  --color-accent: var(--accent);
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-surface: var(--paper-raised);
+  --color-muted: var(--ink-muted);
+  --color-border: var(--rule);
+  --color-accent: var(--riso-blue);
 }
 
 :root {
   color-scheme: light;
-  --background: #ffffff;
-  --foreground: #171717;
-  --surface: #fafafa;
-  --muted: #525252;
-  --border: #e5e5e5;
-  --accent: #171717;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  --paper: #f3e7cc;
+  --paper-raised: #fff9ed;
+  --ink: #201e1e;
+  --ink-muted: #625b55;
+  --rule: #cfc2a7;
+  --riso-blue: #3454e8;
+  --riso-pink: #ef4b87;
+  --riso-pink-text: #a82b59;
+  --riso-blue-soft: #e2e7ff;
+  --riso-pink-soft: #ffe3ed;
+  --success: #28654c;
+  --danger: #a52f36;
+  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -26,28 +32,168 @@
 
 :root.dark {
   color-scheme: dark;
-  --background: #171717;
-  --foreground: #f5f5f5;
-  --surface: #262626;
-  --muted: #a3a3a3;
-  --border: #404040;
-  --accent: #f5f5f5;
+  --paper: #201d22;
+  --paper-raised: #2c282e;
+  --ink: #f7eedc;
+  --ink-muted: #c0b6ae;
+  --rule: #504850;
+  --riso-blue: #91a4ff;
+  --riso-pink: #ff82ae;
+  --riso-pink-text: #ff82ae;
+  --riso-blue-soft: #343a58;
+  --riso-pink-soft: #4d313d;
+  --success: #8dc8a7;
+  --danger: #ff9a9b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--paper);
+  scroll-behavior: smooth;
+  scroll-padding-block: 1rem;
 }
 
 body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 button,
-select {
+select,
+input {
   font: inherit;
 }
 
+button {
+  color: inherit;
+}
+
+:where(
+  button:not(:disabled),
+  [role="button"],
+  a.button,
+  a.action-link,
+  a.text-link,
+  .browse-button
+) {
+  touch-action: manipulation;
+  transition:
+    transform 150ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 150ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+button:active:not(:disabled),
+[role="button"]:active,
+a.button:active,
+a.action-link:active,
+a.text-link:active,
+.browse-button:active {
+  transform: translateY(1px) scale(0.985) !important;
+  transition-duration: 70ms;
+}
+
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--riso-pink);
   outline-offset: 3px;
+}
+
+::selection {
+  background: var(--riso-pink);
+  color: #201e1e;
+}
+
+.site-frame {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  padding: 0 clamp(1.25rem, 5vw, 5rem);
+}
+
+.site-header,
+.site-footer,
+.page-main {
+  width: min(100%, 1240px);
+  margin-inline: auto;
+}
+
+.site-header {
+  flex: none;
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--rule);
+  padding-block: 1.25rem 1.5rem;
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+}
+
+.page-main {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .site-frame {
+    padding-inline: 1rem;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@keyframes page-enter-fallback {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@supports not (view-transition-name: root) {
+  .page-main {
+    animation: page-enter-fallback 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @supports not (view-transition-name: root) {
+    .page-main {
+      animation: none;
+    }
+  }
 }

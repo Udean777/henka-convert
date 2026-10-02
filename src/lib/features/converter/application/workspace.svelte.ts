@@ -1,24 +1,24 @@
-import type { DocumentFormat } from "./documents/types";
-import type { ImageTargetFormat } from "./image/types";
-import { IMAGE_OUTPUT_FORMATS } from "./image/formats";
-import type { PdfFormat } from "./pdf/types";
-import { PDF_IMAGE_FORMATS } from "./pdf/types";
-import type { VideoFormat } from "./video/types";
-import type { AudioFormat } from "./audio/types";
-import { AUDIO_FORMATS } from "./audio/formats";
-import { VIDEO_FORMATS } from "./video/formats";
+import type { DocumentFormat } from "../documents/types";
+import type { ImageTargetFormat } from "../image/types";
+import { IMAGE_OUTPUT_FORMATS } from "../image/formats";
+import type { PdfFormat } from "../pdf/types";
+import { PDF_IMAGE_FORMATS } from "../pdf/types";
+import type { VideoFormat } from "../video/types";
+import type { AudioFormat } from "../audio/types";
+import { AUDIO_FORMATS } from "../audio/formats";
+import { VIDEO_FORMATS } from "../video/formats";
 import {
   DATA_FORMATS,
   getDataFormatFromFilename,
   isWorkbookFormat,
-} from "./data/formats";
-import type { DataFormat } from "./data/types";
-import { inspectSpreadsheetInWorker } from "./data/worker-client";
+} from "../data/formats";
+import type { DataFormat } from "../data/types";
+import { inspectSpreadsheetInWorker } from "../data/worker-client";
 import type { Language } from "$lib/i18n/messages";
 import type { messages } from "$lib/i18n/messages";
 import { getConversionErrorMessage, runConversion } from "./run-conversion";
-import { isSupportedFile } from "./shared/files";
-import type { ConversionOutput, ConverterKind, FileJob } from "./shared/types";
+import { isSupportedFile } from "../shared/files";
+import type { ConversionOutput, ConverterKind, FileJob } from "../shared/types";
 
 type OutputTarget =
   | ImageTargetFormat

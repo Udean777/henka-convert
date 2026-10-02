@@ -19,6 +19,23 @@ Henka Convert is a local-first file conversion web app. Conversion engines run i
 
 Format-specific conversion engines are client-side modules and Web Workers. Browser-only engines load when their converter is selected; conversion does not send files to an API or backend. Avoid importing browser-only conversion engines from server-rendered module scope.
 
+## Project structure
+
+- `src/routes` contains the landing page, converter, format guide, conversion
+  guide, help, privacy, and about routes.
+- `src/lib/features/converter/ui` contains converter UI components.
+- `src/lib/features/converter/application` owns the conversion workflow and
+  orchestration.
+- Format directories (`image`, `pdf`, `documents`, `audio`, `video`, and `data`)
+  contain their conversion engines, workers, errors, and format definitions.
+- `src/lib/features/preferences` owns browser-persisted language and theme
+  preferences; the layout provides its state through Svelte context.
+- `src/lib/features/marketing` contains localized page copy and shared
+  informational page components.
+- `DESIGN.md` records the visual direction and palette. See
+  [`docs/architecture.md`](docs/architecture.md) for dependency and change
+  rules.
+
 ## Supported conversions
 
 - Images: JPG, PNG, WebP, AVIF, SVG, BMP, TIFF, GIF, ICO, JPEG XL, HEIC, and HEIF inputs. Outputs include JPEG, PNG, WebP, AVIF, HEIC, BMP, TIFF, GIF, ICO, JPEG XL, SVG, and PDF. GIF inputs and multi-page TIFF inputs use their first frame/page. Raster-to-SVG embeds a PNG image; it does not vectorize pixels.

@@ -13,12 +13,20 @@ src/
 │   ├── assets/                         # Imported, build-processed assets
 │   ├── components/                     # UI shared across unrelated features
 │   ├── features/
+│   │   ├── converter/                  # File conversion UI and browser engines
+│   │   ├── marketing/                  # Localized content and shared page UI
 │   │   └── preferences/                # Theme and language behavior + controls
 │   └── i18n/                           # Shared language types and messages
 └── routes/
     ├── +layout.svelte                  # App shell and per-app preference context
     ├── +layout.ts                      # Static prerender setting
-    └── +page.svelte                    # Home/converter route composition
+    ├── +page.svelte                    # Landing page composition
+    ├── convert/                        # Converter workspace
+    ├── formats/                        # Supported input/output formats
+    ├── how-it-works/                   # Conversion workflow explanation
+    ├── help/                           # Localized FAQ
+    ├── privacy/                        # File processing and saved preferences
+    └── about/                          # Product principles and identity
 
 static/                                 # Files that need stable public URLs
 docs/                                   # Project decisions and contributor docs
@@ -28,37 +36,22 @@ docs/                                   # Project decisions and contributor docs
 
 ```text
 src/lib/features/converter/
+├── application/
+│   ├── run-conversion.ts               # Dispatch a typed job to its converter
+│   └── workspace.svelte.ts             # Per-instance queue and conversion workflow
+├── ui/
+│   ├── ConverterWorkspace.svelte        # Compose converter UI and shared preferences
+│   ├── ConversionOptions.svelte         # Target format and format-specific options
+│   ├── ConversionJobList.svelte         # Job progress, actions, and downloads
+│   └── FileDropzone.svelte              # Accessible picker and drop area
 ├── shared/
 │   ├── download.ts                     # Local single-file and ZIP downloads
 │   ├── files.ts                        # File type checks and display helpers
 │   ├── limits.ts                       # Shared pixel and output-size limits
 │   └── types.ts                        # Shared jobs and conversion output types
-├── image/
-│   ├── capabilities.worker.ts          # Check browser worker and WebAssembly support
-│   ├── codecs.ts                       # Local WASM codec loading and per-format options
-│   ├── convert.ts                      # Small image-conversion entry point
-│   ├── errors.ts                       # Image-specific conversion error type
-│   ├── image.worker.ts                 # Decode, normalize, and encode orchestration
-│   ├── svg.ts                          # SVG validation, sizing, and rasterization
-│   ├── tiff.ts                         # Lazy TIFF decode; first page only
-│   ├── types.ts                        # Image formats and image error codes
-│   └── worker-client.ts                # Worker lifecycle and message protocol
-├── pdf/
-│   ├── convert.ts                      # PDF pages to images or selectable text
-│   └── types.ts                        # PDF-only output formats
-└── documents/
-    ├── convert.ts                      # Experimental DOCX to HTML, text, Markdown
-    └── types.ts                        # DOCX output formats
-
-src/lib/components/
-└── FileDropzone.svelte                 # Shared accessible file picker and drop area
-
-src/lib/features/converter/
-├── ConverterWorkspace.svelte           # Compose converter UI and shared preferences
-├── ConversionOptions.svelte            # Target format and format-specific options
-├── ConversionJobList.svelte            # Job progress, actions, and downloads
-├── run-conversion.ts                    # Dispatch a typed job to its converter
-└── workspace.svelte.ts                 # Per-instance queue and conversion orchestration
+├── image/, pdf/, documents/
+├── audio/, video/, data/
+└── media/                              # Shared audio/video profiles and worker
 ```
 
 The image converter accepts JPG/JPEG, PNG, WebP, AVIF, SVG, BMP, TIFF, and HEIC/HEIF.
@@ -75,8 +68,9 @@ preserved; the resulting bitmap is transferred to the image worker for encoding.
 Raster inputs and rendered SVG outputs are limited to 40 megapixels and 16,384
 pixels per side to reduce memory pressure. PDF pages can be exported to PNG/JPG
 or selectable text; DOCX export to HTML, TXT, or Markdown remains experimental.
-Audio and video are not part of this release. Heavy PDF and DOCX code is
-dynamically imported. Raster conversion and output encoding run in a Web Worker;
+Audio and video conversion are supported with a lazily loaded, single-threaded
+FFmpeg.wasm worker. Heavy codecs and document/PDF code are dynamically
+imported. Raster conversion and output encoding run in a Web Worker;
 SVG is decoded through the browser's image loader, then its bitmap is transferred
 to the worker. PDF pages are rendered one at a time and capped at 16 megapixels
 per output page. Multi-file outputs can be downloaded together as a ZIP.
@@ -86,13 +80,19 @@ per output page. Multi-file outputs can be downloaded together as a ZIP.
 - Keep `src/routes` focused on URL structure, page composition, route metadata,
   and SvelteKit route options. Route-only components may stay beside their
   route; reusable cross-feature UI belongs in `src/lib/components`.
-- Keep each converter's implementation and UI inside its feature. Put only
+- Keep marketing copy and shared informational page components in
+  `src/lib/features/marketing`; route files should compose that content with
+  page-specific structure and metadata. Keep product claims aligned with the
+  actual browser conversion behavior and documented format limits.
+- Keep each converter's implementation and UI inside its feature. Keep UI in
+  `converter/ui` and workflow state plus conversion orchestration in
+  `converter/application`. Put only
   genuinely shared job/result types and limits in `converter/shared`. Keep
   format types beside their converter so unsupported format combinations are
   excluded by the type system.
 - Keep the converter workspace as composition. Queue state and conversion
-  orchestration belong in the per-instance `workspace.svelte.ts` factory; UI
-  components should own a small, coherent part of the workspace.
+  orchestration belong in the per-instance `application/workspace.svelte.ts`
+  factory; UI components should own a small, coherent part of the workspace.
 - Keep image worker protocol and pixel normalization in the worker, while SVG
   preparation, worker lifecycle, and WASM codec configuration stay in their
   own image modules. Add new modules when they establish a useful boundary,
@@ -116,3 +116,6 @@ per output page. Multi-file outputs can be downloaded together as a ZIP.
 - Add route groups only when distinct URL sections need distinct layouts. Do
   not add a second router or a backend-style domain/use-case/adapter hierarchy
   for the current browser-only feature set.
+- Keep the visual direction in `DESIGN.md`, with global design tokens in
+  `src/app.css` and feature-specific presentation styles scoped to their
+  components.

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { ConverterKind } from "./shared/types";
-  import type { WorkspaceText } from "./workspace.svelte";
+  import type { ConverterKind } from "../shared/types";
+  import type { WorkspaceText } from "../application/workspace.svelte";
 
   interface FormatOption {
     value: string;
@@ -38,14 +38,12 @@
   }: Props = $props();
 </script>
 
-<div
-  class="mt-6 flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-end sm:justify-between"
->
-  <div class="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-    <label class="flex flex-col gap-2 text-sm font-medium">
+<div class="conversion-options">
+  <div class="options-primary">
+    <label class="option-field">
       {text.convertTo}
       <select
-        class="min-w-56 max-w-full rounded-lg border border-border bg-background px-3 py-2.5 font-normal"
+        class="format-select"
         value={target}
         disabled={busy}
         onchange={(event) => onTargetChange(event.currentTarget.value)}
@@ -56,11 +54,11 @@
       </select>
     </label>
     {#if kind === "image" && ["image/jpeg", "image/webp", "image/avif", "image/jxl"].includes(target)}
-      <label class="flex min-w-52 flex-col gap-2 text-sm font-medium">
+      <label class="option-field quality-field">
         {text.quality}
         <span class="font-normal text-muted">{Math.round(quality * 100)}%</span>
         <input
-          class="accent-foreground"
+          class="quality-range"
           type="range"
           min="0.5"
           max="1"
@@ -74,11 +72,11 @@
     {/if}
   </div>
   {#if kind === "image" && hasSvgInput && target !== "image/svg+xml"}
-    <label class="flex flex-col gap-2 text-sm font-medium">
+    <label class="option-field">
       {text.svgWidth}
       <span class="flex items-center gap-2">
         <input
-          class="w-28 rounded-lg border border-border bg-background px-3 py-2.5 font-normal"
+          class="width-input"
           type="number"
           min="1"
           max="4096"
@@ -133,3 +131,73 @@
     {text.dataLimitsNote}<br />{text.dataStructureNote}
   </p>
 {/if}
+
+<style>
+  .conversion-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-top: 1rem;
+    border-block: 1px solid var(--rule);
+    padding: 1.15rem 0;
+  }
+
+  .options-primary {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 1.25rem;
+  }
+
+  .option-field {
+    display: flex;
+    min-width: min(100%, 14rem);
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 750;
+  }
+
+  .format-select,
+  .width-input {
+    min-height: 2.8rem;
+    max-width: 100%;
+    border: 1px solid var(--ink);
+    border-radius: 0;
+    background: var(--paper-raised);
+    padding: 0.65rem 0.75rem;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 450;
+  }
+
+  .quality-field {
+    min-width: 11rem;
+  }
+
+  .quality-range {
+    width: 100%;
+    accent-color: var(--riso-pink);
+  }
+
+  .width-input {
+    width: 7rem;
+  }
+
+  @media (max-width: 640px) {
+    .conversion-options,
+    .options-primary {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .option-field,
+    .quality-field {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+</style>
