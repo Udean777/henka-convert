@@ -8,25 +8,31 @@
   const text = $derived(messages[preferences.language]);
 </script>
 
-<div class="preference-controls">
-  <div class="language-control" role="group" aria-label={text.languageLabel}>
+<div class="flex items-center gap-[0.65rem] max-[480px]:gap-[0.4rem]">
+  <div
+    class="flex gap-[0.15rem] border border-ink bg-surface p-[0.2rem]"
+    role="group"
+    aria-label={text.languageLabel}
+  >
     <button
-      class="language-option {preferences.language === 'en'
-        ? 'is-selected'
-        : ''}"
+      class="inline-flex min-h-8 min-w-[2.35rem] items-center justify-center border px-[0.55rem] py-[0.35rem] text-[0.72rem] font-extrabold transition-all duration-200 {preferences.language ===
+      'en'
+        ? 'border-riso-blue bg-riso-blue text-accent-foreground shadow-[2px_2px_0_var(--riso-pink)]'
+        : 'border-transparent bg-transparent text-ink-muted hover:bg-riso-blue-soft hover:text-ink'}"
       aria-pressed={preferences.language === "en"}
       onclick={() => preferences.setLanguage("en")}>EN</button
     >
     <button
-      class="language-option {preferences.language === 'id'
-        ? 'is-selected'
-        : ''}"
+      class="inline-flex min-h-8 min-w-[2.35rem] items-center justify-center border px-[0.55rem] py-[0.35rem] text-[0.72rem] font-extrabold transition-all duration-200 {preferences.language ===
+      'id'
+        ? 'border-riso-blue bg-riso-blue text-accent-foreground shadow-[2px_2px_0_var(--riso-pink)]'
+        : 'border-transparent bg-transparent text-ink-muted hover:bg-riso-blue-soft hover:text-ink'}"
       aria-pressed={preferences.language === "id"}
       onclick={() => preferences.setLanguage("id")}>ID</button
     >
   </div>
   <button
-    class="theme-toggle"
+    class="inline-flex size-10 items-center justify-center border border-ink bg-transparent text-ink transition-colors hover:bg-riso-pink-soft"
     aria-label={preferences.dark ? text.lightTheme : text.darkTheme}
     aria-pressed={preferences.dark}
     title={preferences.dark ? text.lightTheme : text.darkTheme}
@@ -39,71 +45,3 @@
     {/if}
   </button>
 </div>
-
-<style>
-  .preference-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-  }
-
-  .language-control {
-    display: flex;
-    gap: 0.15rem;
-    border: 1px solid var(--ink);
-    padding: 0.2rem;
-  }
-
-  .language-option,
-  .theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    background: transparent;
-    color: var(--ink-muted);
-    cursor: pointer;
-    transition:
-      background-color 120ms ease,
-      color 120ms ease;
-  }
-
-  .language-option {
-    min-width: 2.35rem;
-    min-height: 2rem;
-    padding: 0.35rem 0.55rem;
-    font-size: 0.72rem;
-    font-weight: 800;
-  }
-
-  .language-option:hover,
-  .theme-toggle:hover {
-    color: var(--ink);
-  }
-
-  .language-option.is-selected {
-    background: var(--riso-blue);
-    color: #fff9ed;
-  }
-
-  :global(:root.dark) .language-option.is-selected {
-    color: #201e1e;
-  }
-
-  .theme-toggle {
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 1px solid var(--ink);
-    color: var(--ink);
-  }
-
-  .theme-toggle:hover {
-    background: var(--riso-pink-soft);
-  }
-
-  @media (max-width: 480px) {
-    .preference-controls {
-      gap: 0.4rem;
-    }
-  }
-</style>

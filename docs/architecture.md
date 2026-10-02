@@ -116,6 +116,10 @@ per output page. Multi-file outputs can be downloaded together as a ZIP.
 - Add route groups only when distinct URL sections need distinct layouts. Do
   not add a second router or a backend-style domain/use-case/adapter hierarchy
   for the current browser-only feature set.
-- Keep the visual direction in `DESIGN.md`, with global design tokens in
-  `src/app.css` and feature-specific presentation styles scoped to their
-  components.
+- Keep the visual direction in `DESIGN.md`. Use Tailwind utilities in Svelte
+  markup for layout, spacing, typography, color, and responsive behavior.
+- Reserve `src/app.css` for theme tokens, global resets, focus and reduced-motion
+  behavior, and page transitions. Keep component-scoped CSS for details Tailwind
+  does not express cleanly, such as SVG paint, decorative pseudo-elements, and
+  browser-specific marker handling. Use an inline style only for runtime values
+  such as conversion progress widths.

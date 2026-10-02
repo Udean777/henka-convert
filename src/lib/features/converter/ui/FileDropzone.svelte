@@ -28,8 +28,9 @@
 </script>
 
 <div
-  class="file-dropzone {dragging ? 'is-dragging' : ''}"
-  class:is-disabled={disabled}
+  class="file-dropzone relative grid min-h-[250px] place-items-center overflow-hidden border border-dashed border-riso-blue bg-paper px-5 py-8 text-center transition-colors max-[480px]:min-h-[220px] max-[480px]:px-4 {dragging
+    ? 'border-solid bg-riso-blue-soft'
+    : ''} {disabled ? 'cursor-not-allowed opacity-[0.65]' : ''}"
   ondragover={(event) => {
     event.preventDefault();
     if (!disabled) dragging = true;
@@ -39,17 +40,30 @@
   role="region"
   aria-label={labels.drop}
 >
-  <div class="drop-content">
-    <div class="registration-art" aria-hidden="true">
-      <span class="registration-sheet sheet-blue"></span>
-      <span class="registration-sheet sheet-pink"></span>
-      <span class="registration-cross">+</span>
+  <div class="flex max-w-[38rem] flex-col items-center">
+    <div class="relative mb-4 h-14 w-[4.25rem]" aria-hidden="true">
+      <span
+        class="absolute left-[0.65rem] top-[0.2rem] h-[2.6rem] w-8 border border-ink bg-riso-blue rotate-[-9deg]"
+      ></span>
+      <span
+        class="absolute left-[1.8rem] top-[0.55rem] h-[2.6rem] w-8 border border-ink bg-riso-pink rotate-[10deg]"
+      ></span>
+      <span
+        class="absolute right-0 bottom-[-0.1rem] font-display text-base font-bold text-ink"
+        >+</span
+      >
     </div>
-    <p class="drop-title">{labels.drop}</p>
-    <label class="browse-button">
+    <p
+      class="m-0 font-display text-[clamp(1.25rem,3vw,1.8rem)] font-bold tracking-[-0.035em]"
+    >
+      {labels.drop}
+    </p>
+    <label
+      class="mt-[1.15rem] inline-flex min-h-[2.9rem] cursor-pointer items-center justify-center border border-ink bg-riso-pink px-[1.1rem] py-[0.7rem] text-[0.88rem] font-extrabold text-[#201e1e] transition-[background-color,transform] hover:bg-riso-blue-soft hover:-translate-x-px hover:-translate-y-px has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-riso-pink has-[:focus-visible]:outline-offset-[3px] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-55 active:translate-y-px active:scale-[0.985]"
+    >
       {labels.choose}
       <input
-        class="visually-hidden"
+        class="sr-only"
         type="file"
         accept={FILE_ACCEPT[kind]}
         multiple
@@ -60,26 +74,11 @@
         }}
       />
     </label>
-    <p class="supported-formats">{labels.formats}</p>
+    <p class="mt-4 text-[0.76rem] leading-6 text-ink-muted">{labels.formats}</p>
   </div>
 </div>
 
 <style>
-  .file-dropzone {
-    position: relative;
-    display: grid;
-    min-height: 250px;
-    place-items: center;
-    overflow: hidden;
-    border: 1px dashed var(--riso-blue);
-    background: var(--paper);
-    padding: 2rem 1.25rem;
-    text-align: center;
-    transition:
-      background-color 120ms ease,
-      border-color 120ms ease;
-  }
-
   .file-dropzone::before,
   .file-dropzone::after {
     position: absolute;
@@ -100,125 +99,5 @@
     right: 0.85rem;
     bottom: 0.85rem;
     border-width: 0 1px 1px 0;
-  }
-
-  .file-dropzone.is-dragging {
-    border-style: solid;
-    background: var(--riso-blue-soft);
-  }
-
-  .file-dropzone.is-disabled {
-    cursor: not-allowed;
-    opacity: 0.65;
-  }
-
-  .drop-content {
-    display: flex;
-    max-width: 38rem;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .registration-art {
-    position: relative;
-    width: 4.25rem;
-    height: 3.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .registration-sheet {
-    position: absolute;
-    width: 2rem;
-    height: 2.6rem;
-    border: 1px solid var(--ink);
-  }
-
-  .sheet-blue {
-    top: 0.2rem;
-    left: 0.65rem;
-    background: var(--riso-blue);
-    transform: rotate(-9deg);
-  }
-
-  .sheet-pink {
-    top: 0.55rem;
-    left: 1.8rem;
-    background: var(--riso-pink);
-    transform: rotate(10deg);
-  }
-
-  .registration-cross {
-    position: absolute;
-    right: 0;
-    bottom: -0.1rem;
-    color: var(--ink);
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1rem;
-    font-weight: 700;
-  }
-
-  .drop-title {
-    margin: 0;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.25rem, 3vw, 1.8rem);
-    font-weight: 700;
-    letter-spacing: -0.035em;
-  }
-
-  .browse-button {
-    display: inline-flex;
-    min-height: 2.9rem;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1.15rem;
-    border: 1px solid var(--ink);
-    background: var(--riso-pink);
-    padding: 0.7rem 1.1rem;
-    color: #201e1e;
-    cursor: pointer;
-    font-size: 0.88rem;
-    font-weight: 800;
-    transition:
-      background-color 120ms ease,
-      transform 120ms ease;
-  }
-
-  .browse-button:hover {
-    background: var(--riso-blue-soft);
-    transform: translate(-1px, -1px);
-  }
-
-  .browse-button:has(input:focus-visible) {
-    outline: 3px solid var(--riso-pink);
-    outline-offset: 3px;
-  }
-
-  .browse-button:has(:disabled) {
-    cursor: not-allowed;
-    opacity: 0.55;
-  }
-
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    clip-path: inset(50%);
-  }
-
-  .supported-formats {
-    margin: 1rem 0 0;
-    color: var(--ink-muted);
-    font-size: 0.76rem;
-    line-height: 1.5;
-  }
-
-  @media (max-width: 480px) {
-    .file-dropzone {
-      min-height: 220px;
-      padding-inline: 1rem;
-    }
   }
 </style>

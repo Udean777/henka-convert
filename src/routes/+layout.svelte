@@ -49,48 +49,35 @@
   <meta name="theme-color" content={preferences.dark ? "#201d22" : "#f3e7cc"} />
 </svelte:head>
 
-<div class="site-frame">
+<div class="flex min-h-screen flex-col px-[clamp(1rem,5vw,5rem)]">
   <AppHeader />
   {@render children()}
-  <footer class="site-footer">
-    <div class="footer-brand">
-      <strong>Henka Convert</strong>
+  <footer
+    class="mx-auto flex w-full max-w-[1240px] flex-col justify-between gap-[0.4rem] border-t border-rule pt-5 pb-6 text-xs text-ink-muted sm:flex-row sm:gap-4"
+  >
+    <div class="grid gap-1.5">
+      <strong class="text-[0.82rem] text-ink">Henka Convert</strong>
       <span>{footerNote}</span>
     </div>
-    <nav class="footer-navigation" aria-label={chrome.navigation}>
-      <a href="/formats">{chrome.formats}</a>
-      <a href="/how-it-works">{chrome.howItWorks}</a>
-      <a href="/help">{chrome.help}</a>
-      <a href="/privacy">{chrome.privacy}</a>
-      <a href="/about">{chrome.about}</a>
+    <nav class="flex flex-wrap gap-4" aria-label={chrome.navigation}>
+      <a
+        class="text-ink-muted underline-offset-4 hover:text-ink"
+        href="/formats">{chrome.formats}</a
+      >
+      <a
+        class="text-ink-muted underline-offset-4 hover:text-ink"
+        href="/how-it-works">{chrome.howItWorks}</a
+      >
+      <a class="text-ink-muted underline-offset-4 hover:text-ink" href="/help"
+        >{chrome.help}</a
+      >
+      <a
+        class="text-ink-muted underline-offset-4 hover:text-ink"
+        href="/privacy">{chrome.privacy}</a
+      >
+      <a class="text-ink-muted underline-offset-4 hover:text-ink" href="/about"
+        >{chrome.about}</a
+      >
     </nav>
   </footer>
 </div>
-
-<style>
-  .footer-brand {
-    display: grid;
-    gap: 0.35rem;
-  }
-
-  .footer-brand strong {
-    color: var(--ink);
-    font-size: 0.82rem;
-  }
-
-  .footer-navigation {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .footer-navigation a {
-    color: var(--ink-muted);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-  }
-
-  .footer-navigation a:hover {
-    color: var(--ink);
-  }
-</style>

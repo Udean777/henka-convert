@@ -6,9 +6,20 @@
   }: { source: string; transform: string; result: string } = $props();
 </script>
 
-<div class="format-shift" aria-hidden="true">
-  <span class="caption caption-source">{source}</span>
-  <svg viewBox="0 0 330 250" fill="none" focusable="false">
+<div
+  class="relative mx-auto aspect-[33/25] w-[min(100%,330px)] justify-self-center max-[760px]:w-[min(82vw,330px)]"
+  aria-hidden="true"
+>
+  <span
+    class="absolute top-[5px] left-0 z-10 text-[0.62rem] font-extrabold tracking-[0.12em] text-riso-blue uppercase"
+    >{source}</span
+  >
+  <svg
+    class="block size-full overflow-visible"
+    viewBox="0 0 330 250"
+    fill="none"
+    focusable="false"
+  >
     <path d="m77 37 125-9 17 166-126 9z" class="back-sheet" />
     <path d="m58 51 126-7 9 166-126 7z" class="front-sheet" />
     <path d="M83 87h73M81 101h54M78 173h77" class="sheet-line" />
@@ -18,25 +29,17 @@
     <path d="m257 171 35 4-4 31-35-4z" class="output-sheet" />
     <path d="M22 36h14M29 29v14M294 221h14M301 214v14" class="crop-mark" />
   </svg>
-  <span class="caption caption-result">{result}</span>
-  <span class="caption caption-transform">{transform}</span>
+  <span
+    class="absolute top-[5px] right-0 z-10 text-[0.62rem] font-extrabold tracking-[0.12em] text-riso-pink-text uppercase"
+    >{result}</span
+  >
+  <span
+    class="absolute bottom-[-4px] left-0 z-10 text-[0.62rem] font-extrabold tracking-[0.12em] text-ink uppercase"
+    >{transform}</span
+  >
 </div>
 
 <style>
-  .format-shift {
-    position: relative;
-    width: min(100%, 330px);
-    height: 260px;
-    justify-self: center;
-  }
-
-  svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
   .back-sheet,
   .front-sheet,
   .output-sheet {
@@ -81,32 +84,5 @@
 
   .crop-mark {
     stroke-width: 1.6;
-  }
-
-  .caption {
-    position: absolute;
-    z-index: 1;
-    font-size: 0.62rem;
-    font-weight: 850;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .caption-source {
-    top: 5px;
-    left: 0;
-    color: var(--riso-blue);
-  }
-
-  .caption-result {
-    top: 5px;
-    right: 0;
-    color: var(--riso-pink-text);
-  }
-
-  .caption-transform {
-    bottom: -4px;
-    left: 0;
-    color: var(--ink);
   }
 </style>

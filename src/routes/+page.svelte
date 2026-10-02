@@ -22,286 +22,144 @@
   website
 />
 
-<main class="page-main home-page">
-  <section class="hero" aria-labelledby="home-title">
-    <div class="hero-copy">
-      <p class="eyebrow">{text.eyebrow}</p>
-      <h1 id="home-title">{text.title}</h1>
-      <p class="description">{text.description}</p>
-      <div class="hero-actions">
-        <a class="button button-primary" href="/convert">{text.primaryAction}</a
+<main
+  class="page-main mx-auto w-full max-w-[1240px] flex-1 pb-[clamp(3rem,8vw,7rem)]"
+>
+  <section
+    class="grid grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)] items-center gap-[clamp(2rem,7vw,7rem)] pt-[clamp(3.5rem,8vw,7.5rem)] pb-[clamp(4rem,9vw,8rem)] max-[760px]:grid-cols-1 max-[760px]:gap-7 max-[520px]:pt-10 max-[520px]:pb-14"
+    aria-labelledby="home-title"
+  >
+    <div class="max-w-[700px]">
+      <p
+        class="mb-4 text-[0.72rem] font-extrabold tracking-[0.15em] text-riso-blue uppercase"
+      >
+        {text.eyebrow}
+      </p>
+      <h1
+        id="home-title"
+        class="m-0 max-w-[12ch] font-display text-[clamp(3.3rem,7.5vw,7rem)] leading-[0.91] tracking-[-0.085em] max-[520px]:text-[clamp(2.85rem,13.5vw,4.25rem)]"
+      >
+        {text.title}
+      </h1>
+      <p
+        class="mt-6 max-w-[39rem] text-[clamp(1rem,1.5vw,1.2rem)] leading-[1.7] text-ink-muted"
+      >
+        {text.description}
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-5">
+        <a
+          class="inline-flex min-h-12 items-center justify-center border border-ink bg-riso-pink px-4 py-[0.7rem] font-extrabold text-[#201e1e] no-underline shadow-[4px_4px_0_var(--ink)] transition-transform duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"
+          href="/convert">{text.primaryAction}</a
         >
-        <a class="text-link" href="/formats">{text.secondaryAction}</a>
+        <a
+          class="text-[0.9rem] font-bold text-ink underline decoration-riso-pink decoration-2 underline-offset-[0.28em]"
+          href="/formats">{text.secondaryAction}</a
+        >
       </div>
     </div>
 
-    <div class="print-illustration"><HeroPrintArtwork /></div>
+    <div
+      class="aspect-[9/8] w-[min(100%,340px)] justify-self-center max-[760px]:w-[min(82vw,340px)]"
+    >
+      <HeroPrintArtwork />
+    </div>
   </section>
 
-  <section class="workbench-section" aria-labelledby="workbench-title">
-    <div class="section-heading">
-      <p class="eyebrow">{text.workbenchLabel}</p>
-      <h2 id="workbench-title">{text.workbenchTitle}</h2>
-      <p>{text.workbenchDescription}</p>
+  <section
+    class="border-t border-rule py-[clamp(2.5rem,6vw,5rem)]"
+    aria-labelledby="workbench-title"
+  >
+    <div class="mb-8 max-w-[760px]">
+      <p
+        class="mb-4 text-[0.72rem] font-extrabold tracking-[0.15em] text-riso-blue uppercase"
+      >
+        {text.workbenchLabel}
+      </p>
+      <h2
+        id="workbench-title"
+        class="m-0 max-w-[20ch] font-display text-[clamp(2rem,4vw,3.8rem)] leading-none tracking-[-0.065em]"
+      >
+        {text.workbenchTitle}
+      </h2>
+      <p class="mt-4 max-w-[42rem] text-base leading-[1.7] text-ink-muted">
+        {text.workbenchDescription}
+      </p>
     </div>
     <InfoCards cards={text.categories} />
-    <a class="button button-secondary" href="/convert">{text.primaryAction}</a>
+    <a
+      class="mt-6 inline-flex min-h-12 items-center justify-center border border-ink bg-paper-raised px-4 py-[0.7rem] font-extrabold text-ink no-underline shadow-[3px_3px_0_var(--riso-blue)] transition-transform duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"
+      href="/convert">{text.primaryAction}</a
+    >
   </section>
 
-  <section class="steps-section" aria-labelledby="steps-title">
-    <div class="section-heading compact-heading">
-      <p class="eyebrow">{text.stepsLabel}</p>
-      <h2 id="steps-title">{text.stepsTitle}</h2>
+  <section class="py-[clamp(2.5rem,6vw,5rem)]" aria-labelledby="steps-title">
+    <div class="mb-8 max-w-[640px]">
+      <p
+        class="mb-4 text-[0.72rem] font-extrabold tracking-[0.15em] text-riso-blue uppercase"
+      >
+        {text.stepsLabel}
+      </p>
+      <h2
+        id="steps-title"
+        class="m-0 max-w-[20ch] font-display text-[clamp(2rem,4vw,3.8rem)] leading-none tracking-[-0.065em]"
+      >
+        {text.stepsTitle}
+      </h2>
     </div>
     <InfoCards cards={text.steps} />
   </section>
 
-  <section class="privacy-panel" aria-labelledby="privacy-title">
-    <div class="privacy-stamp" aria-hidden="true">LOCAL<br />FIRST</div>
+  <section
+    class="grid grid-cols-[auto_1fr] items-center gap-[clamp(1.5rem,5vw,4rem)] border border-ink bg-paper-raised p-[clamp(1.5rem,5vw,3.5rem)] shadow-[8px_8px_0_var(--riso-pink)] max-[760px]:grid-cols-1 max-[520px]:shadow-[5px_5px_0_var(--riso-pink)]"
+    aria-labelledby="privacy-title"
+  >
+    <div
+      class="grid aspect-square w-[clamp(100px,16vw,170px)] place-items-center rounded-full border-2 border-ink bg-riso-blue text-center font-display text-[clamp(1rem,2vw,1.6rem)] leading-[1.05] font-extrabold text-accent-foreground outline outline-1 outline-ink outline-offset-[5px] rotate-[-9deg]"
+      aria-hidden="true"
+    >
+      LOCAL<br />FIRST
+    </div>
     <div>
-      <p class="eyebrow">{text.privacyLabel}</p>
-      <h2 id="privacy-title">{text.privacyTitle}</h2>
-      <p>{text.privacyDescription}</p>
-      <a class="text-link" href="/privacy">{text.privacyAction}</a>
+      <p
+        class="mb-4 text-[0.72rem] font-extrabold tracking-[0.15em] text-riso-blue uppercase"
+      >
+        {text.privacyLabel}
+      </p>
+      <h2
+        id="privacy-title"
+        class="m-0 max-w-[16ch] font-display text-[clamp(2rem,4vw,3.8rem)] leading-none tracking-[-0.065em]"
+      >
+        {text.privacyTitle}
+      </h2>
+      <p class="mt-4 max-w-[42rem] text-base leading-[1.7] text-ink-muted">
+        {text.privacyDescription}
+      </p>
+      <a
+        class="mt-3 inline-block text-[0.9rem] font-bold text-ink underline decoration-riso-pink decoration-2 underline-offset-[0.28em]"
+        href="/privacy">{text.privacyAction}</a
+      >
     </div>
   </section>
 
-  <section class="help-strip" aria-label={text.faqLabel}>
+  <section
+    class="flex items-end justify-between gap-6 pt-[clamp(3rem,7vw,6rem)] max-[520px]:flex-col max-[520px]:items-start"
+    aria-label={text.faqLabel}
+  >
     <div>
-      <p class="eyebrow">{text.faqLabel}</p>
-      <h2>{text.faqTitle}</h2>
+      <p
+        class="mb-4 text-[0.72rem] font-extrabold tracking-[0.15em] text-riso-blue uppercase"
+      >
+        {text.faqLabel}
+      </p>
+      <h2
+        class="m-0 max-w-[20ch] font-display text-[clamp(1.8rem,3.5vw,3rem)] leading-none tracking-[-0.065em]"
+      >
+        {text.faqTitle}
+      </h2>
     </div>
-    <a class="button button-secondary" href="/help">{text.faqLink}</a>
+    <a
+      class="inline-flex min-h-12 items-center justify-center border border-ink bg-paper-raised px-4 py-[0.7rem] font-extrabold text-ink no-underline shadow-[3px_3px_0_var(--riso-blue)] transition-transform duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"
+      href="/help">{text.faqLink}</a
+    >
   </section>
 </main>
-
-<style>
-  .home-page {
-    padding-bottom: clamp(3rem, 8vw, 7rem);
-  }
-
-  .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
-    align-items: center;
-    gap: clamp(2rem, 7vw, 7rem);
-    padding-block: clamp(3.5rem, 8vw, 7.5rem) clamp(4rem, 9vw, 8rem);
-  }
-
-  .hero-copy {
-    max-width: 700px;
-  }
-
-  .eyebrow {
-    margin: 0 0 1rem;
-    color: var(--riso-blue);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  h1 {
-    max-width: 12ch;
-    margin: 0;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(3.3rem, 7.5vw, 7rem);
-    letter-spacing: -0.085em;
-    line-height: 0.91;
-  }
-
-  .description {
-    max-width: 39rem;
-    margin: 1.5rem 0 0;
-    color: var(--ink-muted);
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
-    line-height: 1.7;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1.25rem;
-    margin-top: 2rem;
-  }
-
-  .button {
-    display: inline-flex;
-    min-height: 3rem;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--ink);
-    padding: 0.7rem 1rem;
-    color: var(--ink);
-    font-size: 0.9rem;
-    font-weight: 800;
-    text-decoration: none;
-    transition:
-      transform 120ms ease,
-      box-shadow 120ms ease;
-  }
-
-  .button:hover {
-    transform: translate(-2px, -2px);
-  }
-
-  .button-primary {
-    background: var(--riso-pink);
-    box-shadow: 4px 4px 0 var(--ink);
-    color: #201e1e;
-  }
-
-  .button-secondary {
-    background: var(--paper-raised);
-    box-shadow: 3px 3px 0 var(--riso-blue);
-  }
-
-  .text-link {
-    color: var(--ink);
-    font-size: 0.9rem;
-    font-weight: 750;
-    text-decoration-color: var(--riso-pink);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.28em;
-  }
-
-  .print-illustration {
-    width: min(100%, 340px);
-    height: 310px;
-    justify-self: center;
-  }
-
-  .workbench-section,
-  .steps-section {
-    padding-block: clamp(2.5rem, 6vw, 5rem);
-  }
-
-  .workbench-section {
-    border-top: 1px solid var(--rule);
-  }
-
-  .section-heading {
-    max-width: 760px;
-    margin-bottom: 2rem;
-  }
-
-  .section-heading h2,
-  .privacy-panel h2,
-  .help-strip h2 {
-    max-width: 20ch;
-    margin: 0;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(2rem, 4vw, 3.8rem);
-    letter-spacing: -0.065em;
-    line-height: 1;
-  }
-
-  .section-heading > p:last-child,
-  .privacy-panel > div:last-child > p:not(.eyebrow) {
-    max-width: 42rem;
-    color: var(--ink-muted);
-    font-size: 1rem;
-    line-height: 1.7;
-  }
-
-  .workbench-section > .button {
-    margin-top: 1.6rem;
-  }
-
-  .compact-heading {
-    max-width: 640px;
-  }
-
-  .privacy-panel {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: clamp(1.5rem, 5vw, 4rem);
-    border: 1px solid var(--ink);
-    background: var(--paper-raised);
-    box-shadow: 8px 8px 0 var(--riso-pink);
-    padding: clamp(1.5rem, 5vw, 3.5rem);
-  }
-
-  .privacy-panel h2 {
-    max-width: 16ch;
-  }
-
-  .privacy-panel .text-link {
-    display: inline-block;
-    margin-top: 0.7rem;
-  }
-
-  .privacy-stamp {
-    display: grid;
-    width: clamp(100px, 16vw, 170px);
-    aspect-ratio: 1;
-    place-items: center;
-    border: 2px solid var(--ink);
-    border-radius: 50%;
-    outline: 1px solid var(--ink);
-    outline-offset: 5px;
-    background: var(--riso-blue);
-    color: #fff9ed;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1rem, 2vw, 1.6rem);
-    font-weight: 800;
-    line-height: 1.05;
-    text-align: center;
-    transform: rotate(-9deg);
-  }
-
-  :global(:root.dark) .privacy-stamp {
-    color: #201e1e;
-  }
-
-  .help-strip {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding-block: clamp(3rem, 7vw, 6rem) 0;
-  }
-
-  .help-strip h2 {
-    font-size: clamp(1.8rem, 3.5vw, 3rem);
-  }
-
-  @media (max-width: 760px) {
-    .hero {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-
-    .print-illustration {
-      justify-self: end;
-      transform: scale(0.88);
-      transform-origin: right top;
-      margin-bottom: -2rem;
-    }
-
-    .privacy-panel {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 520px) {
-    .hero {
-      padding-top: 3rem;
-    }
-
-    .hero h1 {
-      font-size: clamp(3.1rem, 16vw, 4.6rem);
-    }
-
-    .help-strip {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
-    .privacy-panel {
-      box-shadow: 5px 5px 0 var(--riso-pink);
-    }
-  }
-</style>

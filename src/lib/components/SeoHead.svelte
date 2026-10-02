@@ -41,10 +41,10 @@
   <meta property="og:image" content={socialImage} />
   <meta property="og:image:type" content="image/webp" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="628" />
+  <meta property="og:image:height" content="630" />
   <meta
     property="og:image:alt"
-    content="Folded Ribbon artwork for Henka Convert, a browser-based file conversion lab"
+    content="Henka Convert social card reading Convert files. Keep them yours, with a Start converting call to action and folded ribbon artwork"
   />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
@@ -52,7 +52,7 @@
   <meta name="twitter:image" content={socialImage} />
   <meta
     name="twitter:image:alt"
-    content="Folded Ribbon artwork for Henka Convert, a browser-based file conversion lab"
+    content="Henka Convert social card reading Convert files. Keep them yours, with a Start converting call to action and folded ribbon artwork"
   />
   {#if website}
     {@html `<script type="application/ld+json">${websiteJsonLd}</script>`}

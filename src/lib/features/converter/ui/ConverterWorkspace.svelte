@@ -108,14 +108,21 @@
   }
 </script>
 
-<section class="converter-workspace" aria-label={text.fileConverter}>
-  <div class="converter-tabs" role="group" aria-label={text.conversionType}>
+<section class="w-full text-left text-ink" aria-label={text.fileConverter}>
+  <div
+    class="mb-4 flex flex-wrap gap-[0.35rem] border-b border-rule pb-[0.7rem] max-[520px]:grid max-[520px]:grid-cols-3"
+    role="group"
+    aria-label={text.conversionType}
+  >
     {#each kinds as item (item)}
       <button
         type="button"
         aria-pressed={state.kind === item}
         disabled={busy}
-        class="converter-tab {state.kind === item ? 'is-selected' : ''}"
+        class="min-h-[2.6rem] border px-[0.85rem] py-[0.65rem] text-[0.87rem] font-bold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-55 max-[520px]:px-[0.35rem] max-[520px]:text-[0.78rem] {state.kind ===
+        item
+          ? 'relative z-10 -translate-y-px border-riso-blue bg-riso-blue text-accent-foreground shadow-[3px_3px_0_var(--riso-pink)]'
+          : 'border-rule bg-surface text-ink-muted hover:border-riso-pink hover:bg-riso-blue-soft hover:text-ink'}"
         onclick={() => workspace.selectKind(item)}
       >
         {item === "image"
@@ -156,7 +163,10 @@
   />
 
   {#if state.invalidFiles}
-    <p class="file-warning" role="status">
+    <p
+      class="mt-4 border border-danger px-4 py-3 text-[0.85rem] text-danger"
+      role="status"
+    >
       {text.invalidFiles}
     </p>
   {/if}
@@ -177,73 +187,3 @@
     onDownload={handleDownload}
   />
 </section>
-
-<style>
-  .converter-workspace {
-    width: 100%;
-    color: var(--ink);
-    text-align: left;
-  }
-
-  .converter-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--rule);
-    padding-bottom: 0.7rem;
-  }
-
-  .converter-tab {
-    min-height: 2.6rem;
-    border: 1px solid transparent;
-    background: transparent;
-    padding: 0.65rem 0.85rem;
-    color: var(--ink-muted);
-    cursor: pointer;
-    font-size: 0.87rem;
-    font-weight: 700;
-    transition:
-      background-color 120ms ease,
-      color 120ms ease;
-  }
-
-  .converter-tab:hover:not(:disabled) {
-    color: var(--ink);
-  }
-
-  .converter-tab.is-selected {
-    border-color: var(--riso-blue);
-    background: var(--riso-blue);
-    color: #fff9ed;
-  }
-
-  :global(:root.dark) .converter-tab.is-selected {
-    color: #201e1e;
-  }
-
-  .converter-tab:disabled {
-    cursor: not-allowed;
-    opacity: 0.55;
-  }
-
-  .file-warning {
-    margin-top: 1rem;
-    border: 1px solid var(--danger);
-    padding: 0.75rem 1rem;
-    color: var(--danger);
-    font-size: 0.85rem;
-  }
-
-  @media (max-width: 520px) {
-    .converter-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .converter-tab {
-      padding-inline: 0.35rem;
-      font-size: 0.78rem;
-    }
-  }
-</style>

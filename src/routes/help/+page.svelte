@@ -19,32 +19,61 @@
   language={preferences.language}
 />
 
-<main class="page-main content-page">
+<main
+  class="page-main mx-auto w-full max-w-[1240px] flex-1 pb-[clamp(3rem,8vw,7rem)]"
+>
   <PageIntro
     eyebrow={text.eyebrow}
     title={text.title}
     description={text.description}
   />
 
-  <section class="faq-list" aria-label={text.eyebrow}>
+  <section class="border-t border-ink" aria-label={text.eyebrow}>
     {#each text.questions as question, index (question.title)}
-      <details class="faq-item" open={index === 0}>
-        <summary>
+      <details
+        class="group border-b border-rule py-[1.15rem]"
+        open={index === 0}
+      >
+        <summary
+          class="flex cursor-pointer list-none items-center justify-between gap-6 font-display text-[clamp(1.15rem,2.4vw,1.55rem)] font-bold tracking-[-0.025em] text-ink marker:hidden"
+        >
           <span>{question.title}</span>
-          <span class="faq-mark" aria-hidden="true">+</span>
+          <span
+            class="grid size-8 shrink-0 place-items-center bg-riso-blue font-sans text-[1.3rem] text-accent-foreground transition-transform duration-150 group-open:rotate-45"
+            aria-hidden="true">+</span
+          >
         </summary>
-        <p>{question.answer}</p>
+        <p
+          class="mt-4 mr-14 max-w-[54rem] text-[0.98rem] leading-[1.7] text-ink-muted"
+        >
+          {question.answer}
+        </p>
       </details>
     {/each}
   </section>
 
-  <aside class="help-callout">
+  <aside
+    class="mt-12 flex items-center justify-between gap-8 border border-ink bg-paper-raised p-[clamp(1.25rem,4vw,2.5rem)] shadow-[6px_6px_0_var(--riso-pink)] max-[680px]:flex-col max-[680px]:items-start"
+  >
     <div>
-      <p class="eyebrow">{text.contactLabel}</p>
-      <h2>{text.contactTitle}</h2>
-      <p>{text.contactDescription}</p>
+      <p
+        class="mb-3 text-[0.68rem] font-extrabold tracking-[0.14em] text-riso-blue uppercase"
+      >
+        {text.contactLabel}
+      </p>
+      <h2
+        class="m-0 max-w-[24ch] font-display text-[clamp(1.6rem,3vw,2.5rem)] tracking-[-0.05em]"
+      >
+        {text.contactTitle}
+      </h2>
+      <p class="max-w-[42rem] leading-[1.6] text-ink-muted">
+        {text.contactDescription}
+      </p>
     </div>
-    <a class="action-link" href="/convert">
+    <a
+      class="inline-flex min-h-12 shrink-0 items-center gap-3 border border-ink bg-riso-pink px-4 py-[0.7rem] font-extrabold text-[#201e1e] no-underline shadow-[4px_4px_0_var(--ink)]"
+      href="/convert"
+    >
       {preferences.language === "id" ? "Buka konverter" : "Open converter"}
       <span aria-hidden="true">↗</span>
     </a>
@@ -52,120 +81,7 @@
 </main>
 
 <style>
-  .content-page {
-    padding-bottom: clamp(3rem, 8vw, 7rem);
-  }
-
-  .faq-list {
-    border-top: 1px solid var(--ink);
-  }
-
-  .faq-item {
-    border-bottom: 1px solid var(--rule);
-    padding-block: 1.15rem;
-  }
-
-  summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    color: var(--ink);
-    cursor: pointer;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.15rem, 2.4vw, 1.55rem);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    list-style: none;
-  }
-
   summary::-webkit-details-marker {
     display: none;
-  }
-
-  .faq-mark {
-    display: grid;
-    width: 2rem;
-    height: 2rem;
-    flex: none;
-    place-items: center;
-    background: var(--riso-blue);
-    color: #fff9ed;
-    font-family: sans-serif;
-    font-size: 1.3rem;
-    transition: transform 120ms ease;
-  }
-
-  :global(:root.dark) .faq-mark {
-    color: #201e1e;
-  }
-
-  details[open] .faq-mark {
-    transform: rotate(45deg);
-  }
-
-  .faq-item > p {
-    max-width: 54rem;
-    margin: 0.9rem 3.5rem 0 0;
-    color: var(--ink-muted);
-    font-size: 0.98rem;
-    line-height: 1.7;
-  }
-
-  .help-callout {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-top: 3rem;
-    border: 1px solid var(--ink);
-    background: var(--paper-raised);
-    box-shadow: 6px 6px 0 var(--riso-pink);
-    padding: clamp(1.25rem, 4vw, 2.5rem);
-  }
-
-  .help-callout h2 {
-    max-width: 24ch;
-    margin: 0;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.6rem, 3vw, 2.5rem);
-    letter-spacing: -0.05em;
-  }
-
-  .help-callout > div > p:last-child {
-    max-width: 42rem;
-    color: var(--ink-muted);
-    line-height: 1.6;
-  }
-
-  .eyebrow {
-    margin: 0 0 0.7rem;
-    color: var(--riso-blue);
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
-  .action-link {
-    display: inline-flex;
-    min-height: 3rem;
-    flex: none;
-    align-items: center;
-    gap: 0.7rem;
-    border: 1px solid var(--ink);
-    background: var(--riso-pink);
-    box-shadow: 4px 4px 0 var(--ink);
-    padding: 0.7rem 1rem;
-    color: #201e1e;
-    font-weight: 800;
-    text-decoration: none;
-  }
-
-  @media (max-width: 680px) {
-    .help-callout {
-      align-items: flex-start;
-      flex-direction: column;
-    }
   }
 </style>

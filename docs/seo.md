@@ -34,7 +34,7 @@ and are copied unchanged by SvelteKit's static adapter:
 - `/favicon.webp` and `/favicon-32.webp`: browser icons.
 - `/apple-touch-icon.webp`: iOS home-screen icon.
 - `/icons/*.webp`: installable app icons referenced by `/site.webmanifest`.
-- `/images/henka-convert-og.webp`: 1200 × 628 image for Open Graph and Twitter Cards.
+- `/images/henka-convert-og.webp`: 1200 × 630 image for Open Graph and Twitter Cards. The `?v=2` URL version refreshes social-platform caches when the artwork changes.
 
 All production image assets use WebP. This reduces transfer size but can limit
 favicon discovery in Google Search and Apple Home Screen icon recognition,
