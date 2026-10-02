@@ -1,4 +1,5 @@
-export type ConverterKind = "image" | "pdf" | "docx" | "video" | "audio";
+export type ConverterKind =
+  "image" | "pdf" | "docx" | "video" | "audio" | "data";
 
 export interface ConversionOutput {
   name: string;
@@ -14,4 +15,7 @@ export interface FileJob {
   progress: number;
   outputs: ConversionOutput[];
   error?: string;
+  worksheetNames?: string[];
+  selectedWorksheet?: string;
+  worksheetNamesLoading?: boolean;
 }

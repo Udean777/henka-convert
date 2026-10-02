@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
-  import FileDropzone from "$lib/components/FileDropzone.svelte";
+  import { getContext } from "svelte";
+  import FileDropzone from "./FileDropzone.svelte";
   import {
     PREFERENCES_CONTEXT,
     type Preferences,
@@ -8,24 +8,15 @@
   import { messages } from "$lib/i18n/messages";
   import ConversionJobList from "./ConversionJobList.svelte";
   import ConversionOptions from "./ConversionOptions.svelte";
-  import type { DocumentFormat } from "./documents/types";
-  import type { PdfFormat } from "./pdf/types";
-  import type { VideoFormat } from "./video/types";
-  import type { AudioFormat } from "./audio/types";
-  import { downloadBlob, downloadOutputs } from "./shared/download";
-  import type { ConverterKind, FileJob } from "./shared/types";
-  import { createConverterWorkspace } from "./workspace.svelte";
-
-  const pdfFormats: { value: PdfFormat; label: string }[] = [
-    { value: "image/png", label: "PNG (one image per page)" },
-    { value: "image/jpeg", label: "JPEG (one image per page)" },
-    { value: "text/plain", label: "Plain text (selectable text only)" },
-  ];
-  const documentFormats: { value: DocumentFormat; label: string }[] = [
-    { value: "text/html", label: "HTML" },
-    { value: "text/plain", label: "Plain text" },
-    { value: "text/markdown", label: "Markdown" },
-  ];
+  import { DOCUMENT_FORMAT_OPTIONS } from "../documents/formats";
+  import { PDF_OUTPUT_FORMATS } from "../pdf/formats";
+  import { IMAGE_OUTPUT_FORMATS } from "../image/formats";
+  import { VIDEO_FORMAT_OPTIONS } from "../video/formats";
+  import { AUDIO_FORMAT_OPTIONS } from "../audio/formats";
+  import { DATA_FORMAT_OPTIONS } from "../data/formats";
+  import { downloadBlob, downloadOutputs } from "../shared/download";
+  import type { ConverterKind, FileJob } from "../shared/types";
+  import { createConverterWorkspace } from "../application/workspace.svelte";
 
   const preferences = getContext<Preferences>(PREFERENCES_CONTEXT);
   const workspace = createConverterWorkspace(
@@ -34,7 +25,14 @@
   );
   const state = workspace.state;
   const text = $derived(messages[preferences.language]);
-  const kinds: ConverterKind[] = ["image", "pdf", "docx", "video", "audio"];
+  const kinds: ConverterKind[] = [
+    "image",
+    "pdf",
+    "docx",
+    "video",
+    "audio",
+    "data",
+  ];
   const currentJobs = $derived(workspace.currentJobs());
   const finishedOutputs = $derived(workspace.finishedOutputs());
   const busy = $derived(workspace.busy());
@@ -49,44 +47,26 @@
   );
   const formats = $derived.by(() => {
     if (state.kind === "image") {
-      return state.imageOutputs.map((value) => ({
-        value,
-        label:
-          value === "image/jpeg"
-            ? "JPEG"
-            : value === "image/avif"
-              ? "AVIF"
-              : value.slice("image/".length).toUpperCase(),
-      }));
+      return IMAGE_OUTPUT_FORMATS;
     }
-    if (state.kind === "pdf") return pdfFormats;
-    if (state.kind === "docx") return documentFormats;
-    if (state.kind === "video") {
-      return state.videoOutputs.map((value) => ({
-        value: value satisfies VideoFormat,
-        label: value === "video/mp4" ? "MP4" : "WebM",
-      }));
-    }
-    return state.audioOutputs.map((value) => ({
-      value: value satisfies AudioFormat,
-      label: value === "audio/mpeg" ? "MP3" : "WAV",
-    }));
+    if (state.kind === "pdf") return PDF_OUTPUT_FORMATS;
+    if (state.kind === "docx") return DOCUMENT_FORMAT_OPTIONS;
+    if (state.kind === "video") return VIDEO_FORMAT_OPTIONS;
+    if (state.kind === "audio") return AUDIO_FORMAT_OPTIONS;
+    return DATA_FORMAT_OPTIONS;
   });
   const canConvert = $derived(
-    (state.kind !== "image" ||
-      (state.imageCapabilitiesReady && state.imageOutputs.length > 0)) &&
-      (state.kind !== "video" ||
-        (state.videoCapabilitiesReady && state.videoOutputs.length > 0)) &&
-      (state.kind !== "audio" ||
-        (state.audioCapabilitiesReady && state.audioOutputs.length > 0)) &&
+    !currentJobs.some(
+      (job) =>
+        job.worksheetNamesLoading ||
+        (job.worksheetNames !== undefined &&
+          job.worksheetNames.length > 1 &&
+          !job.selectedWorksheet),
+    ) &&
       currentJobs.some(
         (job) => job.status === "ready" || job.status === "error",
       ),
   );
-
-  onMount(() => {
-    void workspace.loadImageCapabilities();
-  });
 
   function labelsForDropzone() {
     return {
@@ -101,7 +81,9 @@
               ? text.docxTypes
               : state.kind === "video"
                 ? text.videoTypes
-                : text.audioTypes,
+                : state.kind === "audio"
+                  ? text.audioTypes
+                  : text.dataTypes,
     };
   }
 
@@ -126,22 +108,14 @@
   }
 </script>
 
-<section class="w-full max-w-4xl text-left" aria-label="File converter">
-  <div
-    class="mb-8 flex flex-wrap gap-2 border-b border-border"
-    role="tablist"
-    aria-label="Conversion type"
-  >
+<section class="converter-workspace" aria-label={text.fileConverter}>
+  <div class="converter-tabs" role="group" aria-label={text.conversionType}>
     {#each kinds as item (item)}
       <button
         type="button"
-        role="tab"
-        aria-selected={state.kind === item}
+        aria-pressed={state.kind === item}
         disabled={busy}
-        class="-mb-px border-b-2 px-4 py-3 text-sm font-medium transition-colors {state.kind ===
-        item
-          ? 'border-foreground text-foreground'
-          : 'border-transparent text-muted hover:text-foreground'}"
+        class="converter-tab {state.kind === item ? 'is-selected' : ''}"
         onclick={() => workspace.selectKind(item)}
       >
         {item === "image"
@@ -152,7 +126,9 @@
               ? text.featureDocx
               : item === "video"
                 ? text.featureVideo
-                : text.featureAudio}
+                : item === "audio"
+                  ? text.featureAudio
+                  : text.featureData}
       </button>
     {/each}
   </div>
@@ -170,12 +146,6 @@
     {formats}
     quality={state.quality}
     svgOutputWidth={state.svgOutputWidth}
-    imageCapabilitiesReady={state.imageCapabilitiesReady}
-    imageFormatsAvailable={state.imageOutputs.length > 0}
-    videoCapabilitiesReady={state.videoCapabilitiesReady}
-    videoFormatsAvailable={state.videoOutputs.length > 0}
-    audioCapabilitiesReady={state.audioCapabilitiesReady}
-    audioFormatsAvailable={state.audioOutputs.length > 0}
     {hasSvgInput}
     {hasTiffInput}
     {busy}
@@ -186,10 +156,7 @@
   />
 
   {#if state.invalidFiles}
-    <p
-      class="mt-4 rounded-lg border border-border px-4 py-3 text-sm"
-      role="status"
-    >
+    <p class="file-warning" role="status">
       {text.invalidFiles}
     </p>
   {/if}
@@ -206,6 +173,77 @@
     onDownloadAll={downloadAll}
     onClear={workspace.clearCurrentJobs}
     onRemove={workspace.removeJob}
+    onSelectWorksheet={workspace.selectWorksheet}
     onDownload={handleDownload}
   />
 </section>
+
+<style>
+  .converter-workspace {
+    width: 100%;
+    color: var(--ink);
+    text-align: left;
+  }
+
+  .converter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.7rem;
+  }
+
+  .converter-tab {
+    min-height: 2.6rem;
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 0.65rem 0.85rem;
+    color: var(--ink-muted);
+    cursor: pointer;
+    font-size: 0.87rem;
+    font-weight: 700;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .converter-tab:hover:not(:disabled) {
+    color: var(--ink);
+  }
+
+  .converter-tab.is-selected {
+    border-color: var(--riso-blue);
+    background: var(--riso-blue);
+    color: #fff9ed;
+  }
+
+  :global(:root.dark) .converter-tab.is-selected {
+    color: #201e1e;
+  }
+
+  .converter-tab:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .file-warning {
+    margin-top: 1rem;
+    border: 1px solid var(--danger);
+    padding: 0.75rem 1rem;
+    color: var(--danger);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 520px) {
+    .converter-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .converter-tab {
+      padding-inline: 0.35rem;
+      font-size: 0.78rem;
+    }
+  }
+</style>

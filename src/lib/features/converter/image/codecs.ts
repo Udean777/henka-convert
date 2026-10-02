@@ -1,4 +1,3 @@
-import type { ImageFormat } from "./types";
 import avifDecoderWasm from "@jsquash/avif/codec/dec/avif_dec.wasm?url";
 import avifEncoderWasm from "@jsquash/avif/codec/enc/avif_enc.wasm?url";
 import avifEncoderMtWasm from "@jsquash/avif/codec/enc/avif_enc_mt.wasm?url";
@@ -8,8 +7,13 @@ import pngWasm from "@jsquash/png/codec/pkg/squoosh_png_bg.wasm?url";
 import webpDecoderWasm from "@jsquash/webp/codec/dec/webp_dec.wasm?url";
 import webpEncoderWasm from "@jsquash/webp/codec/enc/webp_enc.wasm?url";
 import webpEncoderSimdWasm from "@jsquash/webp/codec/enc/webp_enc_simd.wasm?url";
+import jxlDecoderWasm from "@jsquash/jxl/codec/dec/jxl_dec.wasm?url";
+import jxlEncoderWasm from "@jsquash/jxl/codec/enc/jxl_enc.wasm?url";
+import jxlEncoderMtWasm from "@jsquash/jxl/codec/enc/jxl_enc_mt.wasm?url";
+import jxlEncoderMtSimdWasm from "@jsquash/jxl/codec/enc/jxl_enc_mt_simd.wasm?url";
+import type { WasmImageFormat } from "./types";
 
-type CodecFormat = "jpeg" | "png" | "webp" | "avif";
+type CodecFormat = "jpeg" | "png" | "webp" | "avif" | "jxl";
 
 export async function decodeWithWasm(
   source: Blob,
@@ -47,6 +51,11 @@ export async function decodeWithWasm(
         }
         return decoded;
       }
+      case "jxl": {
+        const codec = await import("@jsquash/jxl/decode");
+        await codec.init({ locateFile: () => jxlDecoderWasm });
+        return await codec.default(buffer);
+      }
     }
   } catch {
     throw new Error("Could not decode image input");
@@ -55,7 +64,7 @@ export async function decodeWithWasm(
 
 export async function encodeWithWasm(
   imageData: ImageData,
-  target: ImageFormat,
+  target: WasmImageFormat,
   quality: number,
 ): Promise<ArrayBuffer> {
   switch (target) {
@@ -85,6 +94,20 @@ export async function encodeWithWasm(
       });
       return codec.default(imageData, { quality: Math.round(quality * 100) });
     }
+    case "image/jxl": {
+      const codec = await import("@jsquash/jxl/encode");
+      await codec.init({
+        locateFile: (path: string) =>
+          path.includes("_mt_simd")
+            ? jxlEncoderMtSimdWasm
+            : path.includes("_mt")
+              ? jxlEncoderMtWasm
+              : jxlEncoderWasm,
+      });
+      return codec.default(imageData, { quality: Math.round(quality * 100) });
+    }
+    default:
+      throw new Error("Unsupported WebAssembly image output");
   }
 }
 
@@ -95,5 +118,6 @@ function getCodecFormat(file: File): CodecFormat | undefined {
   if (/\.png$/.test(name) || type === "image/png") return "png";
   if (/\.webp$/.test(name) || type === "image/webp") return "webp";
   if (/\.avif$/.test(name) || type === "image/avif") return "avif";
+  if (/\.jxl$/.test(name) || type === "image/jxl") return "jxl";
   return undefined;
 }

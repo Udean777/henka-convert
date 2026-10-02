@@ -1,33 +1,13 @@
-import type { ImageConversionErrorCode, ImageFormat } from "./types";
+import type {
+  ImageConversionErrorCode,
+  ImageFormat,
+  RasterImageFormat,
+} from "./types";
 import { ImageConversionError } from "./errors";
 
 type WorkerResponse =
-  | { type: "capabilities"; formats: ImageFormat[] }
   | { type: "convert"; ok: true; blob: Blob }
   | { type: "convert"; ok: false; code: ImageConversionErrorCode };
-
-export async function getImageOutputFormats(): Promise<ImageFormat[]> {
-  const worker = createCapabilitiesWorker();
-  return new Promise((resolve, reject) => {
-    const timeout = window.setTimeout(() => {
-      worker.terminate();
-      reject(new ImageConversionError("worker-unsupported"));
-    }, 10_000);
-
-    worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
-      if (event.data.type !== "capabilities") return;
-      window.clearTimeout(timeout);
-      worker.terminate();
-      resolve(event.data.formats);
-    };
-    worker.onerror = () => {
-      window.clearTimeout(timeout);
-      worker.terminate();
-      reject(new ImageConversionError("worker-unsupported"));
-    };
-    worker.postMessage({ type: "capabilities" });
-  });
-}
 
 export function convertInWorker(
   file: File,
@@ -69,19 +49,42 @@ export function convertInWorker(
   });
 }
 
-function createImageWorker(): Worker {
+export function encodeImageInWorker(
+  imageData: ImageData,
+  target: RasterImageFormat,
+  quality: number,
+): Promise<Blob> {
+  let worker: Worker;
   try {
-    return new Worker(new URL("./image.worker.ts", import.meta.url), {
+    worker = new Worker(new URL("./encoder.worker.ts", import.meta.url), {
       type: "module",
     });
   } catch {
-    throw new ImageConversionError("worker-unsupported");
+    return Promise.reject(new ImageConversionError("worker-unsupported"));
   }
+
+  return new Promise((resolve, reject) => {
+    worker.onmessage = (event: MessageEvent<{ ok: boolean; blob?: Blob }>) => {
+      worker.terminate();
+      if (event.data.ok && event.data.blob) resolve(event.data.blob);
+      else reject(new ImageConversionError("conversion-failed"));
+    };
+    worker.onerror = () => {
+      worker.terminate();
+      reject(new ImageConversionError("conversion-failed"));
+    };
+    try {
+      worker.postMessage({ imageData, target, quality });
+    } catch {
+      worker.terminate();
+      reject(new ImageConversionError("conversion-failed"));
+    }
+  });
 }
 
-function createCapabilitiesWorker(): Worker {
+function createImageWorker(): Worker {
   try {
-    return new Worker(new URL("./capabilities.worker.ts", import.meta.url), {
+    return new Worker(new URL("./image.worker.ts", import.meta.url), {
       type: "module",
     });
   } catch {

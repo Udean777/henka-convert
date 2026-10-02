@@ -25,6 +25,7 @@ export function createPreferences() {
         // Keep the defaults when browser storage is unavailable.
       }
 
+      document.documentElement.lang = state.language;
       state.dark = document.documentElement.classList.contains("dark");
     },
     setLanguage(language: Language) {

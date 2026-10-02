@@ -1,16 +1,32 @@
-import type { DocumentFormat } from "./documents/types";
-import type { ImageFormat } from "./image/types";
-import type { PdfFormat } from "./pdf/types";
-import type { VideoFormat } from "./video/types";
-import type { AudioFormat } from "./audio/types";
+import type { DocumentFormat } from "../documents/types";
+import type { ImageTargetFormat } from "../image/types";
+import { IMAGE_OUTPUT_FORMATS } from "../image/formats";
+import type { PdfFormat } from "../pdf/types";
+import { PDF_IMAGE_FORMATS } from "../pdf/types";
+import type { VideoFormat } from "../video/types";
+import type { AudioFormat } from "../audio/types";
+import { AUDIO_FORMATS } from "../audio/formats";
+import { VIDEO_FORMATS } from "../video/formats";
+import {
+  DATA_FORMATS,
+  getDataFormatFromFilename,
+  isWorkbookFormat,
+} from "../data/formats";
+import type { DataFormat } from "../data/types";
+import { inspectSpreadsheetInWorker } from "../data/worker-client";
 import type { Language } from "$lib/i18n/messages";
 import type { messages } from "$lib/i18n/messages";
 import { getConversionErrorMessage, runConversion } from "./run-conversion";
-import { isSupportedFile } from "./shared/files";
-import type { ConversionOutput, ConverterKind, FileJob } from "./shared/types";
+import { isSupportedFile } from "../shared/files";
+import type { ConversionOutput, ConverterKind, FileJob } from "../shared/types";
 
 type OutputTarget =
-  ImageFormat | PdfFormat | DocumentFormat | VideoFormat | AudioFormat;
+  | ImageTargetFormat
+  | PdfFormat
+  | DocumentFormat
+  | VideoFormat
+  | AudioFormat
+  | DataFormat;
 export type WorkspaceText = (typeof messages)[Language];
 
 interface WorkspaceState {
@@ -18,21 +34,14 @@ interface WorkspaceState {
   target: OutputTarget;
   quality: number;
   svgOutputWidth: number;
-  imageOutputs: ImageFormat[];
-  imageCapabilitiesReady: boolean;
-  videoOutputs: VideoFormat[];
-  videoCapabilitiesReady: boolean;
-  videoCapabilitiesLoading: boolean;
-  audioOutputs: AudioFormat[];
-  audioCapabilitiesReady: boolean;
-  audioCapabilitiesLoading: boolean;
+  imageOutputs: ImageTargetFormat[];
   jobs: FileJob[];
   invalidFiles: boolean;
   downloadError: string;
   isConverting: boolean;
 }
 
-const pdfFormats: PdfFormat[] = ["image/png", "image/jpeg", "text/plain"];
+const pdfFormats: PdfFormat[] = [...PDF_IMAGE_FORMATS, "text/plain"];
 const documentFormats: DocumentFormat[] = [
   "text/html",
   "text/plain",
@@ -48,14 +57,7 @@ export function createConverterWorkspace(
     target: "image/webp",
     quality: 0.9,
     svgOutputWidth: 1024,
-    imageOutputs: [],
-    imageCapabilitiesReady: false,
-    videoOutputs: [],
-    videoCapabilitiesReady: false,
-    videoCapabilitiesLoading: false,
-    audioOutputs: [],
-    audioCapabilitiesReady: false,
-    audioCapabilitiesLoading: false,
+    imageOutputs: IMAGE_OUTPUT_FORMATS.map((format) => format.value),
     jobs: [],
     invalidFiles: false,
     downloadError: "",
@@ -68,72 +70,8 @@ export function createConverterWorkspace(
   const busy = () =>
     state.isConverting || state.jobs.some((job) => job.status === "converting");
 
-  async function loadImageCapabilities() {
-    try {
-      const { getImageOutputFormats } = await import("./image/convert");
-      state.imageOutputs = await getImageOutputFormats();
-      if (
-        state.kind === "image" &&
-        (!isImageFormat(state.target) ||
-          !state.imageOutputs.includes(state.target))
-      ) {
-        state.target = state.imageOutputs[0] ?? "image/png";
-      }
-    } catch {
-      state.imageOutputs = [];
-    } finally {
-      state.imageCapabilitiesReady = true;
-    }
-  }
-
-  async function loadVideoCapabilities() {
-    if (state.videoCapabilitiesReady || state.videoCapabilitiesLoading) return;
-    state.videoCapabilitiesLoading = true;
-    try {
-      const { getVideoOutputFormats } = await import("./video/worker-client");
-      state.videoOutputs = await getVideoOutputFormats();
-      if (
-        state.kind === "video" &&
-        (!isVideoFormat(state.target) ||
-          !state.videoOutputs.includes(state.target))
-      ) {
-        state.target = state.videoOutputs[0] ?? "video/mp4";
-      }
-    } catch {
-      state.videoOutputs = [];
-    } finally {
-      state.videoCapabilitiesReady = true;
-      state.videoCapabilitiesLoading = false;
-    }
-  }
-
-  async function loadAudioCapabilities() {
-    if (state.audioCapabilitiesReady || state.audioCapabilitiesLoading) return;
-    state.audioCapabilitiesLoading = true;
-    try {
-      const { getAudioOutputFormats } = await import("./audio/worker-client");
-      state.audioOutputs = await getAudioOutputFormats();
-      if (
-        state.kind === "audio" &&
-        (!isAudioFormat(state.target) ||
-          !state.audioOutputs.includes(state.target))
-      ) {
-        state.target = state.audioOutputs.includes("audio/mpeg")
-          ? "audio/mpeg"
-          : (state.audioOutputs[0] ?? "audio/wav");
-      }
-    } catch {
-      state.audioOutputs = [];
-    } finally {
-      state.audioCapabilitiesReady = true;
-      state.audioCapabilitiesLoading = false;
-    }
-  }
-
   function selectKind(kind: ConverterKind) {
     state.kind = kind;
-    if (kind === "video") void loadVideoCapabilities();
-    if (kind === "audio") void loadAudioCapabilities();
     state.target =
       kind === "image"
         ? state.imageOutputs.includes("image/webp")
@@ -144,12 +82,10 @@ export function createConverterWorkspace(
           : kind === "docx"
             ? "text/html"
             : kind === "video"
-              ? state.videoOutputs.includes("video/mp4")
-                ? "video/mp4"
-                : (state.videoOutputs[0] ?? "video/mp4")
-              : state.audioOutputs.includes("audio/mpeg")
-                ? "audio/mpeg"
-                : (state.audioOutputs[0] ?? "audio/wav");
+              ? VIDEO_FORMATS[0]
+              : kind === "audio"
+                ? AUDIO_FORMATS[0]
+                : "application/json";
     state.invalidFiles = false;
   }
 
@@ -163,6 +99,8 @@ export function createConverterWorkspace(
     } else if (state.kind === "video" && isVideoFormat(value)) {
       state.target = value;
     } else if (state.kind === "audio" && isAudioFormat(value)) {
+      state.target = value;
+    } else if (state.kind === "data" && isDataFormat(value)) {
       state.target = value;
     }
   }
@@ -178,16 +116,58 @@ export function createConverterWorkspace(
   function addFiles(files: File[]) {
     const supported = files.filter((file) => isSupportedFile(file, state.kind));
     state.invalidFiles = supported.length !== files.length;
-    const additions: FileJob[] = supported.map((file) => ({
-      id: crypto.randomUUID(),
-      kind: state.kind,
-      file,
+    const additions: FileJob[] = supported.map((file) => {
+      const format =
+        state.kind === "data" ? getDataFormatFromFilename(file.name) : null;
+      const inspectWorkbook = format !== null && isWorkbookFormat(format);
+      return {
+        id: crypto.randomUUID(),
+        kind: state.kind,
+        file,
+        status: "ready",
+        progress: 0,
+        outputs: [],
+        ...(inspectWorkbook ? { worksheetNamesLoading: true } : {}),
+      };
+    });
+    state.jobs = [...state.jobs, ...additions];
+    state.downloadError = "";
+    for (const job of additions) {
+      if (job.worksheetNamesLoading) void loadWorksheetNames(job);
+    }
+  }
+
+  async function loadWorksheetNames(job: FileJob) {
+    try {
+      const worksheetNames = await inspectSpreadsheetInWorker(job.file);
+      if (worksheetNames.length === 0) {
+        throw new Error(getText().dataInvalidInput);
+      }
+      updateJob(job.id, {
+        worksheetNames,
+        worksheetNamesLoading: false,
+        selectedWorksheet:
+          worksheetNames.length === 1 ? worksheetNames[0] : undefined,
+      });
+    } catch (error) {
+      updateJob(job.id, {
+        status: "error",
+        worksheetNamesLoading: false,
+        error: getConversionErrorMessage(error, getText()),
+      });
+    }
+  }
+
+  function selectWorksheet(id: string, worksheetName: string) {
+    const job = state.jobs.find((item) => item.id === id);
+    if (!job?.worksheetNames?.includes(worksheetName)) return;
+    updateJob(id, {
+      selectedWorksheet: worksheetName,
       status: "ready",
       progress: 0,
       outputs: [],
-    }));
-    state.jobs = [...state.jobs, ...additions];
-    state.downloadError = "";
+      error: undefined,
+    });
   }
 
   function updateJob(id: string, update: Partial<FileJob>) {
@@ -259,14 +239,12 @@ export function createConverterWorkspace(
     currentJobs,
     finishedOutputs,
     busy,
-    loadImageCapabilities,
-    loadVideoCapabilities,
-    loadAudioCapabilities,
     selectKind,
     selectTarget,
     setQuality,
     setSvgOutputWidth,
     addFiles,
+    selectWorksheet,
     removeJob,
     clearCurrentJobs,
     convertAll,
@@ -276,10 +254,8 @@ export function createConverterWorkspace(
   };
 }
 
-function isImageFormat(value: string): value is ImageFormat {
-  return ["image/jpeg", "image/png", "image/webp", "image/avif"].includes(
-    value,
-  );
+function isImageFormat(value: string): value is ImageTargetFormat {
+  return IMAGE_OUTPUT_FORMATS.some((format) => format.value === value);
 }
 
 function isPdfFormat(value: string): value is PdfFormat {
@@ -291,9 +267,13 @@ function isDocumentFormat(value: string): value is DocumentFormat {
 }
 
 function isVideoFormat(value: string): value is VideoFormat {
-  return value === "video/mp4" || value === "video/webm";
+  return VIDEO_FORMATS.includes(value as VideoFormat);
 }
 
 function isAudioFormat(value: string): value is AudioFormat {
-  return value === "audio/mpeg" || value === "audio/wav";
+  return AUDIO_FORMATS.includes(value as AudioFormat);
+}
+
+function isDataFormat(value: string): value is DataFormat {
+  return DATA_FORMATS.includes(value as DataFormat);
 }

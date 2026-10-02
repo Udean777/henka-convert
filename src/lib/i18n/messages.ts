@@ -3,36 +3,62 @@ export type Language = "en" | "id";
 export const messages = {
   en: {
     languageLabel: "Language",
+    homeLabel: "Henka Convert home",
     lightTheme: "Switch to light theme",
     darkTheme: "Switch to dark theme",
-    privacy: "Your files stay on your device",
-    title: "File conversion, right in your browser.",
+    fileConverter: "File converter",
+    conversionType: "Conversion type",
+    workbenchLabel: "Local file workbench",
+    sourceLabel: "Source",
+    resultLabel: "New format",
+    transformLabel: "Transform",
+    privacy: "Your files stay on your device.",
+    seoTitle: "Free Online File Converter | Henka Convert",
+    seoDescription:
+      "Convert images, PDFs, documents, spreadsheets, audio, and video in your browser. Your files stay on your device.",
+    title: "Convert files. Keep them yours.",
     description:
-      "Convert images, PDFs, Word documents, and short videos on your device. Your files are not uploaded.",
-    status: "Choose a file type to get started.",
-    footer:
-      "No backend conversion service. Files are processed in your browser.",
+      "Change the format of images, PDFs, documents, tables, audio, and video right in your browser.",
+    status: "Choose a converter, then add your files.",
+    footer: "No account needed. We don't upload your files.",
     featureImage: "Images",
     featurePdf: "PDF",
-    featureDocx: "DOCX (experimental)",
+    featureDocx: "Documents",
     featureVideo: "Video",
     featureAudio: "Audio",
+    featureData: "Tables",
     dropFiles: "Drop files here, or browse your device",
     chooseFiles: "Choose files",
-    imageTypes: "JPG, PNG, WebP, AVIF, SVG, BMP, TIFF, HEIC, HEIF",
+    imageTypes:
+      "JPG, PNG, WebP, AVIF, SVG, BMP, TIFF, GIF, ICO, JPEG XL, HEIC, HEIF",
     tiffFirstPageNote: "Only the first page of a multi-page TIFF is converted.",
     pdfTypes: "PDF documents",
-    docxTypes: "DOCX documents",
-    videoTypes: "MP4, MOV, or WebM videos (up to 20 MB)",
-    audioTypes: "MP3, WAV, M4A/AAC, OGG/Opus, or FLAC audio",
+    docxTypes: "DOCX, HTML, TXT, or Markdown documents",
+    videoTypes:
+      "MP4, MOV, WebM, MKV, AVI, M4V, 3GP, MPEG, or TS video (up to 20 MB)",
+    audioTypes: "MP3, WAV, M4A/AAC, OGG/Opus, FLAC, AIFF, or WMA audio",
+    dataTypes: "CSV, TSV, JSON, XLSX, XLS, ODS, and HTML tables",
     convertTo: "Convert to",
     quality: "Image quality",
     transparencyNote:
-      "JPEG does not support transparency. Transparent areas will use a white background.",
+      "JPEG, BMP, and GIF outputs use a white background for transparent areas.",
     docxNote:
-      "Experimental: complex formatting, tables, and page layout may change during conversion.",
+      "Document conversion keeps basic text and headings. Formatting and images may change. We remove code that could run when you open an HTML file.",
+    documentWorkerUnsupported:
+      "Document conversion couldn't start in this browser. Try another browser or file.",
+    documentTooLarge: "Document files must be 20 MB or smaller.",
+    documentOutputTooLarge:
+      "This document is too large to convert on this device. Try a smaller file.",
+    documentInputUnsupported:
+      "This file is not a supported DOCX, HTML, TXT, or Markdown document.",
+    documentConversionFailed:
+      "We couldn't convert this document. Check that it opens on your device, then try again.",
     pdfTextNote:
-      "Text extraction works for selectable text. Scanned pages need OCR, which is not included.",
+      "This works when you can select text in the PDF. Scanned pages need text recognition, which isn't available here.",
+    pdfNoSelectableText:
+      "This PDF has no selectable text. Scanned pages can't be converted to text.",
+    pdfPageImageUnavailable:
+      "We couldn't create an image from this PDF page. Try another format.",
     addFiles: "Add files",
     clear: "Clear all",
     convert: "Convert files",
@@ -47,108 +73,157 @@ export const messages = {
     failed: "Failed",
     noFiles: "No files added yet.",
     invalidFiles:
-      "Some files were skipped because their format does not match this converter.",
-    imageOutput: "JPG, PNG, WebP, or AVIF",
-    checkingImageFormats: "Checking image format support in this browser…",
-    imageFormatsUnavailable:
-      "This browser does not support local image conversion. Try a current version of Safari, Firefox, or Chrome.",
-    imageFormatUnavailableShort: "No supported formats",
+      "Some files weren't added because they don't match this converter.",
+    imageOutput:
+      "JPEG, PNG, WebP, AVIF, HEIC, BMP, TIFF, GIF, ICO, JPEG XL, SVG, or PDF",
     imageInputUnsupported:
-      "This browser could not read this image. The file may be damaged or this format may not be supported.",
+      "We couldn't open this image. It may be damaged or in a format we can't read.",
     imageOutputUnsupported:
-      "This browser cannot create that output format. Choose another format.",
+      "We couldn't save this image in that format. Try another format.",
     imageWorkerUnsupported:
-      "This browser does not support the background processing needed for image conversion.",
+      "Image conversion couldn't start in this browser. Try another browser or file.",
     imageTooLarge:
-      "Images must be 40 megapixels or smaller, with no side over 16,384 pixels.",
+      "This image is too large to convert on this device. Try a smaller image.",
     invalidSvg: "This SVG file is invalid or could not be read.",
-    svgUnsupported: "This browser cannot rasterize this SVG image.",
+    svgUnsupported: "We couldn't open this SVG. Try another image format.",
     svgDimensionsMissing:
-      "This SVG needs a valid viewBox or width and height before it can be converted.",
+      "This SVG is missing its image size, so we can't convert it.",
     imageConversionFailed:
-      "Image conversion failed. Check the file and try another output format.",
-    svgWidth: "SVG output width",
-    svgWidthHint: "pixels; height is calculated to preserve the aspect ratio.",
-    pdfOutput: "PNG pages, JPG pages, or text",
-    docxOutput: "HTML, plain text, or Markdown",
-    checkingVideoFormats: "Checking video encoding support in this browser…",
-    videoFormatUnavailableShort: "No supported output formats",
-    videoFormatsUnavailable:
-      "This browser cannot encode MP4 or WebM locally at the supported video size.",
+      "We couldn't convert this image. Check that it opens, then try another format.",
+    svgWidth: "Image width",
+    svgWidthHint: "pixels. We'll adjust the height to match.",
+    svgOutputNote:
+      "The SVG will contain your image. It won't turn it into editable vector artwork.",
+    imagePdfNote:
+      "Creates a one-page PDF from this image. Transparent areas use a white background.",
+    pdfOutput: "Each PDF page becomes a separate image file.",
+    docxOutput: "DOCX, HTML, plain text, or Markdown",
     videoLimitsNote:
-      "Videos stay on your device. Files can be up to 20 MB and 60 seconds. High-resolution videos are resized automatically. Available output formats depend on this browser and device.",
+      "Videos can be up to 20 MB and 60 seconds. We automatically resize very large videos. Before your first audio or video conversion, your browser downloads extra tools. This can take longer on a slow connection. Your video stays on your device.",
     videoInputUnsupported:
-      "This browser could not read the video. The file may be damaged or use an unsupported codec.",
+      "We couldn't open this video. It may be damaged or use a format we can't read.",
     videoOutputUnsupported:
-      "This browser cannot create that video format. Choose another available format.",
+      "We couldn't save this video in that format. Try another format.",
     videoWorkerUnsupported:
-      "This browser does not support the background processing needed for video conversion.",
-    videoTooLarge: "Videos must be 20 MB or smaller.",
-    videoTooLong: "Videos must be 60 seconds or shorter.",
+      "Video conversion couldn't start in this browser. Try another browser or file.",
+    videoTooLarge: "This video is over the 20 MB limit. Choose a smaller file.",
+    videoTooLong:
+      "This video is longer than 60 seconds. Choose a shorter clip.",
+    videoOutputTooLarge:
+      "The converted video would be too large to save. Try a shorter clip.",
     videoDurationUnavailable:
-      "Could not determine the video duration. Check that the file plays, then try again.",
+      "We couldn't read how long this video is. Check that it plays, then try again.",
     videoResolutionTooLarge:
-      "This video’s resolution is too high to convert on this device. Try a smaller or lower-resolution file.",
+      "This video is too large to convert on this device. Try a shorter clip or a smaller video.",
     videoConversionFailed:
-      "Video conversion failed. Check the file and try another output format.",
-    checkingAudioFormats: "Checking local audio encoding support…",
-    audioFormatUnavailableShort: "No supported output formats",
-    audioFormatsUnavailable:
-      "This browser could not prepare local audio conversion. Try reloading the page or a current browser.",
+      "We couldn't convert this video. Check that it plays, then try another format.",
     audioLimitsNote:
-      "Audio stays on your device. Files can be up to 20 MB and 10 minutes. FLAC input depends on browser support.",
+      "Audio files can be up to 20 MB and 10 minutes. Before your first audio or video conversion, your browser downloads extra tools. This can take longer on a slow connection. Your audio stays on your device.",
     audioWavNote:
-      "WAV can be much larger than the original. Choose MP3 for a smaller file.",
+      "WAV files can be much larger than the original. Choose MP3 for a smaller file.",
     audioInputUnsupported:
-      "This audio file could not be read. It may be damaged or use a codec unsupported by this browser.",
+      "We couldn't open this audio file. It may be damaged or in a format we can't read.",
     audioOutputUnsupported:
-      "This browser cannot create that audio format. Choose another available format.",
+      "We couldn't save this audio in that format. Try another format.",
     audioWorkerUnsupported:
-      "This browser does not support the background processing needed for audio conversion.",
-    audioTooLarge: "Audio files must be 20 MB or smaller.",
-    audioTooLong: "Audio must be 10 minutes or shorter.",
+      "Audio conversion couldn't start in this browser. Try another browser or file.",
+    audioTooLarge:
+      "This audio file is over the 20 MB limit. Choose a smaller file.",
+    audioTooLong:
+      "This audio is longer than 10 minutes. Choose a shorter file.",
     audioDurationUnavailable:
-      "Could not determine the audio duration. Check that the file plays, then try again.",
-    audioWavTooLarge:
-      "This WAV result would be too large to create safely in the browser. Choose MP3 instead.",
+      "We couldn't read how long this audio is. Check that it plays, then try again.",
+    audioOutputTooLarge:
+      "The converted audio would be too large to save. Try a shorter file or choose MP3.",
     audioConversionFailed:
-      "Audio conversion failed. Check the file and try another output format.",
+      "We couldn't convert this audio. Check that it plays, then try another format.",
+    dataLimitsNote:
+      "Files can be up to 20 MB. Each spreadsheet sheet can contain up to 1 million cells.",
+    dataStructureNote:
+      "CSV and TSV use the first row as column names. JSON needs a simple list of objects. For spreadsheets, choose one sheet. Results keep the visible values and leading zeros, but not formulas or styling. HTML files use the first table.",
+    dataWorksheetNamesLoading: "Reading sheet names…",
+    dataSelectWorksheet: "Choose a sheet",
+    dataWorkerUnsupported:
+      "Table conversion couldn't start in this browser. Try another browser or file.",
+    dataTooLarge: "This file is over the 20 MB limit. Choose a smaller file.",
+    dataOutputTooLarge:
+      "The converted file would be too large to save. Try a smaller file.",
+    dataInvalidInput:
+      "We couldn't open this file as a table. Check that it contains CSV, TSV, JSON, Excel, OpenDocument, or HTML table data.",
+    dataInvalidHeaders:
+      "The first row needs a different name for each column. Column names can't be blank.",
+    dataJsonStructureUnsupported:
+      "JSON needs a simple list of objects. Nested data isn't supported yet.",
+    dataSheetSelectionRequired: "Choose a sheet before converting this file.",
+    dataSheetUnavailable:
+      "We couldn't find that sheet. Choose another one and try again.",
+    dataSheetTooLarge:
+      "This sheet has too much data to convert. Try a smaller sheet.",
+    dataConversionFailed:
+      "We couldn't convert this table. Check that it opens, then try again.",
     file: "file",
     files: "files",
     errorPrefix: "Conversion failed",
   },
   id: {
     languageLabel: "Pilih bahasa",
+    homeLabel: "Beranda Henka Convert",
     lightTheme: "Ganti ke tema terang",
     darkTheme: "Ganti ke tema gelap",
-    privacy: "File Anda tetap di perangkat ini",
-    title: "Konversi file, langsung di browser Anda.",
+    fileConverter: "Konverter file",
+    conversionType: "Jenis konversi",
+    workbenchLabel: "Meja kerja file lokal",
+    sourceLabel: "Sumber",
+    resultLabel: "Format baru",
+    transformLabel: "Ubah",
+    privacy: "File tetap di perangkat Anda.",
+    seoTitle: "Konverter File Online Gratis | Henka Convert",
+    seoDescription:
+      "Ubah gambar, PDF, dokumen, spreadsheet, audio, dan video langsung di browser. File tetap di perangkat Anda.",
+    title: "Ubah format. File tetap milik Anda.",
     description:
-      "Konversi gambar, PDF, dokumen Word, dan video pendek langsung di perangkat. File Anda tidak diunggah.",
-    status: "Pilih jenis file untuk memulai.",
-    footer: "Tanpa layanan konversi backend. File diproses di browser Anda.",
+      "Ubah format gambar, PDF, dokumen, tabel, audio, dan video langsung di browser.",
+    status: "Pilih jenis konverter, lalu tambahkan file.",
+    footer: "Tanpa akun dan tanpa mengunggah file.",
     featureImage: "Gambar",
     featurePdf: "PDF",
-    featureDocx: "DOCX (eksperimental)",
+    featureDocx: "Dokumen",
     featureVideo: "Video",
     featureAudio: "Audio",
+    featureData: "Tabel",
     dropFiles: "Letakkan file di sini atau pilih dari perangkat",
     chooseFiles: "Pilih file",
-    imageTypes: "JPG, PNG, WebP, AVIF, SVG, BMP, TIFF, HEIC, HEIF",
+    imageTypes:
+      "JPG, PNG, WebP, AVIF, SVG, BMP, TIFF, GIF, ICO, JPEG XL, HEIC, HEIF",
     tiffFirstPageNote:
       "Hanya halaman pertama dari TIFF multi-halaman yang dikonversi.",
     pdfTypes: "Dokumen PDF",
-    docxTypes: "Dokumen DOCX",
-    videoTypes: "Video MP4, MOV, atau WebM (maksimal 20 MB)",
-    audioTypes: "Audio MP3, WAV, M4A/AAC, OGG/Opus, atau FLAC",
+    docxTypes: "Dokumen DOCX, HTML, TXT, atau Markdown",
+    videoTypes:
+      "Video MP4, MOV, WebM, MKV, AVI, M4V, 3GP, MPEG, atau TS (maksimal 20 MB)",
+    audioTypes: "Audio MP3, WAV, M4A/AAC, OGG/Opus, FLAC, AIFF, atau WMA",
+    dataTypes: "Tabel CSV, TSV, JSON, XLSX, XLS, ODS, dan HTML",
     convertTo: "Ubah ke",
     quality: "Kualitas gambar",
     transparencyNote:
-      "JPEG tidak mendukung transparansi. Area transparan akan menggunakan latar putih.",
+      "Hasil JPEG, BMP, dan GIF memakai latar putih untuk area transparan.",
     docxNote:
-      "Eksperimental: format kompleks, tabel, dan tata letak halaman dapat berubah saat konversi.",
+      "Konversi dokumen mempertahankan teks dan judul dasar. Tata letak dan gambar bisa berubah. Kami menghapus kode yang dapat berjalan saat file HTML dibuka.",
+    documentWorkerUnsupported:
+      "Konversi dokumen tidak bisa dimulai di browser ini. Coba browser atau file lain.",
+    documentTooLarge: "Ukuran file dokumen maksimal 20 MB.",
+    documentOutputTooLarge:
+      "Dokumen ini terlalu besar untuk dikonversi di perangkat ini. Coba file yang lebih kecil.",
+    documentInputUnsupported:
+      "File ini bukan dokumen DOCX, HTML, TXT, atau Markdown yang didukung.",
+    documentConversionFailed:
+      "Dokumen ini tidak bisa dikonversi. Pastikan file bisa dibuka, lalu coba lagi.",
     pdfTextNote:
-      "Ekstraksi teks bekerja untuk teks yang dapat dipilih. Halaman hasil pindai memerlukan OCR yang belum tersedia.",
+      "Fitur ini bekerja jika teks di PDF bisa dipilih. Halaman hasil pindai memerlukan pengenalan teks yang belum tersedia.",
+    pdfNoSelectableText:
+      "PDF ini tidak memiliki teks yang bisa dipilih. PDF hasil pindai tidak bisa diubah menjadi teks.",
+    pdfPageImageUnavailable:
+      "Halaman PDF ini tidak bisa dibuat menjadi gambar. Coba format lain.",
     addFiles: "Tambah file",
     clear: "Hapus semua",
     convert: "Konversi file",
@@ -163,72 +238,95 @@ export const messages = {
     failed: "Gagal",
     noFiles: "Belum ada file.",
     invalidFiles:
-      "Beberapa file dilewati karena formatnya tidak sesuai dengan konverter ini.",
-    imageOutput: "JPG, PNG, WebP, atau AVIF",
-    checkingImageFormats: "Memeriksa dukungan format gambar di browser ini…",
-    imageFormatsUnavailable:
-      "Browser ini tidak mendukung konversi gambar lokal. Coba Safari, Firefox, atau Chrome versi terbaru.",
-    imageFormatUnavailableShort: "Format tidak tersedia",
+      "Beberapa file tidak ditambahkan karena formatnya tidak sesuai dengan konverter ini.",
+    imageOutput:
+      "JPEG, PNG, WebP, AVIF, HEIC, BMP, TIFF, GIF, ICO, JPEG XL, SVG, atau PDF",
     imageInputUnsupported:
-      "Browser ini tidak dapat membaca gambar. File mungkin rusak atau formatnya belum didukung.",
+      "Gambar ini tidak bisa dibuka. File mungkin rusak atau formatnya belum didukung.",
     imageOutputUnsupported:
-      "Browser ini tidak dapat membuat format keluaran tersebut. Pilih format lain.",
+      "Gambar ini tidak bisa disimpan dalam format tersebut. Coba format lain.",
     imageWorkerUnsupported:
-      "Browser ini tidak mendukung pemrosesan latar belakang untuk konversi gambar.",
+      "Konversi gambar tidak bisa dimulai di browser ini. Coba browser atau file lain.",
     imageTooLarge:
-      "Ukuran gambar maksimal 40 megapiksel dan tiap sisinya maksimal 16.384 piksel.",
+      "Gambar ini terlalu besar untuk dikonversi di perangkat ini. Coba gambar yang lebih kecil.",
     invalidSvg: "File SVG ini tidak valid atau tidak dapat dibaca.",
-    svgUnsupported: "Browser ini tidak dapat merasterisasi gambar SVG ini.",
+    svgUnsupported: "SVG ini tidak bisa dibuka. Coba format gambar lain.",
     svgDimensionsMissing:
-      "SVG ini perlu memiliki viewBox atau lebar dan tinggi yang valid agar dapat dikonversi.",
+      "Ukuran gambar tidak tercantum di file SVG ini, jadi kami tidak bisa mengonversinya.",
     imageConversionFailed:
-      "Konversi gambar gagal. Periksa file atau coba format keluaran lain.",
-    svgWidth: "Lebar hasil SVG",
-    svgWidthHint: "piksel; tinggi dihitung untuk mempertahankan rasio gambar.",
-    pdfOutput: "Halaman PNG, halaman JPG, atau teks",
-    docxOutput: "HTML, teks biasa, atau Markdown",
-    checkingVideoFormats: "Memeriksa dukungan encoding video di browser ini…",
-    videoFormatUnavailableShort: "Format keluaran tidak tersedia",
-    videoFormatsUnavailable:
-      "Browser ini tidak dapat membuat MP4 atau WebM lokal pada batas ukuran video yang didukung.",
+      "Gambar ini tidak bisa dikonversi. Pastikan file bisa dibuka, lalu coba format lain.",
+    svgWidth: "Lebar gambar",
+    svgWidthHint: "piksel. Tinggi akan disesuaikan dengan gambar.",
+    svgOutputNote:
+      "File SVG akan berisi gambar Anda. Gambar tidak akan berubah menjadi karya vektor yang bisa diedit.",
+    imagePdfNote:
+      "Membuat PDF satu halaman dari gambar ini. Area transparan akan memakai latar putih.",
+    pdfOutput: "Setiap halaman PDF menjadi file gambar tersendiri.",
+    docxOutput: "DOCX, HTML, teks biasa, atau Markdown",
     videoLimitsNote:
-      "Video tetap di perangkat Anda. Ukuran file maksimal 20 MB dan durasi 60 detik. Resolusi tinggi akan diperkecil otomatis. Format keluaran yang tersedia bergantung pada browser dan perangkat.",
+      "Ukuran video maksimal 20 MB dan durasinya 60 detik. Video yang sangat besar akan diperkecil otomatis. Sebelum konversi audio atau video pertama, browser mengunduh alat tambahan. Proses ini bisa lebih lama jika koneksi lambat. Video tetap di perangkat Anda.",
     videoInputUnsupported:
-      "Browser ini tidak dapat membaca video. File mungkin rusak atau memakai codec yang tidak didukung.",
+      "Video ini tidak bisa dibuka. File mungkin rusak atau formatnya belum didukung.",
     videoOutputUnsupported:
-      "Browser ini tidak dapat membuat format video tersebut. Pilih format lain yang tersedia.",
+      "Video ini tidak bisa disimpan dalam format tersebut. Coba format lain.",
     videoWorkerUnsupported:
-      "Browser ini tidak mendukung pemrosesan latar belakang untuk konversi video.",
-    videoTooLarge: "Ukuran video maksimal 20 MB.",
-    videoTooLong: "Durasi video maksimal 60 detik.",
+      "Konversi video tidak bisa dimulai di browser ini. Coba browser atau file lain.",
+    videoTooLarge:
+      "Video ini melebihi batas 20 MB. Pilih file yang lebih kecil.",
+    videoTooLong:
+      "Video ini lebih dari 60 detik. Pilih klip yang lebih pendek.",
+    videoOutputTooLarge:
+      "Ukuran video hasil konversi terlalu besar. Coba klip yang lebih pendek.",
     videoDurationUnavailable:
-      "Durasi video tidak dapat dibaca. Pastikan file dapat diputar, lalu coba lagi.",
+      "Lama video tidak bisa dibaca. Pastikan videonya bisa diputar, lalu coba lagi.",
     videoResolutionTooLarge:
-      "Resolusi video ini terlalu tinggi untuk dikonversi di perangkat ini. Coba file dengan resolusi lebih rendah.",
+      "Video ini terlalu besar untuk dikonversi di perangkat ini. Coba klip yang lebih pendek atau video yang lebih kecil.",
     videoConversionFailed:
-      "Konversi video gagal. Periksa file atau coba format keluaran lain.",
-    checkingAudioFormats: "Memeriksa dukungan konversi audio lokal…",
-    audioFormatUnavailableShort: "Format keluaran tidak tersedia",
-    audioFormatsUnavailable:
-      "Browser ini belum dapat menyiapkan konversi audio lokal. Muat ulang halaman atau coba browser versi terbaru.",
+      "Video ini tidak bisa dikonversi. Pastikan videonya bisa diputar, lalu coba format lain.",
     audioLimitsNote:
-      "Audio tetap di perangkat Anda. Ukuran file maksimal 20 MB dan durasi 10 menit. Dukungan input FLAC bergantung pada browser.",
+      "Ukuran audio maksimal 20 MB dan durasinya 10 menit. Sebelum konversi audio atau video pertama, browser mengunduh alat tambahan. Proses ini bisa lebih lama jika koneksi lambat. Audio tetap di perangkat Anda.",
     audioWavNote:
-      "Ukuran WAV bisa jauh lebih besar dari file asal. Pilih MP3 untuk hasil yang lebih kecil.",
+      "File WAV bisa jauh lebih besar dari file asal. Pilih MP3 untuk hasil yang lebih kecil.",
     audioInputUnsupported:
-      "File audio tidak dapat dibaca. File mungkin rusak atau memakai codec yang tidak didukung browser ini.",
+      "Audio ini tidak bisa dibuka. File mungkin rusak atau formatnya belum didukung.",
     audioOutputUnsupported:
-      "Browser ini tidak dapat membuat format audio tersebut. Pilih format lain yang tersedia.",
+      "Audio ini tidak bisa disimpan dalam format tersebut. Coba format lain.",
     audioWorkerUnsupported:
-      "Browser ini tidak mendukung pemrosesan latar belakang untuk konversi audio.",
-    audioTooLarge: "Ukuran file audio maksimal 20 MB.",
-    audioTooLong: "Durasi audio maksimal 10 menit.",
+      "Konversi audio tidak bisa dimulai di browser ini. Coba browser atau file lain.",
+    audioTooLarge:
+      "Audio ini melebihi batas 20 MB. Pilih file yang lebih kecil.",
+    audioTooLong:
+      "Audio ini lebih dari 10 menit. Pilih file yang lebih pendek.",
     audioDurationUnavailable:
-      "Durasi audio tidak dapat dibaca. Pastikan file dapat diputar, lalu coba lagi.",
-    audioWavTooLarge:
-      "Hasil WAV ini terlalu besar untuk dibuat dengan aman di browser. Coba pilih MP3.",
+      "Lama audio tidak bisa dibaca. Pastikan file bisa diputar, lalu coba lagi.",
+    audioOutputTooLarge:
+      "Ukuran audio hasil konversi terlalu besar. Coba file yang lebih pendek atau pilih MP3.",
     audioConversionFailed:
-      "Konversi audio gagal. Periksa file atau coba format keluaran lain.",
+      "Audio ini tidak bisa dikonversi. Pastikan file bisa diputar, lalu coba format lain.",
+    dataLimitsNote:
+      "Ukuran file maksimal 20 MB. Satu sheet spreadsheet dapat berisi hingga 1 juta sel.",
+    dataStructureNote:
+      "Baris pertama CSV dan TSV menjadi nama kolom. JSON harus berupa daftar objek sederhana. Untuk spreadsheet, pilih satu sheet. Hasil mempertahankan nilai yang terlihat dan nol di depan, tetapi tidak menyimpan rumus atau gaya asli. File HTML memakai tabel pertama.",
+    dataWorksheetNamesLoading: "Membaca nama sheet…",
+    dataSelectWorksheet: "Pilih sheet",
+    dataWorkerUnsupported:
+      "Konversi tabel tidak bisa dimulai di browser ini. Coba browser atau file lain.",
+    dataTooLarge: "File ini melebihi batas 20 MB. Pilih file yang lebih kecil.",
+    dataOutputTooLarge:
+      "Ukuran hasil terlalu besar untuk disimpan. Coba file yang lebih kecil.",
+    dataInvalidInput:
+      "File ini tidak bisa dibuka sebagai tabel. Pastikan isinya berupa CSV, TSV, JSON, Excel, OpenDocument, atau tabel HTML.",
+    dataInvalidHeaders:
+      "Setiap kolom perlu memiliki nama yang berbeda. Nama kolom tidak boleh kosong.",
+    dataJsonStructureUnsupported:
+      "JSON harus berupa daftar objek sederhana. Data bertingkat belum didukung.",
+    dataSheetSelectionRequired: "Pilih sheet sebelum mengonversi file ini.",
+    dataSheetUnavailable:
+      "Sheet yang dipilih tidak ditemukan. Pilih sheet lain lalu coba lagi.",
+    dataSheetTooLarge:
+      "Sheet ini berisi terlalu banyak data untuk dikonversi. Coba sheet yang lebih kecil.",
+    dataConversionFailed:
+      "Tabel ini tidak bisa dikonversi. Periksa file lalu coba lagi.",
     file: "file",
     files: "file",
     errorPrefix: "Konversi gagal",
