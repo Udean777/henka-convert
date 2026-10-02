@@ -1,5 +1,5 @@
 <svg
-  class="hero-artwork"
+  class="block size-full overflow-visible"
   viewBox="0 0 360 320"
   fill="none"
   aria-hidden="true"
@@ -20,13 +20,6 @@
 </svg>
 
 <style>
-  .hero-artwork {
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
   .pink-sheet,
   .blue-sheet {
     stroke: var(--ink);

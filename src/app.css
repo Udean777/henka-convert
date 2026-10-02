@@ -7,6 +7,20 @@
   --color-muted: var(--ink-muted);
   --color-border: var(--rule);
   --color-accent: var(--riso-blue);
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-riso-blue: var(--riso-blue);
+  --color-riso-blue-soft: var(--riso-blue-soft);
+  --color-riso-pink: var(--riso-pink);
+  --color-riso-pink-text: var(--riso-pink-text);
+  --color-riso-pink-soft: var(--riso-pink-soft);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
 }
 
 :root {
@@ -23,6 +37,7 @@
   --riso-pink-soft: #ffe3ed;
   --success: #28654c;
   --danger: #a52f36;
+  --accent-foreground: #fff9ed;
   font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -44,6 +59,7 @@
   --riso-pink-soft: #4d313d;
   --success: #8dc8a7;
   --danger: #ff9a9b;
+  --accent-foreground: #201e1e;
 }
 
 * {
@@ -65,24 +81,7 @@ body {
   color: var(--ink);
 }
 
-button,
-select,
-input {
-  font: inherit;
-}
-
-button {
-  color: inherit;
-}
-
-:where(
-  button:not(:disabled),
-  [role="button"],
-  a.button,
-  a.action-link,
-  a.text-link,
-  .browse-button
-) {
+:where(button:not(:disabled), a[href], [role="button"]) {
   touch-action: manipulation;
   transition:
     transform 150ms cubic-bezier(0.2, 0.7, 0.2, 1),
@@ -93,10 +92,7 @@ button {
 
 button:active:not(:disabled),
 [role="button"]:active,
-a.button:active,
-a.action-link:active,
-a.text-link:active,
-.browse-button:active {
+a[href]:active {
   transform: translateY(1px) scale(0.985) !important;
   transition-duration: 70ms;
 }
@@ -109,50 +105,6 @@ a.text-link:active,
 ::selection {
   background: var(--riso-pink);
   color: #201e1e;
-}
-
-.site-frame {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  padding: 0 clamp(1.25rem, 5vw, 5rem);
-}
-
-.site-header,
-.site-footer,
-.page-main {
-  width: min(100%, 1240px);
-  margin-inline: auto;
-}
-
-.site-header {
-  flex: none;
-  border-bottom: 1px solid var(--rule);
-}
-
-.site-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  border-top: 1px solid var(--rule);
-  padding-block: 1.25rem 1.5rem;
-  color: var(--ink-muted);
-  font-size: 0.78rem;
-}
-
-.page-main {
-  flex: 1;
-}
-
-@media (max-width: 640px) {
-  .site-frame {
-    padding-inline: 1rem;
-  }
-
-  .site-footer {
-    flex-direction: column;
-    gap: 0.4rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

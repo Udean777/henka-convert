@@ -5,7 +5,7 @@
 </script>
 
 <svg
-  class="format-icon"
+  class="format-icon block size-12 shrink-0 overflow-visible"
   viewBox="0 0 64 64"
   fill="none"
   aria-hidden="true"
@@ -46,14 +46,6 @@
 </svg>
 
 <style>
-  .format-icon {
-    display: block;
-    width: 3rem;
-    height: 3rem;
-    flex: none;
-    overflow: visible;
-  }
-
   .blue-fill {
     fill: var(--riso-blue);
     stroke: var(--ink);
